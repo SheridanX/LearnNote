@@ -20,7 +20,7 @@ Docker 给以上问题提出了解决方案！
 
   Dockers的思想就是来自于集装箱！
 
-![image-20200728111231106](C:\Users\administer\AppData\Roaming\Typora\typora-user-images\image-20200728111231106.png)
+![](.\image\image-20200728111231106.png)
 
   JRE -- 多个应用（端口冲突） --- 原来都是交叉的！
 
