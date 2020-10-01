@@ -194,97 +194,63 @@
 
 ### 3.1.3.3、读取文件内容
 
-​    \#include<stdio.h>
+  
 
-\#include <sys/types.h>
-
-\#include <sys/stat.h>
-
-\#include <fcntl.h>
-
-\#include <unistd.h>
-
-\#include<string.h>
-
- 
+```C
+#include<stdio.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include<string.h>
 
 int main(int *argc, char *argv[])
-
 {  
 
   int fd = -1;  //fd 就是file descriptor 文件描述符
-
   //第一步：打开文件
-
   char buf[100] = {0};
-
   char writebuf[20] = "I love Linux!";
-
   int ret = -1;
-
+    
   fd = open("a.txt",O_RDWR);
-
   if(-1 == fd) {       //有时候也写成（fd < 0）
-
-​    printf("open file error!\n");
-
-​     return -1;
-
+  printf("open file error!\n");
+     return -1;
   }else{
-
-​    printf("open file success! fd = %d\n",fd);
-
-  }   
-
-​     
-
+   printf("open file success! fd = %d\n",fd);
+  }        
 //第二步：读写文件
-
 ret = write(fd, writebuf,sizeof(writebuf));
-
   if(ret < 0 ){
-
-​    printf("Wirte failed !\n");
-
-​     return -1;
-
+    printf("Wirte failed !\n");
+    return -1;
   }else{
-
-​    printf("Write success!\n");
-
-​    printf("%d bytes were writed\n",ret);
-
+    printf("Write success!\n");
+    printf("%d bytes were writed\n",ret);
 }
-
   ret = read(fd, buf, 13);
-
   if(-1 == fd){
-
-​    printf("read error!\n");
-
-​     return -1;
-
+ 	 printf("read error!\n");
+     return -1;
   }else{
-
-​    printf("%d Bytes were read\n",ret);
-
-​    printf("File content : [%s]\n",buf);
-
-​      } 
-
+     printf("%d Bytes were read\n",ret);
+     printf("File content : [%s]\n",buf);
+     } 
   }
 
   //第三步：关闭文件
-
   close(fd);
-
   return 0;
 
 }
+```
 
  
 
+```C
 (1)ssize_t read(int fd, void *buf, size_t count);
+```
 
 **fd**表示要读取哪个文件，fd一般由前面的open返回得到
 
