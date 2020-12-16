@@ -258,13 +258,13 @@ zImage可以不重新编译烧录，甚至可以不关机重启就实现模块�
 
 ### 5.2.2.1、常用的模块操作命令
 
-(1)**lsmod(list module,****将模块列表显示)**：功能是打印出当前内核中已经安装的模块列表
+(1)**lsmod**(list module,将模块列表显示)：功能是打印出当前内核中已经安装的模块列表
 
-(2)**insmod****（install module，安装模块）**：功能是向当前内核中去安装一个模块，用法是insmod xxx.ko
+(2)**insmod**（install module，安装模块）：功能是向当前内核中去安装一个模块，用法是insmod xxx.ko
 
-(3)**modinfo****（module information，模块信息）**：功能是打印出一个内核模块的自带信息。，用法是modinfo xxx.ko
+(3)**modinfo**（module information，模块信息）：功能是打印出一个内核模块的自带信息。，用法是modinfo xxx.ko
 
-(4)**rmmod****（remove module，卸载模块）**：功能是从当前内核中卸载一个已经安装了的模块，用法是rmmod xxx（注意卸载模块时只需要输入模块名即可，不能加.ko后缀）
+(4)**rmmod**（remove module，卸载模块）：功能是从当前内核中卸载一个已经安装了的模块，用法是rmmod xxx（注意卸载模块时只需要输入模块名即可，不能加.ko后缀）
 
 (5)剩下的后面再说，暂时用不到（如modprobe、depmod等）
 
@@ -370,7 +370,7 @@ static void __exit chrdev_exit(void)
 
 (1)printk在内核源码中用来打印信息的函数，用法和printf非常相似。
 
-(2)**printk****和printf最大的差别**：printf是C库函数，是在应用层编程中使用的，不能在linux内核源代码中使用；printk是linux内核源代码中自己封装出来的一个打印函数，是内核源码中的一个普通函数，只能在内核源码范围内使用，不能在应用编程中使用。
+(2)**printk**和printf最大的差别：printf是C库函数，是在应用层编程中使用的，不能在linux内核源代码中使用；printk是linux内核源代码中自己封装出来的一个打印函数，是内核源码中的一个普通函数，只能在内核源码范围内使用，不能在应用编程中使用。
 
  
 
@@ -1052,7 +1052,7 @@ map-s5p.h中定义的是模块的寄存器基地址的虚拟地址。
 
 ### 5.2.15.3、将代码移动到open和close函数中去
 
-\#include <mach/regs-gpio.h>   **//****注意头文件的包含的顺序，因为****//S5PV210_GPJ0CON** **这个宏是由** **<mach/regs-gpio.h>****头文件的宏组成的，所以这个头文件应该放在前面**   
+\#include <mach/regs-gpio.h>   **//**注意头文件的包含的顺序，因为//S5PV210_GPJ0CON **这个宏是由** **<mach/regs-gpio.h>**头文件的宏组成的，所以这个头文件应该放在前面**   
 
 \#include <mach/gpio-bank.h>
 
@@ -1134,7 +1134,7 @@ static ssize_t test_chrdev_write(struct file *file, const char __user *ubuf, siz
 
 ​    printk(KERN_INFO "copy_from_usr fail\n");
 
-​    return -EINVAL;
+​    return -EINVAL
 
   }
 

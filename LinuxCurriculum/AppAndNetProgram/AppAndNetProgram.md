@@ -76,9 +76,9 @@
 
 (2)典型的嵌入式产品就是基于嵌入式linux操作系统来工作的。典型的嵌入式产品的研发过程就是；
 
-第一步让linux系统在硬件上跑起来（系统移植工作），
+​	第一步让linux系统在硬件上跑起来（系统移植工作）。
 
-第二步基于linux系统来开发应用程序实现产品功能。
+​	第二步基于linux系统来开发应用程序实现产品功能。
 
 (3)基于linux去做应用编程，其实就是通过调用linux的系统API来实现应用需要完成的任务。
 
@@ -168,7 +168,7 @@
 
 (2)一句话讲清楚文件描述符：文件描述符就是用来区分一个程序打开的多个文件的。
 
-(3)文件描述符的作用域就是当前进程，出了当前进程这个文件描述符就没有意义了
+(3)文件描述符的**作用域就是当前进程**，出了当前进程这个文件描述符就没有意义了
 
  
 
@@ -188,7 +188,7 @@
 
 (1)当我们写应用程序时，很多API原型都不可能记得，所以要实时查询，用man手册
 
-(2)**man 1 xx****查linux shell命令，man 2 xxx查API， man 3 xxx查库函数**
+(2)**man 1 xx**查linux shell命令，man 2 xxx查API， man 3 xxx查库函数
 
   
 
@@ -292,7 +292,7 @@ File content : []
 
 ### 3.1.4.1、读写权限：O_RDONLY O_WRONLY O_RDWR
 
-(1)**linux****中文件有读写权限**，我们在open打开文件时也可以附带一定的权限说明（譬如O_RDONLY就表示以只读方式打开，O_WRONLY表示以只写方式打开，O_RDWR表示以可读可写方式打开）
+(1)**linux中文件有读写权限**，我们在open打开文件时也可以附带一定的权限说明（譬如O_RDONLY就表示以只读方式打开，O_WRONLY表示以只写方式打开，O_RDWR表示以可读可写方式打开）
 
 (2)当我们附带了权限后，打开的文件就只能按照这种权限来操作。
 
@@ -314,13 +314,9 @@ File content : []
 
  使用：  fd = open("a.txt",O_RDONLY |O_TRUNC);
 
- 
-
 (3)O_APPEND属性去打开文件时，如果这个文件中本来是有内容的，则新写入的内容会接续到原来内容的后面，对应结果3
 
 使用： fd = open("a.txt",O_RDONLY |O_APPEND);
-
- 
 
 (4)默认不使用O_APPEND和O_TRUNC属性时就是结果4
 
@@ -352,7 +348,7 @@ O_TRUNC 起作用，O_APPEND不起作用；
 
 (2)vi或者windows下的notepad++，都可以直接打开一个尚未存在的文件。
 
-(3)open的flag O_CREAT就是为了应对这种打开一个并不存在的文件的。**O_CREAT****就表示我们当前打开的文件并不存在，我们是要去创建并且打开它**。
+(3)open的flag O_CREAT就是为了应对这种打开一个并不存在的文件的。**O_CREAT**就表示我们当前打开的文件并不存在，我们是要去创建并且打开它。
 
 (4)思考：当我们open使用了O_CREAT，但是文件已经存在的情况下会怎样？ 
 
@@ -388,9 +384,7 @@ O_TRUNC 起作用，O_APPEND不起作用；
 
 ### 3.1.5.3、O_SYNC
 
-(1)write阻塞等待底层完成写入才返回到应用层。0
-
-  
+(1)write阻塞等待底层完成写入才返回到应用层。0  
 
 (2)无O_SYNC时write只是将内容写入底层缓冲区即可返回，然后底层（操作系统中负责实现open、write这些操作的那些代码，也包含OS中读写硬盘等底层硬件的代码）在合适的时候会将buf中的内容一次性的同步到硬盘中。这种设计是为了提升硬件操作的性能和销量，提升硬件寿命；**但是有时候我们希望硬件不好等待，直接将我们的内容写入硬盘中，这时候就可以用O_SYNC标志。**
 
@@ -402,9 +396,9 @@ O_TRUNC 起作用，O_APPEND不起作用；
 
 ### 3.1.6.1、errno和perror
 
-(1)**errno****就是error number，意思就是错误号码**。linux系统中对各种常见错误做了个编号，当函数执行错误时，函数会返回一个特定的errno编号来告诉我们这个函数到底哪里错了。（比如没有内存了，给它一个编号，返回这个编号，就知道哪里出错了）。
+(1)**errno**就是error number，意思就是错误号码。linux系统中对各种常见错误做了个编号，当函数执行错误时，函数会返回一个特定的errno编号来告诉我们这个函数到底哪里错了。（比如没有内存了，给它一个编号，返回这个编号，就知道哪里出错了）。
 
-(2)**errno****是由OS来维护的一个全局变量**，任何OS内部函数都可以通过设置errno来告诉上层调用者究竟刚才发生了一个什么错误。
+(2)**errno**是由OS来维护的一个全局变量**，任何OS内部函数都可以通过设置errno来告诉上层调用者究竟刚才发生了一个什么错误。
 
 (3)errno本身实质是一个int类型的数字，每个数字编号对应一种错误。当我们只看errno时只能得到一个错误编号数字（譬如-37），不适应于人看。
 
@@ -504,49 +498,37 @@ O_TRUNC 起作用，O_APPEND不起作用；
 
 (1)linux中并没有一个函数可以直接返回一个文件的长度。但是我们做项目时经常会需要知道一个文件的长度，怎么办？自己利用lseek来写一个函数得到文件长度即可。
 
-*SYNOPSIS*
 
-​    *#include <sys/types.h>*
 
-​    *#include <unistd.h>*
+```c
+SYNOPSIS
+    #include <sys/types.h>
+    #include <unistd.h>
 
- 
-
-​    *off_t lseek(int fd, off_t offset, int whence);*
-
- 
-
-*DESCRIPTION*
-
-​    *lseek() repositions the file offset of the open file description*
-
-​    *associated with the file descriptor fd to the argument offset*
-
-​    *according to the directive whence as follows:*
-
-*SEEK_SET*
-
-​       *The file offset is set to offset bytes.（从偏移量开始）*
+    off_t lseek(int fd, off_t offset, int whence);
 
  
+DESCRIPTION
+    lseek() repositions the file offset of the open file description
+    associated with the file descriptor fd to the argument offset
+    according to the directive whence as follows:
 
-​    *SEEK_CUR*
+SEEK_SET
+      The file offset is set to offset bytes.（从偏移量开始）*
+    SEEK_CUR
+	  The file offset is set to its current location plus offset*
+     bytes.
 
-​       *The file offset is set to its current location plus offset*
+ SEEK_END
+     The file offset is set to the size of the file plus offset*
+     bytes.
+```
 
-​       *bytes.*
 
- 
-
-​    *SEEK_END*
-
-​       *The file offset is set to the size of the file plus offset*
-
-​       *bytes.*
 
 ### 3.1.8.3、用lseek构建空洞文件
 
-(1)空洞文件就是这个文件中有一段是空的。
+(1)**空洞文件**就是这个文件中有一段是空的。
 
 (2)普通文件中间是不能有空的，因为我们write时文件指针是依次从前到后去移动的，不可能绕过前面直接到后面。
 
@@ -576,7 +558,7 @@ O_TRUNC 起作用，O_APPEND不起作用；
 
 (2)正常情况下我们有时候需要分别写，有时候又需要接续写，所以这两种本身是没有好坏之分的。关键看用户需求
 
-(3**)****默认情况下应该是：分别写（实验验证过的**）
+(3)默认情况下应该是：分别写（实验验证过的）
 
  
 
@@ -588,13 +570,11 @@ O_TRUNC 起作用，O_APPEND不起作用；
 
 ### 3.1.9.4、O_APPEND的实现原理和其原子操作性说明
 
-(1)O_APPEND为什么能够将分别写改为接续写？关键的核心的东西是文件指针。分别写的内部原理就是2个fd拥有不同的文件指针，并且彼此只考虑自己的位移。但是O_APPEND标志可以让write和read函数内部多做一件事情，就是移动自己的文件指针的同时也去把别人的文件指针同时移动。（也就是说即使加了O_APPEND，fd1和fd2还是各自拥有一个独立的文件指针，但是这两个文件指针关联起来了，一个动了会通知另一个跟着动）
+​		(1)O_APPEND为什么能够将分别写改为接续写？关键的核心的东西是文件指针。分别写的内部原理就是2个fd拥有不同的文件指针，并且彼此只考虑自己的位移。但是O_APPEND标志可以让write和read函数内部多做一件事情，就是移动自己的文件指针的同时也去把别人的文件指针同时移动。（也就是说即使加了O_APPEND，fd1和fd2还是各自拥有一个独立的文件指针，但是这两个文件指针关联起来了，一个动了会通知另一个跟着动）
 
-(2)O_APPEND对文件指针的影响，对文件的读写是原子的。原子操作就是不能被打断的，也就是说CPU运行这个程序，不会被其他中断信号打断，一直到结束任务。
+​		(2)O_APPEND对文件指针的影响，对文件的读写是原子的。原子操作就是不能被打断的，也就是说CPU运行这个程序，不会被其他中断信号打断，一直到结束任务。
 
-(3)**原子操作的含义是**：整个操作一旦开始是不会被打断的，必须直到操作结束其他代码才能得以调度运行，这就叫原子操作。每种操作系统中都有一些机制来实现原子操作，以保证那些需要原子操作的任务可以运行。
-
- 
+​		(3)**原子操作的含义是**：整个操作一旦开始是不会被打断的，必须直到操作结束其他代码才能得以调度运行，这就叫原子操作。每种操作系统中都有一些机制来实现原子操作，以保证那些需要原子操作的任务可以运行。
 
  
 
@@ -616,19 +596,13 @@ O_TRUNC 起作用，O_APPEND不起作用；
 
 第一种是同一个进程中多次使用open打开同一个文件；
 
- 
-
 第二种是在不同进程中去分别使用open打开同一个文件（这时候因为两个fd在不同的进程中，所以两个fd的数字可以相同也可以不同）；
-
- 
 
 第三种情况是后面要学的，linux系统提供了dup和dup2两个API来让进程复制文件描述符；
 
- 
-
 (3)**我们分析文件共享时的核心关注点在于：分别写/读还是接续写/读；**
 
- 
+
 
 ### 3.1.10.3、再论文件描述符
 
@@ -672,7 +646,7 @@ Man 2 dup 查看
 
 ### 3.1.11.3、使用dup的缺陷分析
 
-(1)**dup****并不能指定分配的新的文件描述符的数字**，dup2系统调用修复了这个缺陷，所以平时项目中实际使用时根据具体情况来决定用dup还是dup2。
+(1)**dup**并不能指定分配的新的文件描述符的数字**，dup2系统调用修复了这个缺陷，所以平时项目中实际使用时根据具体情况来决定用dup还是dup2。
 
 ### 3.1.11.4、练习
 
@@ -746,7 +720,7 @@ int fcntl(int fd, int cmd, ... /* arg */ );
 
 ### 3.1.13.2、fcntl的常用cmd
 
-(1)**F_DUPFD****这个cmd的作用是复制文件描述符**（作用类似于dup和dup2），这个命令的功能是从可用的fd数字列表中找一个比arg大或者和arg一样大的数字作为oldfd的一个复制的fd，和dup2有点像但是不同。dup2返回的就是我们指定的那个newfd否则就会出错，**但是F_DUPFD命令返回的是>=arg的最小的那一个数字**。 
+(1)**F_DUPFD**这个cmd的作用是复制文件描述符**（作用类似于dup和dup2），这个命令的功能是从可用的fd数字列表中找一个比arg大或者和arg一样大的数字作为oldfd的一个复制的fd，和dup2有点像但是不同。dup2返回的就是我们指定的那个newfd否则就会出错，**但是F_DUPFD命令返回的是>=arg的最小的那一个数字。 
 
 fd2 = fcntl(fd1, F_DUPFD, 0);
 
@@ -4260,47 +4234,36 @@ void delete_file(void)
 
 ## 3.5.2.常见信号介绍
 
-(1)SIGINT           2      Ctrl+C时OS送给前台进程组中每个进程
+ 
 
-(2)SIGABRT         6      调用abort函数，进程异常终止
-
-(3)SIGPOLL  SIGIO   8      指示一个异步IO事件，在高级IO中提及
-
-(4)SIGKILL          9      杀死进程的终极办法，这个信号不能被忽略的。
-
-(5)SIGSEGV         11      无效存储访问时OS发出该信号
-
-(6)SIGPIPE      13      涉及管道和socket，当管道一端关掉了，就会收到这                        个信号。
-
-(7)SIGALARM        14      涉及alarm函数的实现
-
-(8)SIGTERM         15      kill命令发送的OS默认终止信号
-
-(9)SIGCHLD     17      子进程终止或停止时OS向其父进程发此信号，父进程收到SIGCHLD后，就去回收子进程的尸体。
-
+```c
+(1)SIGINT          		 2      Ctrl+C时OS送给前台进程组中每个进程
+(2)SIGABRT        		 6      调用abort函数，进程异常终止
+(3)SIGPOLL  SIGIO   	 8      指示一个异步IO事件，在高级IO中提及
+(4)SIGKILL         		 9      杀死进程的终极办法，这个信号不能被忽略的。
+(5)SIGSEGV        		 11      无效存储访问时OS发出该信号
+(6)SIGPIPE      		 13      涉及管道和socket，当管道一端关掉了，就会收到这个信号。
+(7)SIGALARM       		 14      涉及alarm函数的实现
+(8)SIGTERM         		 15      kill命令发送的OS默认终止信号
+(9)SIGCHLD     			 17      子进程终止或停止时OS向其父进程发此信号，父进程收到SIGCHLD后，就去回收子进程的尸体。
 (10)
-
-SIGUSR1           10      用户自定义信号，作用和意义由应用自己定义。
-
-SIGUSR2           12
+SIGUSR1           		 10      用户自定义信号，作用和意义由应用自己定义。
+SIGUSR2           		 12
 
  
+```
 
- 
+
 
 ## 3.5.3.进程对信号的处理
 
 ### 3.5.3.1、signal函数介绍
 
-SYNOPSIS
+SYNOPSIS:
 
 ​    \#include <signal.h>
 
- 
-
 ​    typedef void (*sighandler_t)(int);
-
- 
 
 ​    sighandler_t signal(int signum, sighandler_t handler);
 
@@ -4340,7 +4303,7 @@ int main(void)
 
 }
 
-  **输出****：**
+  **输出**：
 
    before while(1).
 
@@ -4352,7 +4315,7 @@ int main(void)
 
 \#include <stdio.h>
 
-\#include <signal.h>
+#include <signal.h>
 
  
 
@@ -4388,7 +4351,7 @@ int main(void)
 
 }
 
-**输出****：**
+**输出**：
 
    before while(1).
 
@@ -4702,11 +4665,12 @@ Fcntl：打开的时候是普通方式打开的，之后可以再确定时候是
 
 ### 3.6.2.1、程序中读取键盘
 
-\#include <stdio.h>
 
-\#include <string.h>
 
-\#include <unistd.h>
+```c
+#include <stdio.h>
+#include <string.h>
+#include <unistd.h>
 
  
 
@@ -4736,7 +4700,7 @@ int main(void)
 
 }
 
-**输出：**
+//输出：
 
 jay@ubuntu:/mnt/hgfs/winshare/AppNet/3.6/3.6.2$ ./a.out
 
@@ -4745,8 +4709,9 @@ before read.
 abcd
 
 Read out the text is :ab.
+```
 
- 
+
 
 ### 3.6.2.2、程序中读取鼠标
 
@@ -4756,19 +4721,14 @@ Read out the text is :ab.
 
 我们直接cat /dev/input/mouse0 当中一个文件看看移动鼠标有没有输出，有输出的那个文件是我们的鼠标文件。
 
-\#include <stdio.h>
+```c
+#include <stdio.h>
+#include <string.h>
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
 
-\#include <string.h>
-
-\#include <unistd.h>
-
-\#include <sys/types.h>
-
-\#include <sys/stat.h>
-
-\#include <fcntl.h>
-
- 
 
 int main(void)
 
@@ -4780,54 +4740,40 @@ int main(void)
 
   //读取鼠标
 
- 
-
   fd = open("/dev/input/mouse0", O_RDONLY);
 
   if(fd < 0){
-
-​    perror("open");
-
-​    return -1;
-
+    perror("open");
+    return -1;
   }
 
- 
-
   read(fd, buf, 20);
-
   printf("Read out the text is : %s.\n", buf);
-
- 
 
   return 0;
 
 }
 
-**输出：**
+//输出：
 
 jay@ubuntu:/mnt/hgfs/winshare/AppNet/3.6/3.6.2$ sudo ./a.out
 
 Read out the text is : (�.
+```
+
+**3.6.2.3**、程序中同时读取键盘和鼠标
+
+
+
+```c
+#include <stdio.h>
+#include <string.h>
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
 
  
-
-**3.6.2.3****、程序中同时读取键盘和鼠**标
-
-\#include <stdio.h>
-
-\#include <string.h>
-
-\#include <unistd.h>
-
-\#include <sys/types.h>
-
-\#include <sys/stat.h>
-
-\#include <fcntl.h>
-
- 
-
 int main(void)
 
 {
@@ -4838,251 +4784,174 @@ int main(void)
 
   //读取鼠标
 
- 
-
   fd = open("/dev/input/mouse0", O_RDONLY);
 
   if(fd < 0){
-
-​    perror("open");
-
-​    return -1;
+    perror("open");
+   return -1;
 
   }
 
   memset(buf, 0, sizeof(buf));
-
   printf("before mouse.\n");
-
   read(fd, buf, 20);
-
   printf("Read out the mouse text is : %s.\n", buf);
 
- 
-
    //读取键盘
-
   //键盘就是标准输入，stdin
-
   memset(buf, 0, sizeof(buf));
-
   printf("before keyboard.\n");
-
   read(0, buf, 2);
-
   printf("Read out the keyboard text is :%s.\n",buf);
-
- 
 
   return 0;
 
 }     
 
-**输出1先动鼠标后动键盘**：
+//输出1先动鼠标后动键盘：
 
 jay@ubuntu:/mnt/hgfs/winshare/AppNet/3.6/3.6.2$ sudo ./a.out
-
 before mouse.
-
 Read out the mouse text is : 8��.
-
 before keyboard.
-
 23131
-
 Read out the keyboard text is :23.
 
-**输出2先动键盘后动鼠标**：
+//输出2先动键盘后动鼠标：
 
 jay@ubuntu:/mnt/hgfs/winshare/AppNet/3.6/3.6.2$ sudo ./a.out
-
 before mouse.
-
 sfafdasfa
-
 afafadf
-
 afd
+ //发现按键盘没有任何反应；
 
-​      //**发现按键盘没有任何反应；**
+```
 
-结论：因为read是阻塞式的，所以只有先读鼠标再输键盘才可以运行。
+**结论：因为read是阻塞式的，所以只有先读鼠标再输键盘才可以运行。**
 
- 
+
 
 ## 3.6.3.并发式IO的解决方案
 
 ### 3.6.3.1、非阻塞式IO
 
-\#include <stdio.h>
 
-\#include <string.h>
-
-\#include <unistd.h>
-
-\#include <sys/types.h>
-
-\#include <sys/stat.h>
-
-\#include <fcntl.h>
-
- 
-
-int main(void)
-
-{  
-
-  char buf[100];
-
-  int flag = -1;
-
-  //读取键盘
-
-  //键盘就是标准输入，stdin
-
- 
-
-  //把0号文件描述符stdin 编程非阻塞式的；
-
-  flag = fcntl(0,F_GETFL); // 先获取原来的flag
-
-  flag |= O_NONBLOCK;    //将非阻塞式属性或进去flag
-
-  fcntl(0,F_SETFL,flag);   //将flag写进stdin
-
-  //这3步之后stdin就变成非阻塞式的了
-
-​    
-
-  memset(buf, 0, sizeof(buf));
-
-  printf("before read.\n");
-
-  read(0, buf, 2);
-
-  printf("Read out the text is :%s.\n",buf);
-
- 
-
-  return 0;
-
-}
-
-**输出：**
-
-jay@ubuntu:/mnt/hgfs/winshare/AppNet/3.6/3.6.3$ ./a.out
-
-before read.
-
-Read out the text is :.
 
 ​       结论:程序运行直接过去了，键盘没有输入，所以输出为空；
 
 ​    
 
-### 3.6.3.2、程序中同时读取键盘和鼠标非阻塞式
-
-\#include <stdio.h>
-
-\#include <string.h>
-
-\#include <unistd.h>
-
-\#include <sys/types.h>
-
-\#include <sys/stat.h>
-
-\#include <fcntl.h>
-
- 
+```c
+#include <stdio.h>
+#include <string.h>
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
 
 int main(void)
-
-{
-
-  int fd = -1;
+{  
 
   char buf[100];
-
   int flag = -1;
-
-  int ret = -1;
-
-  
-
+    
+  //读取键盘
   //键盘就是标准输入，stdin
+  //把0号文件描述符stdin 编程非阻塞式的；
 
-​    //把0号文件描述符stdin 编程非阻塞式的；
-
-  flag = fcntl(0,F_GETFL); // 先获取原来的flag
-
-  flag |= O_NONBLOCK;    //将非阻塞式属性或进去flag
-
-  fcntl(0,F_SETFL,flag);   //将flag写进stdin
+  flag = fcntl(0,F_GETFL);  //先获取原来的flag
+  flag |= O_NONBLOCK;       //将非阻塞式属性或进去flag
+  fcntl(0,F_SETFL,flag);    //将flag写进stdin
 
   //这3步之后stdin就变成非阻塞式的了
+   
 
-  
-
-  fd = open("/dev/input/mouse0", O_RDONLY | O_NONBLOCK);
-
-  if(fd < 0){
-
-​    perror("open");
-
-​    return -1;
-
-  }
-
- 
-
-  while(1){
-
-​    //读取鼠标
-
-​    memset(buf, 0, sizeof(buf));
-
-​    // printf("before mouse.\n");
-
-​    ret = read(fd, buf, 20);
-
-​    if(ret > 0){
-
-​      printf("Read out the mouse text is : %s.\n", buf);
-
-​    }
-
-​    
-
-​    //读取键盘
-
-​    memset(buf, 0, sizeof(buf));
-
-​    //printf("before keyboard.\n");
-
-​    ret = read(0, buf, 2);
-
-​    if(ret > 0){
-
-​      printf("Read out the keyboard text is :%s.\n",buf);
-
-​    }
-
-  }
-
- 
+  memset(buf, 0, sizeof(buf));
+  printf("before read.\n");
+  read(0, buf, 2);
+  printf("Read out the text is :%s.\n",buf);
 
   return 0;
 
 }
 
- 
+//输出：
+
+jay@ubuntu:/mnt/hgfs/winshare/AppNet/3.6/3.6.3$ ./a.out
+
+before read.
+
+Read out the text is :
+```
 
 ​    解决了先动鼠标，然后键盘动作才可以有输出，不会被阻塞在读鼠标的函数那；这个方式有点像轮询方式；
 
- 
+
+
+### 3.6.3.2、程序中同时读取键盘和鼠标非阻塞式
+
+
+
+```c
+#include <stdio.h>
+#include <string.h>
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
 
  
+int main(void)
+
+{
+
+  int fd = -1;
+  char buf[100];
+  int flag = -1;
+  int ret = -1;
+
+  //键盘就是标准输入，stdin
+  //把0号文件描述符stdin 编程非阻塞式的；
+
+  flag = fcntl(0,F_GETFL);  // 先获取原来的flag
+  flag |= O_NONBLOCK;       //将非阻塞式属性或进去flag
+  fcntl(0,F_SETFL,flag);    //将flag写进stdin
+
+  //这3步之后stdin就变成非阻塞式的了
+
+  fd = open("/dev/input/mouse0", O_RDONLY | O_NONBLOCK);
+  if(fd < 0){
+    perror("open");
+    return -1;
+  }
+
+ 
+  while(1){
+    //读取鼠标
+    memset(buf, 0, sizeof(buf));
+    printf("before mouse.\n");
+    
+    ret = read(fd, buf, 20);
+    if(ret > 0){
+      printf("Read out the mouse text is : %s.\n", buf);
+    }
+   
+   //读取键盘
+   memset(buf, 0, sizeof(buf));
+   printf("before keyboard.\n");
+    ret = read(0, buf, 2);
+   if(ret > 0){
+     printf("Read out the keyboard text is :%s.\n",buf);
+	}
+  }
+
+  return 0;
+
+}
+```
+
+
 
 ## 3.6.4.IO多路复用原理
 
@@ -5094,325 +4963,197 @@ int main(void)
 
 (3)涉及到的函数select和poll， 这样个函数的思想是一样的，只是外部的特征不一样。
 
-   (4)IO多路复用原理：外部阻塞式，内部非阻塞式自动轮询多路阻塞式IO。Select和poll类似是一个监视函数，监视内部的IO有没有事件发生，轮询切换。
+(4)IO多路复用原理：外部阻塞式，内部非阻塞式自动轮询多路阻塞式IO。Select和poll类似是一个监视函数，监视内部的IO有没有事件发生，轮询切换。
 
  
 
 ### 3.6.4.2、select函数介绍
 
+
+
+```c
 SYNOPSIS：
 
-​    /* According to POSIX.1-2001, POSIX.1-2008 */
+  /* According to POSIX.1-2001, POSIX.1-2008 */
+#include <sys/select.h>
 
-​    \#include <sys/select.h>
+    int select(int nfds, fd_set *readfds, fd_set *writefds,
+    fd_set *exceptfds, struct timeval *timeout);
 
- 
+      nfds       ：
+fd_set *readfds  ：  读文件的描述符
+fd_set *writefds ：  写文件的描述符
+fd_set *exceptfds：  异常文件的描述符
+timeval *timeout :   超时时间
 
-​    int select(int nfds, fd_set *readfds, fd_set *writefds,
 
-​         fd_set *exceptfds, struct timeval *timeout);
+ void FD_CLR(int fd, fd_set *set)     ：将fd中*set中拿出来
+ int  FD_ISSET(int fd, fd_set *set);  ：判断 *set中的fd有没有被置位（发生了IO事件）。
+ void FD_SET(int fd, fd_set *set);    ：添加fs到 *set
+ void FD_ZERO(fd_set *set);           ：将 *set中的fd清零
+```
 
-​       nfds       ：
 
-fd_set *readfds ：读文件的描述符
-
-fd_set *writefds ：写文件的描述符
-
-fd_set *exceptfds：异常文件的描述符
-
-timeval *timeout : 超时时间
-
- 
-
- 
-
-​    void FD_CLR(int fd, fd_set *set)  ：将fd中*set中拿出来
-
-  int FD_ISSET(int fd, fd_set *set); ：判断 *set中的fd有没有被置位（发生了IO事件）。
-
-​    void FD_SET(int fd, fd_set *set);  ：添加fs到 *set
-
-​    void FD_ZERO(fd_set *set);     ：将 *set中的fd清零
-
- 
-
- 
 
 ### 3.6.4.3、poll函数介绍
 
+```c
 SYNOPSIS
-
-​    \#include <poll.h>
-
- 
-
-​    int poll(struct pollfd *fds, nfds_t nfds, int timeout);
-
-​          
+    #include <poll.h>
+    int poll(struct pollfd *fds, nfds_t nfds, int timeout);
 
 struct pollfd {
+       int  fd;     /* file descriptor */
+       short events;   /* requested events */
+       short revents;  /* returned events */
+      };
 
-​        int  fd;     /* file descriptor */
+shortevents:
 
-​        short events;   /* requested events */
-
-​        short revents;  /* returned events */
-
-​      };
-
-  **short** **events****：**
-
-​    POLLOUT
-
+POLLOUT
    Writing is now possible, though a write larger that the available space in asocket or pipe will still block (unless O_NONBLOCK is set).
 
-​    POLLOUT
+```
 
-​     Writing is now possible, though a write larger that the available space in a socket or pipe will still block (unless O_NONBLOCK is set).
 
- 
 
 ## 3.6.5.IO多路复用实践
 
 ### 3.6.5.1、用select函数实现同时读取键盘鼠标
 
-\#include <stdio.h>
 
-\#include <string.h>
 
-\#include <unistd.h>
-
-\#include <sys/types.h>
-
-\#include <sys/stat.h>
-
-\#include <fcntl.h>
-
-\#include <sys/select.h>
-
- 
+```c
+#include <stdio.h>
+#include <string.h>
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <sys/select.h>
 
 int main(void)
-
 {
-
   int fd = -1;
-
   char buf[100];
-
   int flag = -1;
-
   int ret = -1;
 
   fd_set myset;
-
   struct timeval tm;
 
-  
-
   fd = open("/dev/input/mouse0", O_RDONLY | O_NONBLOCK);
-
   if(fd < 0){
-
-​    perror("open");
-
-​    return -1;
-
+    perror("open");
+    return -1;
   }
-
- 
 
   //当前有两个fd
-
   //处理myset
-
   FD_ZERO(&myset);
-
   FD_SET(fd, &myset);
-
   FD_SET(0, &myset);
 
- 
-
   tm.tv_sec = 10;
-
   tm.tv_usec = 0;
+    
+  while(1){
+      ret = select(fd+1, &myset, NULL, NULL, &tm);
+      if(ret < 0){
+         perror("select:");
+         return -1;
+      }else if(ret == 0){
+        printf("Overtime!\n");
+      }else{
+        //等到了一路IO，然后去检测到底是哪个IO到了，处理之
+         if(FD_ISSET(0, &myset)){  //判断这路IO是否有事件发生，发生返回值为1
+           //读取键盘
+           memset(buf, 0, sizeof(buf));
+           ret = read(0, buf, 2);
+           if(ret > 0){
+           printf("Read out the keyboard text is :%s.\n",buf);
+          }
+       }
 
- 
-
-  ret = select(fd+1, &myset, NULL, NULL, &tm);
-
-  if(ret < 0){
-
-​    perror("select:");
-
-​    return -1;
-
-  }else if(ret == 0){
-
-​    printf("Overtime!\n");
-
-  }else{
-
- 
-
-​    //等到了一路IO，然后去检测到底是哪个IO到了，处理之
-
-​    if(FD_ISSET(0, &myset)){  //判断这路IO是否有事件发生，发生返回值为1
-
-​      //读取键盘
-
-​      memset(buf, 0, sizeof(buf));
-
-​      ret = read(0, buf, 2);
-
-​      if(ret > 0){
-
-​      printf("Read out the keyboard text is :%s.\n",buf);
-
-​      }
-
-​    }
-
-​    if(FD_ISSET(fd, &myset)){
-
-​      //读取鼠标
-
-​      memset(buf, 0, sizeof(buf));
-
-​      ret = read(fd, buf, 20);
-
-​      if(ret > 0){
-
-​      printf("Read out the mouse text is : %s.\n", buf);
-
-​      }
-
-​    }
-
-​    
-
-  }
-
- 
-
+       if(FD_ISSET(fd, &myset)){
+           //读取鼠标
+           memset(buf, 0, sizeof(buf));
+           ret = read(fd, buf, 20);
+           if(ret > 0){
+             printf("Read out the mouse text is : %s.\n", buf);
+           }
+        }   
+      }
+      usleep(10 * 1000);
+  }    
   return 0;
-
 }
+```
 
- 
+
 
 ### 3.6.5.2、用poll函数实现同时读取键盘鼠标
 
-\#include <stdio.h>
 
-\#include <unistd.h>
 
-\#include <string.h>
-
-\#include <sys/types.h>
-
-\#include <sys/stat.h>
-
-\#include <fcntl.h>
-
-\#include <poll.h>
-
- 
+```c
+#include <stdio.h>
+#include <unistd.h>
+#include <string.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <poll.h>
 
 int main(void)
 
 {
 
   int fd = -1;
-
   char buf[200];
-
   int ret = -1;
-
   struct pollfd myfds[2] = {0};
-
   int timeout = 10*1000;
-
+    
   fd = open("/dev/input/mouse0", O_RDONLY);
-
   if(fd < 0){
-
-​    perror("open");
-
-​    return -1;
-
+    perror("open");
+    return -1;
   }
 
- 
-
   //初始化我们的pollfd
-
   myfds[0].fd = 0;  //键盘    
-
   myfds[0].events = POLLIN;//等待读操作
-
- 
-
   myfds[1].fd = fd;  //鼠标    
-
   myfds[1].events = POLLIN;//等待读操作
-
  
-
   ret = poll( myfds, fd, timeout);
-
   printf("ret = %d.\n", ret);
 
  
-
   if(ret < 0){
-
-​    perror("select:");
-
-​    return -1;
-
+  perror("select:");
+    return -1;
   }else if(ret == 0){
-
-​    printf("Overtime!\n");
-
-  }else{
-
- 
-
-​    //等到了一路IO，然后去检测到底是哪个IO到了，处理之
-
-​    if(myfds[0].events == myfds[0].revents){
-
-​      //读取键盘
-
-​      memset(buf, 0, sizeof(buf));
-
-​      read(0, buf, 20);
-
-​      printf("Read out the keyboard text is :%s.\n",buf);
-
-​    }
-
-​    if(myfds[1].events == myfds[1].revents){
-
-​      //读取鼠标
-
-​      memset(buf, 0, sizeof(buf));
-
-​       read(fd, buf, 20);
-
-​      printf("Read out the mouse text is : %s.\n", buf);
-
-​    }
-
-​    
-
+    printf("Overtime!\n");
+  }else{ 
+      //等到了一路IO，然后去检测到底是哪个IO到了，处理之
+      if(myfds[0].events == myfds[0].revents){
+      //读取键盘
+      memset(buf, 0, sizeof(buf));
+      read(0, buf, 20);
+      printf("Read out the keyboard text is :%s.\n",buf);
   }
-
+    if(myfds[1].events == myfds[1].revents){
+     //读取鼠标
+    memset(buf, 0, sizeof(buf));
+       read(fd, buf, 20);   
+       printf("Read out the mouse text is : %s.\n", buf);
+  	}
+  }
   return 0;
-
 }
+```
 
 这个函数有BUG，现象:刚运行就直接运行完成了，ret=2，鼠标键盘并没有输入；但有时后功能又是正常的，poll函数会阻塞住。
 
@@ -5658,18 +5399,15 @@ SYNOPSIS
 
 ### 3.7.1.1、多进程实现同时读取键盘和鼠标
 
-\#include <stdio.h>
 
-\#include <string.h>
 
-\#include <unistd.h>
-
-\#include <sys/types.h>
-
-\#include <sys/stat.h>
-
-\#include <fcntl.h>
-
+```c
+#include <stdio.h>
+#include <string.h>
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
  
 
 int main(void)
@@ -5677,70 +5415,69 @@ int main(void)
 {
 
   int fd = -1;
-
   char buf[100];
-
   int ret = -1;
-
+    
   //创建一个子进程，然后父子进程中分别进行读键盘和鼠标的工作
-
   ret = fork();
-
   if(ret == 0){
-
-​    //子进程
-
-​    while(1){
-
-​      //鼠标
-
-​      fd = open("/dev/input/mouse0", O_RDONLY);
-
-​      if(fd < 0){
-
-​        perror("open");
-
-​        return -1;
-
-​      }
-
-​      memset(buf, 0, sizeof(buf));
-
-​      read(fd, buf, 20);
-
-​      printf("Read out the mouse text is : %s.\n", buf);
-
-​    }
-
+    //子进程
+   while(1){
+      //鼠标
+      fd = open("/dev/input/mouse0", O_RDONLY);
+      if(fd < 0){
+        perror("open");
+        return -1;
+      }
+      memset(buf, 0, sizeof(buf));
+      read(fd, buf, 20);
+      printf("Read out the mouse text is : %s.\n", buf);
+    }
   }else if(ret > 0){
-
-​    //父进程
-
-​    while(1){
-
-​        //读取键盘
-
-​      memset(buf, 0, sizeof(buf));
-
-​      read(0, buf, 2);
-
-​      printf("Read out the keyboard text is :%s.\n",buf);
-
-​    }
-
+    //父进程
+    while(1){
+        //读取键盘
+      memset(buf, 0, sizeof(buf));
+      read(0, buf, 2);
+      printf("Read out the keyboard text is :%s.\n",buf);
+    }
   }else{
-
-​    perror("fork:");
-
+    perror("fork:");
   }
-
- 
-
   return 0;
-
 }
+```
 
- 
+运行结果是：
+
+```shell
+ Read out the mouse text is xxxx
+ Read out the keyboard text is xxxx
+ Read out the mouse text is xxxx
+ Read out the keyboard text is xxxxx 
+```
+
+  在语句fpid=fork()之前，只有一个进程在执行这段代码，但在这条语句之后，就变成两个进程在执行了，这两个进程的几乎完全相同，将要执行的下一条语句都是if(fpid<0)……
+  为什么两个进程的fpid不同呢，这与fork函数的特性有关。fork调用的一个奇妙之处就是它仅仅被调用一次，却能够返回两次，它可能有三种不同的返回值：
+  **1）在父进程中，fork返回新创建子进程的进程ID；**
+  **2）在子进程中，fork返回0；**
+  **3）如果出现错误，fork返回一个负值；**
+
+  在fork函数执行完毕后，如果创建新进程成功，则出现两个进程，一个是子进程，一个是父进程。在子进程中，fork函数返回0，在父进程中，fork返回新创建子进程的进程ID。我们可以通过fork返回的值来判断当前进程是子进程还是父进程。
+
+  引用一位网友的话来解释fpid的值为什么在父子进程中不同。“其实就相当于链表，进程形成了链表，父进程的fpid(p 意味point)指向子进程的进程id, 因为子进程没有子进程，所以其fpid为0.
+  **fork出错可能有两种原因：**
+  **1）当前的进程数已经达到了系统规定的上限，这时errno的值被设置为EAGAIN。**
+  **2）系统内存不足，这时errno的值被设置为ENOMEM。**
+  创建新进程成功后，系统中出现两个基本完全相同的进程，这两个进程执行没有固定的先后顺序，哪个进程先执行要看系统的进程调度策略。
+  每个进程都有一个独特（互不相同）的进程标识符（process ID），可以通过getpid（）函数获得，还有一个记录父进程pid的变量，可以通过getppid（）函数获得变量的值。
+  fork执行完毕后，出现两个进程，
+
+![1268332-20180225234739259-831189290](.\image\fork.png)
+
+​        有人说两个进程的内容完全一样啊，怎么打印的结果不一样啊，那是因为判断条件的原因，上面列举的只是进程的代码和指令，还有变量啊。
+​       执行完fork后，进程1的变量为count=0，fpid！=0（父进程）。进程2的变量为count=0，fpid=0（子进程），这两个进程的变量都是独立的，存在不同的地址中，不是共用的，这点要注意。可以说，我们就是通过fpid来识别和操作父子进程的。
+​       还有人可能疑惑为什么不是从#include处开始复制代码的，这是因为fork是把进程当前的情况拷贝一份，执行fork时，进程已经执行完了int count=0;fork只拷贝下一个要执行的代码到新的进程。 
 
 ### 3.7.1.2、使用进程技术的优势
 
@@ -5750,7 +5487,7 @@ int main(void)
 
 ### 3.7.1.3、进程技术的劣势
 
-(1)进程间切换开销大：有多个进程同时运行，同时是宏观上，围观是串行的，CPU在进程间轮流切换执行任务。CPU在切换进程的时候需要将当前进程的断点保存好，CPU返回后在将点断处的任务恢复。点断的保存与恢复的花销是非常大的，如果进程代码量很小，进程间这样切换是很不划算的，这就好像打仗，打仗的人100人，运粮食的人200人。
+(1)进程间切换开销大：有多个进程同时运行，同时是宏观上，微观是串行的，CPU在进程间轮流切换执行任务。CPU在切换进程的时候需要将当前进程的断点保存好，CPU返回后在将点断处的任务恢复。点断的保存与恢复的花销是非常大的，如果进程代码量很小，进程间这样切换是很不划算的，这就好像打仗，打仗的人100人，运粮食的人200人。
 
 (2)进程间通信麻烦而且效率低。
 
@@ -5799,117 +5536,69 @@ int main(void)
 
 ### 3.7.2.1、使用线程技术同时读取键盘和鼠标
 
+```c
 SYNOPSIS
+    #include <pthread.h>
+    int pthread_create(pthread_t *thread, const pthread_attr_t *attr,
+            void *(*start_routine) (void *), void *arg);
+```
 
-​    \#include <pthread.h>
 
-​    int pthread_create(pthread_t *thread, const pthread_attr_t *attr,
-
-​             void *(*start_routine) (void *), void *arg);
-
- 
 
 **程序示例**：
 
-\#include <stdio.h>
-
-\#include <string.h>
-
-\#include <unistd.h>
-
-\#include <sys/types.h>
-
-\#include <sys/stat.h>
-
-\#include <fcntl.h>
-
-\#include <pthread.h>
-
+```c
+#include <stdio.h>
+#include <string.h>
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <pthread.h>
   
-
 char buf[100];
-
- 
 
 void *func(void *arg)
 
 {
-
   while(1){
-
-​    //读取键盘
-
-​    memset(buf, 0, sizeof(buf));
-
-​    read(0, buf, 2);
-
-​    printf("Read out the keyboard text is :%s.\n",buf);
-
+    //读取键盘
+    memset(buf, 0, sizeof(buf));
+    read(0, buf, 2);
+    printf("Read out the keyboard text is :%s.\n",buf);
    }
-
- 
-
 }
 
- 
-
 int main(void)
-
 {
-
   int fd = -1;
-
- 
-
   int ret = -1;
-
   pthread_t th = -1;
 
- 
-
   ret =pthread_create(&th, NULL, func, NULL);
-
- 
 
   //主任务
 
   if(ret != 0){
-
-​    printf("pthread created error!\n");
-
+    printf("pthread created error!\n");
   }
-
- 
 
   fd = open("/dev/input/mouse0", O_RDONLY);
-
    if(fd < 0){
-
-​    perror("open");
-
-​    return -1;
-
-​     }
-
- 
-
+      perror("open");
+      return -1;
+    }
+    
   while(1){   
-
-​    memset(buf, 0, sizeof(buf));
-
-​    read(fd, buf, 20);
-
-​    printf("Read out the mouse text is : %s.\n", buf);
-
+     memset(buf, 0, sizeof(buf));
+     read(fd, buf, 20);
+     printf("Read out the mouse text is : %s.\n", buf);
   }
 
- 
-
   return 0;
-
 }
 
-  **编译时出错：**
+  //编译时出错：
 
 jay@ubuntu:/mnt/hgfs/winshare/AppNet/3.7/3.7.2$ sudo gcc 1.c
 
@@ -5919,31 +5608,27 @@ jay@ubuntu:/mnt/hgfs/winshare/AppNet/3.7/3.7.2$ sudo gcc 1.c
 
 collect2: error: ld returned 1 exit status
 
-  **解决方法**：
+  //解决方法：
+sudo gcc 1.c -lpthread 加上lpthread 的动态链接库
+```
 
-​      sudo gcc 1.c -lpthread 加上lpthread 的动态链接库
 
- 
-
-  
 
 ### 3.7.2.2、linux中的线程简介
 
-(1)一种轻量级进程
+​	(1)一种轻量级进程
 
-(2)线程是参与内核调度的最小单元
+​	(2)线程是参与内核调度的最小单元
 
-(3)一个进程中可以有多个线程
+​	(3)一个进程中可以有多个线程
 
 ### 3.7.2.3、线程技术的优势
 
-(1)像进程一样可被OS调度
+​	(1)像进程一样可被OS调度
 
-(2)同一进程的多个线程之间很容易高效率通信
+​	(2)同一进程的多个线程之间很容易高效率通信
 
-(3)在多核心CPU（对称多处理器架构SMP）架构下效率最大化，多核心CPU可以保证多线程运行在不同的核心上。
-
- 
+​	(3)在多核心CPU（对称多处理器架构SMP）架构下效率最大化，多核心CPU可以保证多线程运行在不同的核心上。
 
  
 
@@ -5951,37 +5636,35 @@ collect2: error: ld returned 1 exit status
 
 ### 3.7.3.1、线程创建与回收
 
-(1)pthread_create     主线程用来创造子线程的
+​	(1)pthread_create     主线程用来创造子线程的
 
-(2)pthread_join       主线程用来等待（阻塞）回收子线程
+​	(2)pthread_join       主线程用来等待（阻塞）回收子线程
 
-(3)pthread_detach    主线程用来分离子线程，分离后主线程不必再去回收子线程
+​	(3)pthread_detach    主线程用来分离子线程，分离后主线程不必再去回收子线程
 
-(4) pthread_join、pthread_detach   二选一，不能同时出现。如果子线程是死循环，没法等待它消亡，可以用pthread_detach 分离它。
+​	(4) pthread_join、pthread_detach   二选一，不能同时出现。如果子线程是死循环，没法等待它消亡，可以用pthread_detach 分离它。
 
 ### 3.7.3.2、线程取消
 
-(1)pthread_cancel         一般都是主线程调用该函数去取消（让它赶紧死）子线程
+​	(1)pthread_cancel         一般都是主线程调用该函数去取消（让它赶紧死）子线程
 
-(2)pthread_setcancelstate   （2）、（3）子线程设置自己是否允许被取消
+​	(2)pthread_setcancelstate   （2）、（3）子线程设置自己是否允许被取消
 
-(3)pthread_setcanceltype
+​	(3)pthread_setcanceltype
 
 ### 3.7.3.3、线程函数退出相关
 
-   (1)pthread_exit与return退出，一般用pthread_exit， return用的比较少
+​	 (1)pthread_exit与return退出，一般用pthread_exit， return用的比较少
 
-(2)pthread_cleanup_push
+​	(2)pthread_cleanup_push
 
-(3)pthread_cleanup_pop
+​	(3)pthread_cleanup_pop
 
-(2)(3)这两个函数用来压栈和出栈；就在在锁里面，cnt—还没被执行的时候，线程就被关闭了。pthread_cleanup_push 就把一个处理函数压入栈，在线程被关闭的时候执行cnt-- 。pthread_cleanup_pop函数在线程正常退出的时候不需要调用fuction函数，这里用pop函数来取消，把function从栈里拿出来。
+​	(2)(3)这两个函数用来压栈和出栈；就在在锁里面，cnt—还没被执行的时候，线程就被关闭了。pthread_cleanup_push 就把一个处理函数压入栈，在线程被关闭的时候执行cnt-- 。pthread_cleanup_pop函数在线程正常退出的时候不需要调用fuction函数，这里用pop函数来取消，把function从栈里拿出来。
 
 ### 3.7.3.4、获取线程id
 
-(1)pthread_self
-
- 
+​	(1)pthread_self（）
 
  
 
@@ -5989,49 +5672,33 @@ collect2: error: ld returned 1 exit status
 
 ### 3.7.4.1、任务：用户从终端输入任意字符然后统计个数显示，输入end则结束
 
-\#include <stdio.h>
 
-\#include <string.h>
 
- 
+```c
+#include <stdio.h>
+#include <string.h>
 
 int main(void)
-
 {
-
   char buf[200] = {0};
-
- 
-
   printf("Enter s string,ending with end.\n ");
 
   while(scanf("%s", buf)){
-
- 
-
-​    //判断是不是end，是end退出程序
-
-​    if(!strncmp(buf,"end", 3)){
-
-​      printf("program end!\n");
-
-​      return 0;
-
-​    }
-
-​    printf("Enter the %ld Characters this time!\n",strlen(buf));
-
-​    memset(buf, 0, sizeof(buf));
-
+     //判断是不是end，是end退出程序
+     if(!strncmp(buf,"end", 3)){
+        printf("program end!\n");
+        return 0;
+    }
+   printf("Enter the %ld Characters this time!\n",strlen(buf));
+   memset(buf, 0, sizeof(buf));
   }
-
- 
 
   return 0;
 
 }
+```
 
- 
+
 
 ### 3.7.4.2、使用多线程实现：主线程获取用户输入并判断是否退出，子线程计数
 
@@ -6041,95 +5708,51 @@ int main(void)
 
 (2)问题和困难点是？
 
-\#include <stdio.h>
-
-\#include <string.h>
-
-\#include <pthread.h>
-
- 
+```c
+#include <stdio.h>
+#include <string.h>
+#include <pthread.h>
 
 char buf[200] = {0};
-
- 
-
-// Count the number of characters and print it
+Count the number of characters and print it
 
 void *func(void *arg)
-
 {
-
   printf("Enter the %ld Characters this time!\n",strlen(buf));
-
 }
 
- 
-
 int main(void)
-
 {  
-
   int ret = -1;
-
   pthread_t th = -1;
-
- 
-
-  ret = pthread_create(&th, NULL, func, NULL);
-
-  if(ret !=0){
-
-​    printf("pthread create error!\n");
-
-​    exit(-1);
-
-  }
-
   
+  ret = pthread_create(&th, NULL, func, NULL);
+  if(ret !=0){
+    printf("pthread create error!\n");
+	exit(-1);
+  }
 
   printf("Enter s string,ending with end.\n ");
 
- 
-
   while(scanf("%s", buf)){
-
- 
-
-​    //If the character is "end" to end the pragram
-
- 
-
-​    if(!strncmp(buf,"end", 3)){
-
-​      printf("program end!\n");
-
-​      break;
-
-​    }
-
- 
-
-​    memset(buf, 0, sizeof(buf));
-
-​        }
-
- 
+    //If the character is "end" to end the pragram
+    if(!strncmp(buf,"end", 3)){
+       printf("program end!\n");
+       break;
+    }
+    memset(buf, 0, sizeof(buf));
+       }
 
   //Reclaim child thread
 
   ret = pthread_join(th, NULL);
-
   if(ret != 0){
-
-​    printf("pthread_join error!\n");
-
+    printf("pthread_join error!\n");
   }
-
   printf("Reclaimed child thread successfully!\n");
-
   return 0;
-
 }
+```
 
    子线程被创建出来就是可以独立运行，我们的func函数，运行一下直接就结束了，如果给函数中的pirntf加while(1)死循环，这时候又会不停的打印信息而不顾是否有输入进来。这个时候就需要子线程和主线程进行同步。
 
@@ -6139,149 +5762,81 @@ int main(void)
 
 **SYNOPSIS**
 
-​    \#include <semaphore.h>
+```c
+#include <semaphore.h>
+    int sem_init(sem_t *sem, int pshared, unsigned int value);
+```
 
- 
 
-​    int sem_init(sem_t *sem, int pshared, unsigned int value);
-
- 
 
 ### 3.7.4.4、用信号了解决以上的问题
 
-\#include <stdio.h>
-
-\#include <string.h>
-
-\#include <pthread.h>
-
-\#include <semaphore.h>
-
-\#include <stdlib.h>
-
- 
+```c
+#include <stdio.h>
+#include <string.h>
+#include <pthread.h>
+#include <semaphore.h>
+#include <stdlib.h>
 
 char buf[200] = {0};
-
 sem_t sem;
-
 unsigned int flag = 1;
 
 // Count the number of characters and print it
 
 void *func(void *arg)
-
 {
-
-  
-
   //Child thread should have a loop body
-
   sem_wait(&sem); 
-
   while(flag){
-
-​    printf("Enter the %ld Characters this time!\n",strlen(buf));
-
-​    memset(buf, 0, sizeof(buf));
-
-​    sem_wait(&sem) ;  //wait for semaphore.
-
+    printf("Enter the %ld Characters this time!\n",strlen(buf));
+    memset(buf, 0, sizeof(buf));
+    sem_wait(&sem) ;  //wait for semaphore.
   }
-
   pthread_exit(NULL);
-
 }
 
- 
-
 int main(void) 
-
 {  
-
   int ret = -1;
-
   pthread_t th = -1;
-
- 
-
   sem_init(&sem, 0, 0); //define a semaphore
-
- 
-
   ret = pthread_create(&th, NULL, func, NULL);
-
   if(ret !=0){
-
-​    printf("pthread create error!\n");
-
-​    exit(-1);
-
+    printf("pthread create error!\n");
+    exit(-1);
   }
-
-  
 
   printf("Enter s string,ending with end.\n ");
-
- 
-
   while(scanf("%s", buf)){
-
- 
-
-​    //If the character is "end" to end the pragram
-
-​    if(!strncmp(buf,"end", 3)){
-
-​      printf("program end!\n");
-
-​      flag = 0;
-
-​      sem_post(&sem); 
-
-​      break;
-
-​    }
-
- 
+   //If the character is "end" to end the pragram
+    if(!strncmp(buf,"end", 3)){
+      printf("program end!\n");
+      flag = 0;
+      sem_post(&sem); 
+      break;
+    }
 
 //After main thread recived string of user entering which it was not "end",it was going to send semaphore(信号 to activate child thread.
-
-​    //Child thread is blocked and main thread can be activated
-
- 
-
-​    sem_post(&sem); //use sem_post function to activate child thread
+//Child thread is blocked and main thread can be activated
+    sem_post(&sem); //use sem_post function to activate child thread
 
   }
-
- 
-
+    
   //Reclaim child thread
-
- 
-
   printf("Wait for reclaiming child thread!\n");
-
   ret = pthread_join(th, NULL);
-
   if(ret != 0){
-
-​    printf("pthread_join error!\n");
-
+     printf("pthread_join error!\n");
   }
-
   printf("Reclaimed child thread successfully!\n");
-
   sem_destroy(&sem); //destory semaphore
-
   return 0;
 
 }
 
  
-
- 
+```
 
  
 
@@ -6291,169 +5846,99 @@ int main(void)
 
 (1)互斥锁又叫互斥量（mutex）
 
-(2)相关函数：pthread_mutex_init   pthread_mutex_destroy
+(2)相关函数：
 
-​           pthread_mutex_lock   pthread_mutex_unlock
+```c
+pthread_mutex_init   pthread_mutex_destroy
+pthread_mutex_lock   pthread_mutex_unlock
+```
 
 (3)互斥锁和信号量的关系：**可以认为互斥锁是一种特殊的信号量**
 
 (4)互斥锁主要用来实现关键段保护， 当一段代码可以被不同的线程访问，但是又不能被同时访问，这时候我们就用互斥锁将这段代码保护起来，避免被不同的线程同时访问。
 
-### 3.7.6.2、用互斥锁来实现上节的代码
+### 3.7.6.2、用互斥锁来实现上节的代码 
 
  
 
 注意：man 3 pthread_mutex_init时提示找不到函数，说明你没有安装pthread相关的man手册。安装方法：1、虚拟机上网；2、sudo apt-get install manpages-posix-dev
 
-\#include <stdio.h>
 
-\#include <string.h>
 
-\#include <pthread.h>
+```c
+#include <stdio.h>
+#include <string.h>
+#include <pthread.h>
+#include <semaphore.h>
+#include <stdlib.h>
+#include <unistd.h>
 
-\#include <semaphore.h>
-
-\#include <stdlib.h>
-
-\#include <unistd.h>
-
- 
 
 char buf[200] = {0};
-
 pthread_mutex_t mutex;
-
 unsigned int flag = 1;
 
 // Count the number of characters and print it
-
 void *func(void *arg)
-
-{
-
-  
+{ 
 
   //Child thread should have a loop body
-
   sleep(1);
-
   while(flag){
-
-​    pthread_mutex_lock(&mutex);
-
-​    printf("Enter the %ld Characters this time!\n",strlen(buf));
-
-​    memset(buf, 0, sizeof(buf));
-
-​    pthread_mutex_unlock(&mutex);
-
-​    sleep(1);
-
+     pthread_mutex_lock(&mutex);
+     printf("Enter the %ld Characters this time!\n",strlen(buf));
+     memset(buf, 0, sizeof(buf));
+     pthread_mutex_unlock(&mutex);
+     sleep(1);
   }
-
   pthread_exit(NULL);
-
 }
 
- 
-
 int main(void) 
-
 {  
-
   int ret = -1;
-
   pthread_t th = -1;
 
- 
-
   pthread_mutex_init(&mutex, NULL);
-
-  
-
   ret = pthread_create(&th, NULL, func, NULL);
-
   if(ret !=0){
-
-​    printf("pthread create error!\n");
-
-​    exit(-1);
-
+     printf("pthread create error!\n");
+     exit(-1);
   }
-
-  
 
   printf("Enter s string,ending with end.\n ");
 
- 
-
   while(1){
-
- 
-
-​    pthread_mutex_lock(&mutex);
-
-​    scanf("%s", buf);
-
-​    pthread_mutex_unlock(&mutex);
-
- 
-
-​    //If the character is "end" to end the pragram
-
-​    if(!strncmp(buf,"end", 3)){
-
-​      printf("program end!\n");
-
-​      flag = 0;
-
- 
-
-​      break;
-
-​    }
-
-​    sleep(1);
-
-​    //After main thread recived string of user entering which it was not "end",
-
-​    //it was going to send semaphore(信号量) to activate child thread.
-
-​    //Child thread is blocked and main thread can be activated
-
- 
+    pthread_mutex_lock(&mutex);
+    scanf("%s", buf);
+    pthread_mutex_unlock(&mutex);
+    //If the character is "end" to end the pragram
+    if(!strncmp(buf,"end", 3)){
+       printf("program end!\n");
+       flag = 0;
+       break;
+     }
+    sleep(1);
+    //After main thread recived string of user entering which it was not "end",
+    //it was going to send semaphore(信号量) to activate child thread.
+    //Child thread is blocked and main thread can be activated
 
   }
-
- 
 
   //Reclaim child thread
 
- 
-
   printf("Wait for reclaiming child thread!\n");
-
   ret = pthread_join(th, NULL);
-
   if(ret != 0){
-
-​    printf("pthread_join error!\n");
-
+     printf("pthread_join error!\n");
   }
-
   printf("Reclaimed child thread successfully!\n");
-
   pthread_mutex_destroy(&mutex); //destory mutex
-
   return 0;
-
 }
+```
 
- 
 
- 
-
- 
 
 ## 3.7.7.线程同步之条件变量（效率比较高）
 
@@ -6461,201 +5946,90 @@ int main(void)
 
 ### 3.7.7.2、相关函数
 
-​       pthread_cond_init    pthread_cond_destroy
 
-​       pthread_cond_wait    pthread_cond_signal/pthread_cond_broadcast
 
- 
+```c
+   pthread_cond_init    pthread_cond_destroy
+   pthread_cond_wait    pthread_cond_signal/pthread_cond_broadcast
+```
+
+1.将isp,frameSource模块代码整合进sample程序;
 
 ### 3.7.7.3、使用条件变量来实现上节代码
 
-\#include <stdio.h>
-
-\#include <string.h>
-
-\#include <pthread.h>
-
-\#include <semaphore.h>
-
-\#include <stdlib.h>
-
-\#include <unistd.h>
-
  
 
+```c
+#include <stdio.h>
+#include <string.h>
+#include <pthread.h>
+#include <semaphore.h>
+#include <stdlib.h>
+#include <unistd.h>
+
+
 char buf[200] = {0};
-
 pthread_mutex_t mutex;
-
 pthread_cond_t cond;
-
 unsigned int flag = 1;
 
 // Count the number of characters and print it
-
 void *func(void *arg)
-
 {
-
-  
-
   //Child thread should have a loop body
-
- 
-
   while(flag){
-
-​    pthread_mutex_lock(&mutex);
-
-​    pthread_cond_wait(&cond, &mutex); //wait for main thread signal
-
-​    printf("Enter the %ld Characters this time!\n",strlen(buf));
-
-​    memset(buf, 0, sizeof(buf));
-
-​    pthread_mutex_unlock(&mutex);
-
+    pthread_mutex_lock(&mutex);
+    pthread_cond_wait(&cond, &mutex); //wait for main thread signal
+    printf("Enter the %ld Characters this time!\n",strlen(buf));
+    memset(buf, 0, sizeof(buf));
+    pthread_mutex_unlock(&mutex);
   }
-
   pthread_exit(NULL);
-
 }
-
  
-
 int main(void) 
-
 {  
-
   int ret = -1;
-
-  pthread_t th = -1;
-
-  
+  pthread_t th = -1; 
 
   ret = pthread_create(&th, NULL, func, NULL);
-
   pthread_mutex_init(&mutex, NULL);  
-
   pthread_cond_init(&cond, NULL);
-
   if(ret !=0){
-
-​    printf("pthread create error!\n");
-
-​    exit(-1);
-
+      printf("pthread create error!\n");
+      exit(-1);
   }
-
-  
-
   printf("Enter s string,ending with end.\n ");
 
- 
-
   while(1){
-
- 
-
-   
-
-​    scanf("%s", buf);
-
-​    pthread_cond_signal(&cond);
-
-​    //If the character is "end" to end the pragram
-
-​    if(!strncmp(buf,"end", 3)){
-
-​      printf("program end!\n");
-
-​      flag = 0;
-
- 
-
-​      break;
-
-​    }
-
-​    //After main thread recived string of user entering which it was not "end",
-
-​    //it was going to send semaphore(信号量) to activate child thread.
-
-​    //Child thread is blocked and main thread can be activated
-
- 
-
+    scanf("%s", buf);
+    pthread_cond_signal(&cond);
+    //If the character is "end" to end the pragram
+   if(!strncmp(buf,"end", 3)){
+      printf("program end!\n");
+     flag = 0;
+      break;
+    }
+    //After main thread recived string of user entering which it was not "end",
+    //it was going to send semaphore(信号量) to activate child thread.
+    //Child thread is blocked and main thread can be activated
   }
-
- 
-
   //Reclaim child thread
-
- 
-
   printf("Wait for reclaiming child thread!\n");
-
   ret = pthread_join(th, NULL);
-
   if(ret != 0){
-
-​    printf("pthread_join error!\n");
-
+    printf("pthread_join error!\n");
   }
-
   printf("Reclaimed child thread successfully!\n");
-
   pthread_mutex_destroy(&mutex); //destory mutex
-
   pthread_cond_destroy(&cond); 
 
   return 0;
 
 }
+```
 
- 
-
- 
-
-### 3.7.7.4、线程同步总结
-
- 
-
- 
-
- 
-
- 
-
- 
-
- 
-
- 
-
- 
-
- 
-
- 
-
- 
-
- 
-
- 
-
- 
-
-
-
- 
-
- 
-
- 
-
- 
+### 3.7.7.4、线程同步总结 
 
 # 第八章 网络基础
 
@@ -7143,7 +6517,7 @@ IP地址 = 网络地址 + 主机地址
 
 注：这些握手协议已经封装在TCP协议内部，socket编程接口平时不用管
 
- 
+![TCP](.\image\TCP-1.png)
 
 ### 3.9.3.3、基于TCP通信的服务模式
 
@@ -7173,95 +6547,75 @@ IP地址 = 网络地址 + 主机地址
 
 ### 3.9.4.1、建立连接
 
-**(1)socket：**SYNOPSIS
 
-​    \#include <sys/socket.h>
 
-​    int socket(int domain, int type, int protocol);
-
+```c
+(1)socket：SYNOPSIS
+#include <sys/socket.h>
+    int socket(int domain, int type, int protocol);
   domain ：IPV4 还是IPV6
-
   type  ： 
+      SOCK_STREAM : TCP
+      SOCK_DGRAM  ：UDP 
+      SOCK_SEQPACKET ：
 
-​      SOCK_STREAM : TCP
-
-​      SOCK_DGRAM  ：UDP 
-
-​      SOCK_SEQPACKET ：
-
-socket函数类似于open，用来打开一个网络连接，如果成功则返回一个网络文件描述符（int类型），之后我们操作这个网络连接都通过这个网络文件描述符。
-
- 
+//socket函数类似于open，用来打开一个网络连接，如果成功则返回一个网络文件描述符（int类型），之后我们操作这个网络连接都通过这个网络文件描述符。
 
 （2）bind:SYNOPSIS
-
-​    \#include <sys/socket.h>
-
-​    int bind(int socket, const struct sockaddr *address,
-
-​      socklen_t address_len);
-
-​        socket: socket函数返回的那个描述符；
-
+#include <sys/socket.h>
+   int bind(int socket, const struct sockaddr *address,
+     socklen_t address_len);
+        socket: socket函数返回的那个描述符；
   address: 这个结构体是网络编程接口中用来表示一个IP地址的，注意这个IP地址是不区分IPv4和IPv6的（或者说是兼容IPv4和IPv6的）。
-
-​       address_len : sockaddr 这个结构体的长度
-
-bind把本地的IP地址和socket绑定起来，有点像fctrl函数
+  address_len : sockaddr 这个结构体的长度
+  bind把本地的IP地址和socket绑定起来，有点像fctrl函数
 
 (3)listen:SYNOPSIS
-
-​    \#include <sys/types.h>     /* See NOTES */
-
-​    \#include <sys/socket.h>
-
-​    int listen(int sockfd, int backlog);
-
+#include <sys/types.h>     /* See NOTES */
+#include <sys/socket.h>
+    int listen(int sockfd, int backlog);
   sockfd : 调用返回的那个文件描述符
-
   backlog: 
 
 (4)connect:SYNOPSIS
+#include <sys/socket.h>
+     int connect(int socket, const struct sockaddr *address,
+     socklen_t address_len);
+```
 
-​    \#include <sys/socket.h>
 
-​    int connect(int socket, const struct sockaddr *address,
-
-​      socklen_t address_len);
 
 ### 3.9.4.2、发送和接收
 
+
+
+```c
 （1）send：SYNOPSIS
 
-  \#include <sys/socket.h>
+#include <sys/socket.h>
+ssize_t send(int socket, const void *buffer, size_t length, int flags);
 
-  ssize_t send(int socket, const void *buffer, size_t length, int flags);
-
- 
-
-(1)send和write 很像
+send和write 很像
 
 SYNOPSIS
+#include <sys/socket.h>
+ssize_t recv(int socket, void *buffer, size_t length, int flags);
 
-​    \#include <sys/socket.h>
-
- 
-
-​    ssize_t recv(int socket, void *buffer, size_t length, int flags);
-
- 
 
 （2）recv：SYNOPSIS
+#include <sys/socket.h>
+ssize_t recv(int socket, void *buffer, size_t length, int flags);
+recv和read 很像
+```
 
-​    \#include <sys/socket.h>
 
- ssize_t recv(int socket, void *buffer, size_t length, int flags);
-
-(2)recv和read 很像
 
 ### 3.9.4.3、辅助性函数
 
-​    辅助性函数主要用于IP地址装换，一种是点分十进制，一种是二进制，我们需要在这两种之间进行可靠的转换。
+
+
+```c
+/*辅助性函数主要用于IP地址装换，一种是点分十进制，一种是二进制，我们需要在这两种之间进行可靠的转换。*/
 
 (1)inet_aton、inet_addr、inet_ntoa (不推荐，不支持IPV6)
 
@@ -7270,48 +6624,39 @@ SYNOPSIS
 (3)inet_ntop函数名字解析：
 
 intenet net (网络）to p(字符串指针)，意思将点分十进制的IP转为二进制的字符串。
+```
+
+
 
 ### 3.9.4.4、表示IP地址相关数据结构
 
+```c
 (1)都定义在 netinet/in.h
 
-(2)struct sockaddr，这个结构体是网络编程接口中用来表示一个IP地址的，注意这个IP地址是不区分IPv4和IPv6的（或者说是兼容IPv4和IPv6的）
+(2)struct sockaddr
+    /*这个结构体是网络编程接口中用来表示一个IP地址的，注意这个IP地址是不区分IPv4和IPv6的（或者说是兼容IPv4和IPv6的）*/
 
-(3) typedef uint32_t in_addr_t;   网络内部用来表示IP地址的类型
+(3) typedef uint32_t in_addr_t;   /*网络内部用来表示IP地址的类型*/
 
 (4)struct in_addr
-
  {
-
   in_addr_t s_addr;
-
  };
 
 (5)struct sockaddr_in
-
  {
-
   __SOCKADDR_COMMON (sin_);
-
-  in_port_t sin_port;         /* Port number. */
-
+  in_port_t sin_port;           /* Port number. */
   struct in_addr sin_addr;      /* Internet address. */
-
- 
 
   /* Pad to size of `struct sockaddr'. */
 
   unsigned char sin_zero[sizeof (struct sockaddr) -
-
-​              __SOCKADDR_COMMON_SIZE -
-
-​              sizeof (in_port_t) -
-
-​              sizeof (struct in_addr)];
-
+              __SOCKADDR_COMMON_SIZE -
+              sizeof (in_port_t) -
+              sizeof (struct in_addr)];
  };
-
- 
+```
 
  (6)struct sockaddr：这个结构体是linux的网络编程接口中用来表示IP地址的标准结构体，bind、connect等函数中都需要这个结构体，这个结构体是兼容IPV4和IPV6的。在实际编程中这个结构体会被一个struct sockaddr_in或者一个struct sockaddr_in6所填充。
 
@@ -7323,33 +6668,29 @@ intenet net (网络）to p(字符串指针)，意思将点分十进制的IP转�
 
 ### 3.9.5.1、inet_addr、inet_ntoa、inet_aton
 
-\#include <stdio.h>
 
-\#include <sys/socket.h>
 
-\#include <netinet/in.h>
+```
+#include <stdio.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
 
-\#include <arpa/inet.h>
-
- 
-
-\#define IPADDR "192.168.1.1"
+#define IPADDR "192.168.1.1"
 
  
 
 int main()
-
 {
 
   in_addr_t addr = 0;
-
   addr = inet_addr(IPADDR);
-
   printf("addr=0x%x.\n",addr);
 
   return 0;
 
 }
+```
 
 **输出：**
 

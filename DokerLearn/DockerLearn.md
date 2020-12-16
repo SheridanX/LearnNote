@@ -399,7 +399,7 @@ jay@ubuntu:~ $ sudo docker rmi $(docker images -aq)
 
 ## 4.4容器命令
 
-​	**说明：我们有的镜像才可以创建容器，linux，下载一个centos来学习**
+​	**说明：我们有了镜像才可以创建容器，linux，下载一个centos来学习**
 
 ```shell
 	docker pull centos

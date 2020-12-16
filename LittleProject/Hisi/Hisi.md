@@ -935,8 +935,6 @@ osdrv/pub/bin/pc/mkfs.jffs2 -d osdrv/pub/rootfs_uclibc -l -e 0x10000 -o osdrv/pu
 
 (2)得从宏观上理解整个视频采集、内部传递、处理、编码输出、网络传输等的过程。
 
- 
-
 (3)得反复看代码，熟才能生巧，才能帮助理解整个代码。
 
 (4)得查阅mpp手册，熟悉海思这一套API的规矩和一般用法。
