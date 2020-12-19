@@ -1,256 +1,566 @@
 
 
-[TOC]
+# 项目积木1：USB WIFI网卡在X210上的移植和使用最全攻略
 
-------
+## 0.项目概要
 
+1.**课程背景介绍
 
+  本节介绍本项目课程的背景及后续课程规划。
 
-# 6.1.项目展示与整体规划
+**2.****本课程将带来哪些干货**
 
-## 6.1.1.关于做项目不得不说的事儿
+  本节介绍本课程的关键技术点及任务规划，看了本节就知道学习本课程能学到什么。
 
-（1）真实项目与实训项目
+**3.****项目各项材料的准备和确认**
 
-​    公司里真正的产品是真实的项目，实训项目就是我们用来练习提升自己功力的项目；
+  本节讲解驱动移植前的准备工作，主要是环境的搭建和软硬件的信息确认。
 
-(2)何选择项目课题：噱头还是实质
+**4.****驱动源码修改及编译**
 
- 课程选择偏实质
+ 本节进行驱动源码的修改和编译，属于操作性课程，要跟着做。
 
-（3）如何完美讲解一个项目过程：正统流程or解剖流程
+**5.USB WIFI****网卡驱动源码简单分析**
 
-​    正统流程：在所有书上看到的一个流程；
+  本节对源码做简单浏览和分析，目的是进一步清楚移植时需要修改的源码部分及其原理。
 
-  解剖流程：一边写一边调试，按着解剖流程去做；
+**6.WIFI****网卡的配置过程1**
 
-## 6.1.2本课程将如何演绎一个项目 
+  本节进行网卡的配置，主要讲解了iwconfig工具集及其使用方法、路由器的网络设想选项包括加密模式、加密算法等。
 
- （1）目的：从程序员的角度出发，经历一个项目从无到有的过程，同时锻炼编程工地和发现并解决问题的能力，提升实战功力。
+**7.WIFI****网卡的配置过程2**
 
- （2）做法：实训项目、选题常见、重实质、解剖流程办事。
+  本节讲解并演示wpa_supplicant的配置过程及手动分配IP、连接路由器、ping通网关、设置dns并最终能够访问外网域名。
 
-## 6.1.3.项目展示
+**8.WIFI****网卡的配置过程3**
 
-(1)项目从哪里来的
+  本节有2个技术点，一个是使用dhcp方式获取本地IP，另一个是使用interfaces文件来配置网卡信息。
 
-(2)项目实现的基本效果浏览
+**9.****在自己定制的rootfs****中移植网卡**
 
-(3)项目规划文档简介
+  本节演示如何在自己定制的最小rootfs中移植usb wifi驱动并做联网测试。
 
-## 6.1.4.应该如何学做项目
+**10.****移植wpa_supplicant****并制作镜像1**
 
-(1)要动手，练而不是只听
+  本节讲解wpa_supplicant的移植和交叉编译，因为wpa_supplicant需要用到openssl而且版本有要求，所以移植过程需要注意很多细节。
 
-(2)学写程序的关键：聚沙成塔集腋成裘
+**11.****移植wpa_supplicant****并制作镜像2**
 
-(3)做项目的核心关注点：1、用代码实现自己的构想；2、解决过程中遇到的问题
+  本节使用移植的wpa_supplicant进行联网，并且制作镜像，从镜像启动后进行各种配置使之最终能够ping通外网域名，课程完成。
+
+ 
+
+## 1.   课程背景介绍
+
+### 1.1、嵌入式课程的整体规划
+
+(1)系统学习课程：《嵌入式linux核心课程》  已完结
+
+(2)项目实训课程：《嵌入式项目库》      正当下
+
+### 1.2、嵌入式项目库中2类项目
+
+(1)大项目
+
+(2)项目积木
+
+### 1.3、本课程背景
+
+(1)WIFI介绍
+
+(2)IBM watson课程引起的开发板无线上网需求
+
+(3)很多同学毕设、项目、竞赛等需求
+
+### 1.4、未来展望
+
+(1)项目积木：X210上QT库的移植和开发环境搭建
+
+(2)大项目：基于海思HI3518E方案的网络摄像机无限扩展项目集
+
+ 
+
+  
+
+## 2.本课程将带来哪些干货
+
+### 2.1、MT7601驱动的移植
+
+(1)开发环境搭建和确认
+
+(2)源码获取和解压
+
+(3)配置、编译、安装
+
+### 2.2、无线网卡的配置和使用
+
+(1)常用无线网卡工具介绍：iwconfig、iwlist、iwpriv、wpa_supplicant(android used)
+
+(2)常见WIFI加密格式介绍和路由器端查看：WEP、WPA
+
+(3)wpa_supplicant使用详解
+
+(4)配置本地IP地址、网关、dns等并确认外网连接
+
+### 2.3、在自己定制的rootfs中移植USB WIFI
+
+(1)自己定制rootfs
+
+(2)移植wifi驱动并安装
+
+(3)移植iwconfig工具集（LWE）
+
+(4)移植wpa_supplicant
+
+### 2.4、在自己定制的rootf中添加dhcp支持
+
+(1)在内核和busybox配置中添加dhcp支持
+
+(2)移植dhcpc和dhcpd并使用
 
  
 
  
 
-# 6.2.环境搭建和基础确认
+## 3.项目各项材料的准备和确认
 
-## 6.2.1.开发环境
+### 3.1、开发环境搭建和确认
 
-(1)硬件：PC（主机Win7 X64，虚拟机ubuntu14.04） + 开发板（X210）
+(1)ubuntu14.04 
 
-(2)软件：linux（直接基于linux API）
+(2)内核源码树
 
-## 6.2.2.需要用到的基础环境
+(3)开发板提供的官方linux+QT4.8镜像
 
-(1)开发板uboot（uboot可以在iNand中，也可以在外部SD卡中）
+(4)nfs服务器和文件夹形式的rootfs
 
-(2)移植好的内核（zImage在tftp服务器中，或者zImage直接fastboot方式烧录到iNand中）
+mount -t nfs -o nolock 192.168.1.141:/root/rootfs /opt
 
-建议使用九鼎提供的移植好的源码包来自己修改、编译后得到zImage。
+### 3.2、网卡驱动源码确认
 
-(3)自己做的rootfs（其实就是第2部分移植课程中制作rootfs时制作的那个）
+(1)DPO_MT7601U_LinuxSTA_3.0.0.4_20130913.tar.bz2
 
-(4)主机ubuntu中tftp服务器
+### 3.3、USB WIFI网卡硬件确认
 
-(5)主机ubuntu中nfs服务器
+(1)网卡基本信息介绍
 
-## 6.2.3.其他小细节
+(2)lsusb查看网卡的VID和PID
 
-(1)代码编辑器：SourceInsight
+Bus 001 Device 003: ID 148f:7601
 
-(2)代码管理：Makefile
+148f VID 厂商ID ; 
 
-(3)调试流程：Windows共享文件夹编辑、虚拟机ubuntu中编译、make cp到nfs格式的rootfs中在开发板上运行
+  7601 PID 产品ID;
 
-(4)开发板标准：以V3S（1024*600）为准，V3版本的请自行根据原理进行调整
+  驱动会比较VID和PID判断这个wifi芯片是否和自己兼容; 
+
+ 
+
+## 4.驱动源码修改及编译
+
+### 4.1、确认USB的VID和PID 
+
+(1)源码包中rtusb_dev_id.c文件
+
+USB_DEVICE_ID rtusb_dev_id[] = {
+
+\#ifdef RT6570
+
+  {USB_DEVICE(0x148f,0x6570)}, /* Ralink 6570 */
+
+\#endif /* RT6570 */
+
+  {USB_DEVICE(0x148f, 0x7650)}, /* MT7650 */
+
+\#ifdef MT7601U
+
+  {USB_DEVICE(0x148f,0x6370)}, /* Ralink 6370 */
+
+  {USB_DEVICE(0x148f,0x7601)}, /* MT 6370 */ // 我们的模块就是这个
+
+\#endif /* MT7601U */
+
+  { }/* Terminating entry */
+
+};
+
+### 4.2、修改Makefile
+
+(1)平台换成：三星
+
+PLATFORM = SMDK
+
+(2)内核源码树路径设置
+
+LINUX_SRC = //linux内核源码树
+
+(3)交叉工具链路径设置
+
+CROSS_COMPILE = //交叉编译环境
+
+### 4.3、修改网卡名字(可选)
+
+(1)常用无线网卡名称：rax、wlanx
+
+(2)修改include/rtmp_def.h文件
+
+\#define INF_MAIN_DEV_NAME "ra"
+
+\#define INF_MBSSID_DEV_NAME "ra"
+
+### 4.4、添加wpa_supplicant支持
+
+要使用wpa_supplicant工具就要确保config.mk文件中WPA_SUPPLICANT=y
+
+### 4.5、编译生成驱动模块
+
+(1)清理&编译
+
+make clean && make -j2 
+
+生成os/linux/mt7601Usta.ko就是驱动模块
 
  
 
  
 
-# 6.3.开始动手写代码
+## 5.USB WIFI网卡驱动源码简单分析
 
-## 6.3.1.Makefile介绍
+### 5.1、关键点1：把握深度适可而止
 
-(1)这是一个通用的项目管理的Makefile体系，自己写的分子文件夹组织的项目可以直接套用这套Makefile体系
+一、**GCC****编译**器中使用：
+     -D macro=string，等价于在头文件中定义：#define  macro  string。
 
-(2)包含三类：顶层Makefile、Makefile.build、子文件夹下面的Makefile
+　　　　例如：-D TRUE=true，等价于：#define  TRUE  true
+     -D macro，等价于在头文件中定义：#define  macro  1，实际上也达到了定义：#define  macro的目的。
 
-  顶层主要申明一些全局变量，环境变量等。
+　　　　例如：-D [Linux](http://lib.csdn.net/base/linux)，等价于：#define  LINUX  1（与#define  LINUX作用类似）。
+     --define-macro  macro=string与-D macro=string作用相同。
 
- 
+我们在头文件和.c文件中都没有找到MT7601U的宏定义,原因是在os/linux/Makefile中WFLAGS +=-DMT7601
 
-(3)可以参考：http://www.cnblogs.com/lidabo/p/4521123.html
+## 6.WIFI网卡的配置过程1
 
-## 6.3.2.SI建立工程
+### 6.1、iwconfig工具集的介绍和使用演示
 
- 
+(1)linux下专用来配置无线网络的一些命令集
 
- 
+(2)因为iwconfig本身有一定限制，只支持一定的加密格式，在我们这里不用
 
-# 6.4.framebuffer基本操作代码
+(3)这些工具集算比较老的
 
- 
+(4)iwlist  scanning,可以看到有哪些可连接的无线网络;
 
-# 6.5.图片显示原理和实践
+### 6.2、路由器端基础知识
 
-## 6.5.1.图片显示原理
+(1)路由器的WAN、LAN(ap)
 
-(1) 概念1：像素
+(2)无线参数：SSID、频段、模式
 
-(2) 概念2：点阵
+(3)安全类型：WEP和WPA、WPA2 
 
-​    有像素点构成的一个点阵，屏幕就是一个点阵。
+(4)安全选项
 
-(3) 分辨率（物理分辨率、显示分辨率）、清晰度和分辨率和像素间距有关；
+(5)加密算法
 
-​    像素间距相同时，分辨率越大越清晰；分辨率相同是，像素间距越小越清晰；
-
-(3) bpp (RGB565 RGB888) 像素深度，每个像素用几个bit来表示。
-
-(4) 颜色序 （RGB、BGR），写程序一定要搞清楚颜色序，不然显示的时候颜色就反了。
-
-(5) 一副图片就是一个数组。
-
-## 6.5.2图片点阵数据获取
-
-（1）Image2LCD 软件提取，用这个软件来讲图片转换成数据。
-
- (2) 通过图片、视频文件直接代码方式获取
-
-## 6.5.3图片显示编码与实践
-
-# 6.6.图片数据提取和显示
-
-## 6.6.1 Image2LCD提取图片数据
-
-## 6.6.2.图片显示编码与实践
-
-# 6.7图片显示的高级话题
-
-## 6.7.1 RGB顺序调整
-
-（1）一个是imagetolcd中的RGB顺序要和代码中的所设置的RGB顺序要一致（数组左移多少位）。
-
- *p++ = ((pData[cnt] << 16) | (pData[cnt+1] << 8) | (pData[cnt+2] << 0));
-
-## 6.7.2 显示函数的其他写法
-
-# 6.8 其他显示细节问题
-
-##  6.8.1任意分辨率大小图片显示
-
-​    （1）图片比屏幕分辨率大，这种情况下多出来的部分肯定是没办法显示的。处理方法直接在显示函数中把多余不能显示的部分丢掉。
-
-（2）图片大小比屏幕的大小要小，这种情况下图片知识填充屏幕中的一部分，神域部分仍然保持原来的底色。
-
-​       
-
- （2）任意起点位置图片显示
+(6)PSK密码
 
  
 
-# 6.9_10 任意起点位置图片显示
+### 6.3启动网卡出错解决方法: ifconfig: SIOCSIFFLAGS: Operation not permitted
 
-## 6.9.1 小图片人一起点(整个图片显示没有超出屏幕范围)
+\# insmod mt7601Usta.ko 
 
-//测试将图片显示到起点（x0,y0）；处
+rtusb init rt2870 --->
+ usbcore: registered new interface driver rt2870
 
-void fb_draw_pic3(unsigned int x0, unsigned int y0)
+ 
 
-{  
+\# iwconfig
+ lo     no wireless extensions.
+ 
+ eth0    no wireless extensions.
+ 
+ ra0    Ralink STA  ESSID:"11n-AP" Nickname:"MT7601STA"
+      Mode:Auto  Frequency=2.412 GHz Access Point: Not-Associated  
+      Bit Rate:1 Mb/s  
+      RTS thr:off  Fragment thr:off
+      Encryption key:off
+      Link Quality=10/100  Signal level:0 dBm Noise level:0 dBm
+      Rx invalid nwid:0  Rx invalid crypt:0 Rx invalid frag:0
+      Tx excessive retries:0  Invalid misc:0  Missed beacon:0
 
-  unsigned int x, y;
+ 
 
-  unsigned int *p =pfb;
+\# ifconfig ra0 up
+ unlink cmd rsp urb
+ ifconfig: SIOCSIFFLAGS: Operation not permitted
 
-  unsigned int cnt, cnt_Data = 0;
+ 
 
-  const unsigned char *pData = gImage_pic_dog; //指向图像数组； 
+原因：/etc/Wireless/RT2870STA/RT2870STA.dat 该文件找不到导致的。
 
-​    
+ 
 
-  for(y = y0; y < y0+281 ; y++)
+解决：将驱动对应的dat文件拷贝对应目录，就没问题了
 
-​    for(x= x0; x < x0+500; x++){
+$cp RT2870STA.dat  /etc/Wireless/RT2870STA/RT2870STA.dat
 
-​      cnt = y * WIDTH + x;
+ 
 
-​      *(p + cnt)= ((pData[cnt_Data] << 16) | (pData[cnt_Data+1] << 8) | \
+ 
 
-​      (pData[cnt_Data+2] << 0));
+ 
 
-​      cnt_Data += 3; 
+## 7.WIFI网卡的配置过程2
 
-​    }
+### 7.1、wpa_supplicant配置文件
+
+(1)wpa_supplicant简介
+
+(2)/etc/Wireless/RT2870STA/RT2870STA.dat //网卡配置文件
+
+(3)/etc/wpa_supplicant.conf       //wpa_supplicant.conf工具配置文件
+
+ 
+
+ 
+
+// /etc/wpa_supplicant.conf文件中修改为
+
+ctrl_interface=/var/run/wpa_supplicant
+
+network={
+
+ key_mgmt=WPA-PSK         //路由器的加密方式
+
+ ssid="2lou"            //wifi的名字
+
+ psk="15950156"          //wifi的密码
 
 }
 
  
 
-## 6.9.2 起点导致图片超出屏幕外
+删除: iap_scan=1 这一句
 
-//测试将图片显示到起点（x0,y0）；处
+### 7.2、网卡配置命令序列
 
-void fb_draw_pic3(unsigned int x0, unsigned int y0)
+insmod mt7601Usta.ko      //安装驱动程序
 
-{  
+ifconfig ra0 up         //开启无线网卡
 
-  unsigned int x, y;
+wpa_supplicant -B -c /etc/wpa_supplicant.conf -i ra0  //连接无线网络
 
-  unsigned int *p =pfb;
+wpa_cli -i ra0 status      //查看连接状态
 
-  unsigned int cnt, cnt_Data = 0;
+ifconfig ra0 192.168.1.200  //手动配置ip，同一网段
 
-  const unsigned char *pData = gImage_pic_dog; //指向图像数组； 
+route add default gw 192.168.31.1 dev ra0       //配置网关
 
-​    
+ping 192.168.1.1      //ping 网关
 
-for(y = y0; y < y0+281; y++){
+ping 8.8.8.8        //ping 外网
 
-​    if(y >= HEIGHT)
+ 
 
-​      break;
+vi /etc/resolv.conf      //配置dns
 
-​    for(x= x0; x < x0+500 ; x++){
+nameserver 192.168.1.1 
 
-​      if(x >= WIDTH)     //不显示超出的部分，让下标不赋值给显示指针
+ping www.baidu.com  
 
-​        cnt_Data += 3; 
+ 
 
-​      else{
+**注意：**
 
-​        cnt = y * WIDTH + x;
+1、ra0的配置和上网前，一定要先关掉eth0（ifconfig eth0 down），否则你ping或者设置等等都是默认使用的eth0而不是ra0.
 
-​        *(p + cnt)= ((pData[cnt_Data] << 16) | (pData[cnt_Data+1] << 8) | \
+2、当我们wifi网卡连接上路由器后，想要ping通路由器（网关），必须本地wifi网卡有一个和网关同一网段的ip地址才可以。这个本地的ip地址可以dhcp分配，也可以手工配置一个。
 
-​        (pData[cnt_Data+2] << 0));
+3、本地有了ip地址，并且wifi网卡通过wpa_supplicant配置连上路由器后，就能ping通网关了。但是这时还不能ping通外网，因为本地还没有添加网关配置。添加网关配置有2种方法：通过route命令动态添加，或者通过/etc/network/interfaces文件添加。
 
-​        cnt_Data += 3; 
+4、添加网关后就能ping通外网IP了，但是还ping不通www.baidu.com等域名，因为还没有dns。
 
-​      }
+ 
 
-​    }
+ 
 
-  }
+## 8.WIFI网卡的配置过程3
+
+### 8.1、使用interfaces文件静态配置
+
+(1)
+
+insmod mt7601Usta.ko      //安装驱动程序
+
+ifconfig ra0 up         //开启无线网卡
+
+wpa_supplicant -B -c /etc/wpa_supplicant.conf -i ra0  //连接无线网络
+
+wpa_cli -i ra0 status      //查看连接状态
+
+(2)interface文件
+
+ 
+
+第一步，编辑好interface文件
+
+第二步，使interface文件生效（重启网卡），方法是先ifdown ra0然后ifup ra0
+
+总结：使用/etc/network/interfaces文件其实就是替代了手工配置时的ifconfig分配本地ip地址，和route添加网关这两步。
+
+### 8.2、使用dhcp动态分配IP
+
+(1)原理：路由器中有个dhcp服务器，本地有dhcp客户端, 
+
+(2)前导步骤
+
+insmod mt7601Usta.ko      //安装驱动程序
+
+ifconfig ra0 up         //开启无线网卡
+
+wpa_supplicant -B -c /etc/wpa_supplicant.conf -i ra0  //连接无线网络
+
+wpa_cli -i ra0 status     //查看连接状态
+
+(3)当前状态就是：wifi网卡已经启动并且连接上路由器了，但是本地没有ip地址，所以没法ping通路由器。怎么办？使用dhcp分配一个本地ip。
+
+方法1：命令行使用udhcpc命令来分配
+
+   udhcpc -i ra0
+
+方法2：使用interface文件选择dhcp模式然后重启网卡
+
+auto ra0
+
+iface ra0 inet static
+
+address 192.168.31.94
+
+netmask 255.255.255.0
+
+gateway 192.168.31.1
+
+ 
+
+修改为:
+
+auto ra0
+
+iface ra0 inet dhcp
+
+ 
+
+### 8.3、让开发板开机自动连上路由器上网
+
+改/etc/init.d/rcS及其相关文件 ---- 
+
+  自己创建一个S4* 开头的启动脚本  如 S41wifi
+
+  注意:S是大写的;
+
+  
+
+ 
+
+ 
+
+**在配置脚本中添加:**
+
+insmod /home/mt7601/mt7601Usta.ko
+
+ifconfig ra0 up
+
+wpa_supplicant -B -c /etc/wpa_supplicant.conf -i ra0
+
+ifdown ra0
+
+ifup ra0
+
+ 
+
+## 9.在自己定制的rootfs中移植网卡
+
+### 9.1、确认自己制作的rootfs并启动
+
+(1)busybox交叉编译
+
+(2)启动后直接nfs方式挂载文件夹形式的rootfs，测试ok后再做成镜像烧录
+
+(3)挂载参数bootargs：setenv bootargs root=/dev/nfs nfsroot=192.168.1.141:/root/rootfs ip=192.168.1.10:192.168.1.141:192.168.1.1:255.255.255.0::eth0:off init=/linuxrc console=ttySAC2,115200 
+
+ 
+
+set bootcmd 'tftp 30008000 zImage; bootm 30008000'
+
+### 9.2、需要的工具集确认
+
+(1)iwconfig工具集：另外移植的，不是busybox中的
+
+(2)dhcp工具集：是busybox中集成的，确认busybox的menuconfig中配置支持了这个
+
+(3)wpa_supplicant工具集：另外移植的，不是busybox中的
+
+### 9.3、交叉编译iwconfig
+
+(1)源码下载
+
+  百度搜索:Wireless tools
+
+(2)配置
+
+Makefile 文件中修改 编译器gcc ar 等为arm-linux-gcc 的交叉编译工具链
+
+添加PREFIX = /root/rootfs ,将所需要的工具和动态链接库安装到vfs文件底下去;
+
+(3)交叉编译
+
+(4)部署安装
+
+(5)测试
+
+ 
+
+ 
+
+## 10_11.移植wpa_supplicant并制作镜像1_2
+
+### 10.1、交叉编译wpa_supplicant
+
+(1)下载wpa_supplicant源码并配置编译。参考http://blog.csdn.net/hktkfly6/article/details/48949863
+
+(2)下载配套版本的openssl并配置编译
+
+(3)去掉配置NL相关的选项省去移植libnl。参考：http://www.cnblogs.com/helloworldtoyou/p/6145995.html
+
+### 10.2、在nfs中测试wpa_supplicant使用
+
+配置 wpa_supplicant -B -c /etc/wpa_supplicant.conf -i ra0 语句的时候出错：/var/run/wpa_suplicant.conf no such a director
+
+**解决方法：**
+
+在/var 底下创建 run 文件夹
+
+Chmod -R 777 run 修改权限即可
+
+ 
+
+### 10.3、制作ext2镜像并刷机测试
+
+附：/etc/wpa_supplicant.conf文件内容：
+
+ctrl_interface=/var/run/wpa_supplicant
+
+ 
+
+network={
+
+​    key_mgmt=WPA-PSK
+
+​    ssid="zhulaoshi"
+
+​    psk="www.zhulaoshi.org"
 
 }
 
@@ -258,747 +568,46 @@ for(y = y0; y < y0+281; y++){
 
  
 
-# 6.11_~_15.BMP图片的显示
+ 
 
-## 6.9.11.1 图片文件的本质
+### 10.4 文件下载
 
-(1)二进制文件
+Wpa_supplicant下载
 
-(2)不同格式的图片文件的差别
+http://w1.fi/wpa_supplicant/
 
-(3)BMP（bitMap）图片的基本特征：违背压缩的元素位图格式
+Openssl1.0.1下载
 
-## 6.11.2 BMP图片详解
-
-(1)BMP文件如何识别
-
-​    一个完整的图片数据不仅包含组成图片的数据还包含有效信息（图片的大小分辨率这些信息）。BMP图片的特征就是以0x424D开头的。
-
-(2)BMP文件组成
-
-## [BMP图像数据格式详解](https://www.cnblogs.com/l2rf/p/5643352.html)
-
-一．简介
-
-BMP(Bitmap-File)图形文件是Windows采用的图形文件格式，在Windows环境下运行的所有图象处理软件都支持BMP图象文件格式。Windows系统内部各图像绘制操作都是以BMP为基础的。Windows 3.0以前的BMP图文件格式与显示设备有关，因此把这种BMP图象文件格式称为设备相关位图DDB(device-dependent bitmap)文件格式。Windows 3.0以后的BMP图象文件与显示设备无关，因此把这种BMP图象文件格式称为设备无关位图DIB(device-independent bitmap)格式（注：Windows 3.0以后，在系统中仍然存在DDB位图，象BitBlt()这种函数就是基于DDB位图的，只不过如果你想将图像以BMP格式保存到磁盘文件中时，微软极力推荐你以DIB格式保存），目的是为了让Windows能够在任何类型的显示设备上显示所存储的图象。BMP位图文件默认的文件扩展名是BMP或者bmp（有时它也会以.DIB或.RLE作扩展名）。
+https://www.openssl.org/source/old/1.0.1/
 
  
 
-二．BMP格式结构
+### 10.5 问题总结
 
-BMP文件的数据按照从文件头开始的先后顺序分为四个部分：
+   进入到Wpa_supplicant 底下执行sudo cp defconfig .config 
 
-◆ 位图文件头(bmp file header)： 提供文件的格式、大小等信息
+修改Wpa_supplicant 中的makefile cc 为arm-linux-gcc;**注意：需要将#ifndef CC   #endif** **去掉，不然默认是用个主机的gcc**
 
-◆ 位图信息头(bitmap information)：提供图像数据的尺寸、位平面数、压缩方式、颜色索引等信息
+保存后编译出错：需要openssl库
 
-◆ 调色板(color palette)：可选，如使用索引来表示图像，调色板就是索引与其对应的颜色的映射表
+下载之后需要安装opnssl库,通过阅读README文件可以看到wpa_supplicant2.6所使用的openssl库版号为1.0.1。
 
-◆ 位图数据(bitmap data)：图像数据区
+编译openssl库文件时，将相关的安装目录路径变量INSTALLTOP  OPENSSLDIR改为你自己创建的目录下；将cc ar ranlib nm 变量改为交叉编译工具链arm-linux-;
 
- 
-
-BMP图片文件数据表如下：
+修改完编译完成后安装，安装出错，发现man手册编译失败，我们将Makefile中安装目标中的与man手册相关的install_docs依赖去掉 。
 
  
 
-| 数据段名称                            | 大小（byte）       | 开始地址 | 结束地址 |
-| ------------------------------------- | ------------------ | -------- | -------- |
-| 位图文件头(bitmap-file header)        | 14                 | 0000h    | 000Dh    |
-| 位图信息头(bitmap-information header) | 40                 | 000Eh    | 0035h    |
-| 调色板(color table)                   | 由biBitCount决定   | 0036h    | 未知     |
-| 图片点阵数据(bitmap data)             | 由图片大小和颜色定 | 未知     | 未知     |
+在gcc后面添加 -L/（openssl安装的路径）/lib
+
+在CFLAGS 后面添加 -I/（openssl安装的路径）/include
+
+添加LIBS = -L/（openssl安装的路径）/lib
 
  
 
- 
+保存编译发现出错，将./config中的 CONFIG_DRIVER_NL80211=y 这样注释掉；
 
- 
+编译成功；
 
- 
-
-三．BMP文件头
-
-BMP文件头结构体定义如下：
-
-typedef struct tagBITMAPFILEHEADER
-
-{ 
-
-UINT16 bfType;    //2Bytes，必须为"BM"，即0x424D 才是Windows位图文件
-
-DWORD bfSize;     //4Bytes，整个BMP文件的大小
-
-UINT16 bfReserved1;  //2Bytes，保留，为0
-
-UINT16 bfReserved2;  //2Bytes，保留，为0
-
-DWORD bfOffBits;   //4Bytes，文件起始位置到图像像素数据的字节偏移量
-
-} BITMAPFILEHEADER;
-
- 
-
- 
-
- 
-
- 
-
- 
-
- 
-
- 
-
-BMP文件头数据表如下：
-
- 
-
-| 变量名      | 地址偏移 | 大小   | 作用说明                                                     |
-| ----------- | -------- | ------ | ------------------------------------------------------------ |
-| bfType      | 0000h    | 2Bytes | 文件标识符，必须为"BM"，即0x424D 才是Windows位图文件  ‘BM’：Windows  3.1x, 95, NT,…　　‘BA’：OS/2  Bitmap Array　　‘CI’：OS/2 Color  Icon 　  ‘CP’：OS/2 Color  Pointer 　‘IC’：OS/2  Icon 　  ‘PT’：OS/2 Pointer  因为OS/2系统并没有被普及开，所以在编程时，你只需判断第一个标识“BM”就行 |
-| bfSize      | 0002h    | 4Bytes | 整个BMP文件的大小（以位B为单位）                             |
-| bfReserved1 | 0006h    | 2Bytes | 保留，必须设置为0                                            |
-| bfReserved2 | 0008h    | 2Bytes | 保留，必须设置为0                                            |
-| bfOffBits   | 000Ah    | 4Bytes | 说明从文件头0000h开始到图像像素数据的字节偏移量（以字节Bytes为单位），以为位图的调色板长度根据位图格式不同而变化，可以用这个偏移量快速从文件中读取图像数据 |
-
- 
-
- 
-
- 
-
-四．BMP信息头
-
-BMP信息头结构体定义如下：
-
-typedef struct _tagBMP_INFOHEADER
-
-{
-
-DWORD  biSize;  //4Bytes，INFOHEADER结构体大小，存在其他版本I NFOHEADER，用作区分
-
-LONG  biWidth;  //4Bytes，图像宽度（以像素为单位）
-
-LONG  biHeight;  //4Bytes，图像高度，+：图像存储顺序为Bottom2Top，-：Top2Bottom
-
-WORD  biPlanes;  //2Bytes，图像数据平面，BMP存储RGB数据，因此总为1
-
-WORD  biBitCount;     //2Bytes，图像像素位数
-
-DWORD biCompression;   //4Bytes，0：不压缩，1：RLE8，2：RLE4
-
-DWORD biSizeImage;    //4Bytes，4字节对齐的图像数据大小
-
-LONG  biXPelsPerMeter;  //4 Bytes，用象素/米表示的水平分辨率
-
-LONG  biYPelsPerMeter;  //4 Bytes，用象素/米表示的垂直分辨率
-
-DWORD biClrUsed;     //4 Bytes，实际使用的调色板索引数，0：使用所有的调色板索引
-
-DWORD biClrImportant;   //4 Bytes，重要的调色板索引数，0：所有的调色板索引都重要
-
-}BMP_INFOHEADER;
-
- 
-
-BMP信息头数据表如下：
-
- 
-
-| 变量名          | 地址偏移 | 大小   | 作用说明                                                     |
-| --------------- | -------- | ------ | ------------------------------------------------------------ |
-| biSize          | 000Eh    | 4Bytes | BNP信息头即BMP_INFOHEADER结构体所需要的字节数（以字节为单位） |
-| biWidth         | 0012h    | 4Bytes | 说明图像的宽度（以像素为单位）                               |
-| biHeight        | 0016h    | 4Bytes | 说明图像的高度（以像素为单位）。这个值还有一个用处，指明图像是正向的位图还是倒向的位图，该值是正数说明图像是倒向的即图像存储是由下到上；该值是负数说明图像是倒向的即图像存储是由上到下。大多数BMP位图是倒向的位图，所以此值是正值。 |
-| biPlanes        | 001Ah    | 2Bytes | 为目标设备说明位面数，其值总设置为1                          |
-| biBitCount      | 001Ch    | 2Bytes | 说明一个像素点占几位（以比特位/像素位单位），其值可为1,4,8,16,24或32 |
-| biCompression   | 001Eh    | 4Bytes | 说明图像数据的压缩类型，取值范围为：  0     BI_RGB  不压缩（最常用）  1     BI_RLE8  8比特游程编码（BLE），只用于8位位图  2     BI_RLE4  4比特游程编码（BLE），只用于4位位图  3     BI_BITFIELDS比特域（BLE），只用于16/32位位图  4 |
-| biSizeImage     | 0022h    | 4Bytes | 说明图像的大小，以字节为单位。当用BI_RGB格式时，总设置为0    |
-| biXPelsPerMeter | 0026h    | 4Bytes | 说明水平分辨率，用像素/米表示，有符号整数                    |
-| biYPelsPerMeter | 002Ah    | 4Bytes | 说明垂直分辨率，用像素/米表示，有符号整数                    |
-| biClrUsed       | 002Eh    | 4Bytes | 说明位图实际使用的调色板索引数，0：使用所有的调色板索引      |
-| biClrImportant  | 0032h    | 4Bytes | 说明对图像显示有重要影响的颜色索引的数目，如果是0，表示都重要。 |
-
- 
-
- 
-
-五．BMP调色板
-
-BMP调色板结构体定义如下：
-
-typedef struct _tagRGBQUAD
-
-{
-
-BYTE  rgbBlue;    //指定蓝色强度
-
-BYTE  rgbGreen;   //指定绿色强度
-
-BYTE  rgbRed;    //指定红色强度
-
- BYTE  rgbReserved;  //保留，设置为0
-
-} RGBQUAD;
-
- 
-
-1，4，8位图像才会使用调色板数据，16,24,32位图像不需要调色板数据，即调色板最多只需要256项（索引0 - 255）。
-
-颜色表的大小根据所使用的颜色模式而定：2色图像为8字节；16色图像位64字节；256色图像为1024字节。其中，每4字节表示一种颜色，并以B（蓝色）、G（绿色）、R（红色）、alpha（32位位图的透明度值，一般不需要）。即首先4字节表示颜色号1的颜色，接下来表示颜色号2的颜色，依此类推。
-
-颜色表中RGBQUAD结构数据的个数有biBitCount来确定，当biBitCount=1,4,8时，分别有2,16,256个表项。
-
-当biBitCount=1时，为2色图像，BMP位图中有2个数据结构RGBQUAD，一个调色板占用4字节数据，所以2色图像的调色板长度为2*4为8字节。
-
-当biBitCount=4时，为16色图像，BMP位图中有16个数据结构RGBQUAD，一个调色板占用4字节数据，所以16像的调色板长度为16*4为64字节。
-
-当biBitCount=8时，为256色图像，BMP位图中有256个数据结构RGBQUAD，一个调色板占用4字节数据，所以256色图像的调色板长度为256*4为1024字节。
-
-当biBitCount=16，24或32时，没有颜色表。
-
- 
-
-五．BMP图像数据区
-
-位图数据记录了位图的每一个像素值，记录顺序是在扫描行内是从左到右,扫描行之间是从下到上。位图的一个像素值所占的字节数:
-
-当biBitCount=1时，8个像素占1个字节;
-
-当biBitCount=4时，2个像素占1个字节;
-
-当biBitCount=8时，1个像素占1个字节;
-
-当biBitCount=24时,1个像素占3个字节;
-
-Windows规定一个扫描行所占的字节数必须是4的倍数(即以long为单位),不足的以0填充，
-
-一个扫描行所占的字节数计算方法:
-
-DataSizePerLine= (biWidth* biBitCount+31)/8;
-
-// 一个扫描行所占的字节数
-
-DataSizePerLine= DataSizePerLine/4*4; // 字节数必须是4的倍数
-
-位图数据的大小(不压缩情况下):
-
-DataSize= DataSizePerLine* biHeight;
-
- 
-
-颜色表接下来位为位图文件的图像数据区，在此部分记录着每点像素对应的颜色号，其记录方式也随颜色模式而定，既2色图像每点占1位（8位为1字节）；16色图像每点占4位（半字节）；256色图像每点占8位（1字节）；真彩色图像每点占24位（3字节）。所以，整个数据区的大小也会随之变化。究其规律而言，可的出如下计算公式：图像数据信息大小=（图像宽度*图像高度*记录像素的位数）/8。
-
- 
-
-(3)BMP头文件信息
-
-(4)图片有效数据区
-
-第一步： 打开BMP图片
-
-第二步： 判断图片格式是否真是BMP
-
-第三步：解析头星系，得到该BMP图片的详细信息
-
-第四步：根据第三步得到的信息，去合适位置提取真正的有效图片信心
-
-第五步：将得到的有效数据丢到fb中去显示
-
-## 6.14.1BMP头信息结构体注意项
-
-//BMP文件头结构体定义如下：
-
-typedef struct tagBITMAPFILEHEADER
-
-{ 
-
-  //UINT16 bfType;    //2Bytes，必须为"BM"，即0x424D 才是Windows位图文件
-
-  DWORD bfSize;     //4Bytes，整个BMP文件的大小
-
-  UINT16 bfReserved1; //2Bytes，保留，为0
-
-  UINT16 bfReserved2; //2Bytes，保留，为0
-
-  DWORD bfOffBits;   //4Bytes，文件起始位置到图像像素数据的字节偏移量
-
-} BITMAPFILEHEADER;
-
- 
-
-调用的时候我们必须注意结构体对齐的问题，必须按照1字节对齐，但是加了1字节对齐还是不行，现在我们就将第一个bfType取消掉来解决。因为fd在is_bmp（）函数当中已经read了2字节，所以在bmp_analyze（）函数中就不用跳过2个字节了。
-
- 
-
- 
-
- 
-
-# 6.16_~_18 及时规整才能写出好项目
-
-## 6.16.1 再次强调规范问题
-
-​    (1) 函数、变量起名字好合法合理
-
-(2) 要写注释
-
-(3) 函数长短要适合
-
-(4) 多文件长短要合适
-
-## 6.16.2 为什要规整项目
-
-​    (1) 完全自由写项目是不可能一步到位，只能先重功能和内容，后不调理和规范；
-
-(2) 规整的过程也是一个梳理逻辑和分析加过的过程；
-
-## 6.16.3 一些重构代码的技巧
-
-​    （1）不用的代码先不要删掉，把他注释掉；
-
-（2）用 #if 0    #endif 来屏幕不需要的代码，不要用/* */
-
- 
-
-## 6.16.4 对本项目进行规整
-
-(1)添加DEBUG宏以控制调试信息输出
-
-\#undef DEBUG
-
- 
-
-\#ifdef DEBUG
-
-  \#define debug(...) {fprintf(stderr, "debug(%s, %s(), %d): ", \
-
-​              __FILE__, __FUNCTION__, __LINE__);\
-
-​          fprintf(stderr, __VA_ARGS__);}
-
-\#else
-
-  \#define debug(...) 
-
-\#endif
-
-Debug宏添加好后，要是能输出可以有2中方式：
-
-第一种： 就是在debug洪涤因之前定义DEBUG宏
-
-第二种： 在编译参数中添加-DDEBUG编译选项
-
-(2)图片信息用结构体封装传递
-
-typedef struct pic_info
-
-{
-
-  char* pathname; //图片的路径加名字
-
-  LONG  biWidth; 
-
-  LONG  biHeight; 
-
-  UINT16  biBitCount;
-
-  unsigned char * pData; //图片像素数据  
-
-}pic_info;
-
- 
-
- 
-
-# 6.19_20.jpg 图片的显示原理分析
-
-## 6.19.1认识jpg图片
-
-  （1）有固定的识别特征
-
-（2）jpg图片是经过压缩的图片格式
-
-## 6.19.2 jpg图片如何显示
-
-（1）jpg图片中的二进制数并不对应像素数据
-
-（2）LCD显示器的街头仍然是framebuffer
-
-（3）要显示jpg图片必须先解码（解压缩）jpg得到相应的位图数据
-
-## 6.19.3 如何解码jpg图片
-
-(1) 图片编码和解码对应着压缩和解压缩
-
-(2) 编码和解码其实就是一些数学运算(压缩度、算法复杂度、时间、清晰度)
-
-(3) 软件编码解码和硬件编解码
-
-(4) 不同的图片格式其实就是编解码的算法不同，结果是图片特征不同
-
-![img](file:///C:/Users/ADMINI~1/AppData/Local/Temp/msohtmlclip1/01/clip_image002.jpg)
-
-  Jpg网速很慢的时候是先一段一段刷新出来的，每一段都是和原图一样清晰，而png是先刷新处一个模糊的轮廓然后再填充细节。
-
-(5) 编程实战：使用开源解码库
-
- 
-
-# 6.21. libjpeg介绍及开源库的使用方法
-
-## 6.21.1 libjpeg介绍
-
-  (1)基于linux的开源软件
-
-  (2)c语言编写(gcc、Makefile管理)
-
-  (3) 提供JPEG图片的编解码算法实现
-
-## 6.21.2 libjpeg版本及下载资源
-
-  (1) 经典版本v6b：
-
-https://sourceforge.net/projects/libjpeg/files/libjpeg/6b/jpegsrc.v6b.tar.gz/download
-
-  (2) 最新版本v9b：www.ijg.org
-
-## 6.21.3 开源库的使用方法
-
-  (1) 移植（源码下载、解压、配置、修改Makefile、编译或交叉编译）。移植的目的是由源码得到三个东西：动态链接库.so、静态链接库.a，头文件.h
-
-(2) 部署（部署动态so、部署静态库）动态链接库.so、静态链接库.a，头文件.h 这三个东西放在该放的地方。
-
-动态库是运行时环境需要，编译时不需要；
-
-静态库是静态连接时需要，动态链接是不需要；
-
-头文件.h是在编译程序时使用的，运行时不需要;
-
-总结：静态库和头文件这两个东西，是在编译链接过程中需要的；而动态库是运行时需要的。
-
-所以动态库so文件是要放到开发板文件系统中去的（放的过程就叫部署），把静态库.a文件和头文件.h放到ubuntu文件系统去。
-
-（3） 注意三个编译选项：-I -l -L
-
-**-I** **是编译选项（准确的说是预处理选项,CFLAGS或者是CPPFLAGS），用来指定处理室查找头文件的范围的。**
-
-**-l** **是链接选项（LDFLAGS）,用来指定链接额外的库（比如我们用到了数学函数，就用-lm，连接器就会去链接libm.so; 那么我们使用了libjpeg，对应的库名就叫libjpeg.so，就需要用-ljpeg选项链接）**
-
-**-L** **是连接选项（LDFLAGS中指定），用来告诉连接器到哪个路径下面去找动态链接库。**
-
-**总结：-l是告诉连接器要链接的动态库的名字，而-L是告诉连接器库的路径。**
-
- 
-
- 
-
-# 6.22_23 libjpeg的移植实战
-
-第一部分: libjpeg& libpng&lbgi库的移植
- 1、 libjpeg库移植
- 2、下载源码(htt://www.photopost.com/pegsrc.v6b.tar.gz)与准备交叉工具链
- 3、解压源码并进入解压后的目录。
- 4、配置./configure --prefix=/root/libgpeg/jpegdecode --exec-prefix=/root/libgpeg/jpegdecode --enable-shared --enable-static -build=i386 -host=arm
- 5、修改 Makefile
- CC=BCC
- 改为CC= arm-linux-gCC
- AR=arc改为AR= arm-linux-ar rc
- AR2=anib改为AR2= arm-linux-ranlib
- 6、确认是否存在/root/libgpeg/jpegdecode/include与/root/libgpeg/jpegdecode/bin两个目录,若不存在则创建。
-
-16, make & make install-lib
-
-安装完成后,可以在/opt/ decode/ include目录中找到 libjpeg的头文件,
- 以后在编译包含了 libipeg的工程时,必须指定1/opt/ libdecode/ include,
- 同时在链接时需指定L/opt/ libdecode/ib,若为动态链接,则必须将 
-
- 
-
-## ubuntu中的libtool问题
-
-时总是报错，libtool的原因
-
-解决方法
-
-sudo apt-get install aptitude 
-
-sudo aptitude install libtool 
-
- 
-
- 
-
-## make: ./libtool：command not found
-
- 
-
-./libtool --mode=compile gcc -O2 -I. -c ./jcapimin.c
-
- 
-
-make: ./libtool：命令未找到
-
-make: *** [jcapimin.lo] 错误 127
-
-./libtool --mode=compile gcc -O2 -I. -c ./cjpeg.c
-
-make: ./libtool：命令未找到
-
-make: *** [cjpeg.lo] 错误 127
-
- 
-
-问题原因:没有安装 libtool 
-
- 
-
-解决办法:首先看有没有安装libtool 及 libtool-ltdl-devel 
-
- 
-
-rpm -qa | grep libtool  
-
- 
-
-下面安装libtool：
-
- 
-
-libtool见附件或者我的资源http://download.csdn.net/detail/qq361294382/9444925
-
- 
-
- 
-
-./configure
-
-make
-
-make install 
-
- 
-
-\#cd jpeg-6b
-
-\#cp /usr/share/libtool/config/config.sub .
-
-\#cp /usr/share/libtool/config/config.guess . 
-
-把 libtool里面的两个配置文件拿来覆盖掉jpeg-6b目录下的对应文件
-
-make clean 再重新configure（切记必须重新configure,否则仍提示这个错误）
-
-没有权限的时候先建立对应的文件夹，再次make install就行了
-
-然后进入jpeg-6b的源码目录，然后执行以下步骤，切记！COPY到当前目录注意后面的点(.)
-
-网上好多都把config.sub和config.guess的路径弄错了，应该是在/usr/share/libtool/config/下，而不是在
-
-/usr/share/libtool/下
-
-————————————————
-
-版权声明：本文为CSDN博主「admithhq」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。
-
-原文链接：https://blog.csdn.net/qq361294382/article/details/50749932
-
- 
-
- 
-
-# 6.24~28.使用libjpeg解码显示jpg图片
-
-## 6.24~28.1.如何使用新的库
-
-​    (1)网络上找别人使用过后写的一些文档、博客等作为参考
-
-​    (2)看库源码自带的文档（说明文档和示例代码）
-
-## 6. 24~28.2 libjpeg说明文档和示例代码
-
-​    (1) 说明文档：REDEME 和libjpeg.doc
-
-​    (2) 示例代码：example.c
-
-## 6. 24~28.3 结合说明文档和示例代码实践
-
-## 6.27.4 完成example.c中代码到项目中的移植
-
-​    （1）测试代码，先试图读取jpg图片的头信息
-
- 
-
-## 6.28.5 动态库的部署
-
-​    (1) 第一种情况：放到/lib或者/user/lib下，这样不需要给系统指定库路径，就能自动找到。强调一下是开发板的根文件系统的路径。
-
-(2) 第二种情况：有时候对于一些不常用的库，我们不愿意将它放到lib或sur/lib目录下去，而是找个自定义的第三方目录，单独放置这些不常用的库，然后用环境变量告诉操作系统这个路径下加载这个库。将该自定义第三方目录导出到环境连梁LD_LIBRARY_PATH下即可。
-
-示例： EXPORT LD_LIBRARY_PATH=/（你的库的路径）:$LD_LIBARARY_PATH
-
- 
-
-# 6.29 解决显示不正确错误
-
-问题的分析及解决记录：
-
-(1)更具LCD上错误的显示状态，分析有可能是显示函数的宽高有误，在fb_draw添加了一个函数打印发没有出错。
-
-(2)怀疑解析出来的数据出错，打印数据发现都是0，返现数据真的是错的。初步怀疑解码出错，也有可以是拿出来的时候出错的。调试发现在
-
- jpeg_read_scanlines(&cinfo, buffer, 1);
-
-这里读出来就是0，那么这里就出错了。
-
-(3) 有这么几种肯能：
-
-​      1.lib库本身就有错 
-
-​    2 部署有问题
-
-​      3 写的代码由错误  （极有可能）
-
-​     发现就是代码有错，buffer 申请有问题；
-
-   (4) 无法解决，走投无路了怎么办？
-
-​       1 去网络找相关的文章看看别人是怎么解决的；
-
-​       2 去看libjpeg源码中查看；
-
- 
-
-# 6.32 解码显示png图片
-
-## 6.32.1 思路分析
-
-​    (1)png更像jpg而不像是bmp
-
-​    (2)png和jpg都是压缩格式的图片，都是二进制文件，不同之处是压缩和解压缩的伏安法不同。
-
-​    (3)通过libjpeg来编码jpg图片，那么同样有一个libpng用来编解码png图片。
-
-(4)工作思路和顺序：找到并一直部署libpng，然后查readme和其他文档示例代码等来使用libpng提供的API对png图片进行解码，并将解码出来的数据丢到framebuffer中去显示。 
-
-## 6.32.2 zlib库的移植
-
-1、源码下载,这里下载了最新版1.2.8,网址为:http//www.zlib.net
-
-2、解压并进入目录# tar -xvf zlib-128argz
-
-3、导出CC以确定配置时为 arm-linux,# export CC=arm-linux-gcc
-
-配置lib库,得到 Makefile, ./ configure -shared --prefix=/root/libgpeg/jpegdecode/
-
-4 make & make install
-
-指定库安装目录为/opt/ libdecode,交叉编译后得到的tib共享库文件放到了/opt/ /libdecode/ 中,头文件放到了/root/libgpeg           /jpegdecode/include中,man手册放到了/root/libgpeg/jpegdecode//share/man 下
-
-## 6.32.3libpng移植
-
-​    (1)libpng库依赖于zlib库。
-
-​    (2)下载libpng库；
-
-​    (3)解压、配置、修改Makefile, 编译，部署；
-
-​     1、ipng源码下载,目前最新的是166,下载地址为
-
-ftp: //ftp. simplesystems. org/pub/libpng/png/src/libpng16/
-
-
-
-2、解压并进入目录,# tar-xvf libpng-16.6 tar. gz
-
-3、配置
-
-export LDFLAGS="-L/root/libgpeg/jpegdecode/lib"
-
-export CFLAGS="-I/root/libgpeg/jpegdecode/include"
-
-export CPPFLAGS="-I/root/libgpeg/jpegdecode/include"
-
-./configure --host=arm-linux --enable-shared --enable-static --prefix=/root/libgpeg/jpegdecode/
-
-4.make & make install
-
-如果在进行配置前并未按照2中所述安装zib,则配置运行了一部分后,会报错:
-
-configure: error: Zlib not installed
-
- 
-
-## 6.33.4 解码显示png图片
-
-###     6.33.1 参考源码包自带资料
-
-(1)REEDME
-
-(2) libpng-manual.txt
-
-(3) example.c和 pngtest.c
-
-# 6.37 图片文件的管理和检索
-
-## 6.37.1 图片文件的管理
-
-(1)在物理磁盘存储层次上：用一个文件夹来管理；在程序中，用数据结构来管理
-
-(2)用数组来管理
-
-(3)用链表管理
-
-## 6.37.2 图片信息的自动检索
-
-(1)读取文件类型
-
-(2)普通文件和文件夹的分类处理
-
-(3)普通文件区分，将其中的图片按格式存储到图片管理数组/链表中
-
- 
-
-# 6.40 添加触摸翻页功能
-
-## 6.40.1 读取触摸坐标数据
-
-## 6.40.2 使用触摸坐标判断并判断执行翻页操作
-
- 
-
-# 6.41 回顾与总结
-
-## 6.41.2 项目总结
-
-(1)项目描述
-
-​    1.软件平台是什么
-
-\2. 项目主要完成了什么功能
-
-​       基于linuxAPI直接操作ramebuff完成了 png jpg pwn
-
-​       图片的管理和检索
-
-​       使用触摸屏用来翻页
-
-​    3.项目过程当中完成了什么问题？
-
-​       Libgpeg 解码不对， 
-
-​       -I -l -L 的编译链接
-
-​       相关库文件的部署
-
-​       Opendir 的局限性
-
-(2)重点和难点
-
-   第三方库的移植和部署，库的使用，如何对图片文件的检索
-
-## 6.41.2 项目总结
-
-(1)划屏翻页  图片放大与缩小  动画  开机动画 背景音乐；
+[LUXSAHRE WORK](https://to-do.microsoft.com/sharing?InvitationToken=i00F8M9RxBE9cJ1FPln0PAGijx0KORPyEzJfojxpOSGRKhC68e4VCCp9t1PeG1Unw)
