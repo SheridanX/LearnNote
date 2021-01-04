@@ -56,11 +56,17 @@
 
    计算机就是用来计算的，所有的计算机程序其实都是在做计算。计算就是在计算数据。所以计算机程序中很重要的部分就是数据。
 
+<<<<<<< Updated upstream
 ​    **计算机程序 = 代码 + 数据**      
 
  计算机程序运行完得到一个结果，就是说
 
-​    **代码 + 数据 (经过运行后) = 结果**
+    **代码 + 数据 (经过运行后) = 结果**
+=======
+​    **计算机程序** = **代码** + **数据**       计算机程序运行完得到一个结果，就是说
+
+​    **代码** + **数据** (经过运行后) = **结果**
+>>>>>>> Stashed changes
 
 ​    从宏观上来理解，代码就是动作，就是加工数据的动作；数据就是数字，就是被代码所加工的东西。
 
@@ -73,20 +79,33 @@
 ```c
 int add(int a, int b)
   {
+<<<<<<< Updated upstream
      return a + b;
+=======
+    return a + b;
+>>>>>>> Stashed changes
   }      // 这个函数的执行就是为了得到结果
   void add(int a, int b)
   {
     int c;
+<<<<<<< Updated upstream
     c = a + b;
+=======
+     c = a + b;
+>>>>>>> Stashed changes
     printf("c = %d.\n", c);
   }      // 这个函数的执行重在过程（重在过程中的printf），返回值不需要
   int add(int a, int b)
   {
     int c;
     c = a + b;
+<<<<<<< Updated upstream
      printf("c = %d.\n", c);
      return c;
+=======
+    printf("c = %d.\n", c);
+    return c;
+>>>>>>> Stashed changes
   }      // 这个函数又重结果又重过程
 ```
 
@@ -250,7 +269,11 @@ int add(int a, int b)
 
 ### 4.1.5.1、C语言对内存地址的封装（用变量名来访问内存、数据类型的含义、函数名的含义）
 
-​    譬如在C语言中 int a; a = 5; a += 4;    // a == 9;
+​    譬如在C语言中
+
+```c
+ int a; a = 5; a += 4;    // a == 9;
+```
 
 结合内存来解析C语言语句的本质：
 
@@ -2869,8 +2892,6 @@ typedef struct mystruct111
 ```c
 #define offsetof(TYPE, MEMBER) ((int) &((TYPE *)0)->MEMBER)
 ```
-
-​	
 
 (2)offsetof宏的原理：我们虚拟一个type类型结构体变量，然后用type.member的方式来访问那个member元素，继而得到member相对于整个变量首地址的偏移量。
 
