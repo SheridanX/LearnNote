@@ -3017,21 +3017,14 @@ int main()
 /** 
 
  \* container_of - cast a member of a structure out to the containing structure 
-
  \* @ptr:    the pointer to the member. 
-
  \* @type:    the type of the container struct this is embedded in. 
-
  \* @member:   the name of the member within the struct. 
-
  \* @ptr   ：  指向成员的指针。
-
  \* @type  ：  需要返回的结构体实例类型。
-
  \* @member ：  成员在结构实例内部的名称，如果为数组，需要指定下标。
 
  */ 
-
 
 #define container_of(ptr, type, member) ({            \
    const typeof( ((type *)0)->member ) *__mptr = (ptr);   \
