@@ -2402,6 +2402,9 @@ int main(void)
     
     return 0;
 }
+	//GCC编译器环境添加typeid打印全部信息而不是首字母
+	//#include <cxxabi.h> //使用abi
+	//cout<<abi::__cxa_demangle(typeid(int).name(),0,0,0 )<<endl;
 ```
 
 
