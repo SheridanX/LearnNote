@@ -2577,6 +2577,7 @@ strcmp(const_cast<char *>(pb), const_cast<char *>(pa));
 
 ​	(4)auto可以一次定义多个同类型的变量，但是不能一次定义多个类型不同的变量，这是auto的类型推导机制决定的;
 
+
 ```c++
 #include <iostream>
 #include <typeinfo>
@@ -2590,9 +2591,40 @@ int main(void)
     return 0;
 }
 ```
+​	(5)auto 一般会忽略顶层的const, 同时底层的const会保留下来， 比如初始值是指向一个常量指针时;
+	
+```c++	
+#include <iostream>
+#include <typeinfo>
+#include <cxxabi.h>
+using namespace std;
 
+int main()
+{
 
-
+        const int i = 42;
+        cout << "i = " << abi::__cxa_demangle(typeid(i).name(), 0, 0, 0) <<endl;
+        auto j = i;
+        cout << "j = " << abi::__cxa_demangle(typeid(j).name(), 0, 0, 0)  << endl;
+        const auto &k = i;
+        cout << "&k = " << abi::__cxa_demangle(typeid(k).name(), 0, 0, 0)  << endl;
+        auto *p = &i;
+        cout << "*p = " << abi::__cxa_demangle(typeid(p).name(), 0, 0, 0)  << endl;
+        const auto j2 = i, &k2 = i;
+        cout << "j2 =" << abi::__cxa_demangle(typeid(j2).name(), 0, 0, 0)  << endl;
+        cout << "k2 =" << abi::__cxa_demangle(typeid(k2).name(), 0, 0, 0)  << endl;
+//输出：
+/*
+start test
+i = int  ,去掉了定成的const
+j = int
+&k = int
+*p = int const* ,保留了底层的const
+j2 =int
+k2 =int	
+*/
+	
+```
 ### 1.4.15.2、decltype关键字
 
 ​	(1)C++11新增关键字;
@@ -2617,8 +2649,30 @@ int main(void)
 
 
 ```
+​	(4)decltype 的结果可以是引用类型;
+```c++
+	int i = 42, *p = &i, &r = i;
+	decltype(r) x = i;    //x为引用类型
+	decltype(r + 0) y;    //decltype(r)时引用类型， 此时r作为表达式，将指向具体的值， 所以为引用指向的类型；
+	decltype(*p);         //错误 *P指向引用(解引用了)，所以是个引用类型，所以定义变量时需要初始化；
+	//值得注意的是：
+	decltype((i))       //如果将变量加上括号， 那么将变成引用类型；
+	//简单记忆：双重括号一定是引用， 单括号本身是引用才是引用类型；
+```
+​	(5) 问题:c++中,decltype(a=b)和if(a=b),前者a不会被b赋值,后者a会被b赋值,为什么?
+```c++
+	int a = 3, b = 4,d=0;
+	decltype(a = b)c = a;
+	cout << a <<c; //结果是3 3
+	a = b;
+	cout << a << c;//结果是4 4
+	if (a = d);
+	cout << a << d;//结果是0 0
 
 
+```
+​	decltype的作用是要求编译器推导表达式类型，但是并不会对表达式求值。在样例代码中，C++表达式a=b的返回值是int&型，
+​	也就是产生一个int引用c，c=a就是说引用c绑定到了a上。这个过程其实没有任何求值。所以 c 是int& 类型的;
 
 ### 1.4.15.3、auto和decltype的对比
 
