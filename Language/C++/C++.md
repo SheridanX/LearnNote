@@ -889,7 +889,7 @@ namespace NS1
     }
   
     namespace NS2{
-        /*NS1 和NS2中的函数可以重名,优先执行NS2的func2*/
+        /*NS1 和NS2中的函数可以重名,优先执行NS2的func2, 近水楼台先得月*/
         void func2(void)
         {
             cout << "NS1::NS2::func2." << endl;
@@ -910,13 +910,14 @@ namespace NS1
 
 int main()
 {
-    NS1::NS2::func1();  /*输出结果: NS1::func2.  NS1::NS2::func1.*/
+    NS1::NS2::func1();  /*输出结果: NS1::NS2::func2.  NS1::NS2::func1.*/
     NS1::func2();		/*输出结果: NS1::func2.*/
     NS1::NS2::func2(); /*输出结果: NS1::NS2::func2. 说明优先执行NS2的func2*/
     NS1::func3();  	   /*输出结果: NS1::NS2::func2.  NS1::NS2::func1*/
 
     return 0;
 }
+
 ```
 
 
@@ -1066,7 +1067,7 @@ int main(void)
 
 (1)输入的时候不要使用引用符&				scanf("%d", &val);
 
-(2)cin的输入会以空格为中断
+(2)cin的输入会以空格为分隔
 
 
 
@@ -1263,10 +1264,10 @@ add_ii
 ​	(3)对比加不加extern "C"这2种情况下得到的.i文件的符号差异;
 
 ```c++
-/*file: 1.c*/
+/*file: 1.h*/
 int add(int a, int b);
 
-/*file: 1.h*/
+/*file: 1.c*/
 #include "1.h"
 int add(int a, int b)
 {
@@ -1274,10 +1275,10 @@ int add(int a, int b)
 }
 
 /*********************************************************/
-/*file: 1.cpp*/
+/*file: 1.hpp*/
 int add(int a, int b);
 
-/*file: 1.hpp*/
+/*file: 1.cpp*/
 #include "1.hpp"
 int add(int a, int b)
 {
@@ -1339,14 +1340,14 @@ Disassembly of section .text:
 ​	实验第3步：证明了在C++的头文件中，只要把C++的函数的声明放在extern "C"{}的大括号范围之内，就可以让g++在编译这个函数时生成中间符号名时按照C的规则而不是按照C++的规则，所以这样的函数就可以和C的库进行共同链接。
 
 ```c++
-/*file: 2.cpp*/
+/*file: 2.hpp*/
 //extern "c"表示,在这声明以内的函数编译的时候生成的符号名是以c文件的方式来命令的.
 extern "c"
 {
     int add(int a, int b);
 }
 
-/*file: 2.hpp*/
+/*file: 2.cpp*/
 #include "2.hpp"
 int add(int a, int b)
 {
@@ -1456,25 +1457,24 @@ int main()
     return 0;
 }
 
+//clib.a因为使用gcc编译的,所以编译后的函数名是add, 而mian.cpp编译后的add是_Z3addii, 所以找不到库中的add名的函数,
+//这时候 extern "C" 后以C的方式编译就可以连接到了。
+
 ```
 
-​	(3)同一个项目中C++是库，C是源码，C调用C++;
+(3)同一个项目中C++是库，C是源码，C调用C++;
 
+**第一种情况**
 
+​		(1)可能性1：全部使用g++编译。不推荐;
 
-### 1.3.14.2、第一种情况
+​		(2)可能性2：在C的头文件中加extern "C"声明;
 
-(1)可能性1：全部使用g++编译。不推荐;
+**第二种情况**
 
-(2)可能性2：在C的头文件中加extern "C"声明;
+​	(1)这种是最典型的常见情况;
 
-
-
-### 1.3.14.3、第二种情况
-
-(1)这种是最典型的常见情况;
-
-(2)通用解决方案：在C的头文件中加extern "C"声明，在C++中直接包含头文件调用即可;
+​	(2)通用解决方案：在C的头文件中加extern "C"声明，在C++中直接包含头文件调用即可;
 
 
 
@@ -1488,7 +1488,7 @@ int main()
 
 ​	(3)解决方案：添加一层封装层;
 
-
+ **一般情况下不会有这样奇特的要求，直接用C++编译不就完了？**
 
 ### 1.3.15.2、代码实战：C调用C++库中的函数
 
@@ -1517,7 +1517,7 @@ int add(int a, int b)
 #define __LIBCPP_HPP__
 
 int add(int a, int b);
-
+#endif /*__LIBCPP_HPP__*/
 /**********************************/
 /*libcppw.cpp*/
 #include "libcpp.hpp"
@@ -1738,7 +1738,7 @@ int addw(int a, int b);
 ```c++
 if
 else
-for
+for 
 do
 while
 break
@@ -1844,12 +1844,12 @@ int main()
 {
     int a = 1, b = 2;
     int c;
-    int &b1 = c; 		//定义了一个引用符号叫b1, 关联到x; 定义的时候必须初始化。
+    int &b1 = c; 		//定义了一个引用符号叫b1, 关联到c; 定义的时候必须初始化。
     b1 = 44;
     cout << "b1 =" << c << endl;
-    
+     
     swap2(&a, &b);      //& 符号在这里是取地址符
-    swap3(a, b);
+    swap3( , b);
     cout << "a = " << a << endl;
     cout << "b = " << b << endl;
 
@@ -2864,7 +2864,7 @@ void A::func1(void)
 
 ​	(2)一个成员方法不希望被子类override，可以声明时用final修饰;
 
-​	(3)final是C++11引入的;
+​	(3)final是C++11引入的; 
 
 ​	(4)很多其他面向对象语言如java中也有final关键字，也是这个作用;
 
@@ -2967,8 +2967,8 @@ class A
 {
     int a;
     int j;
-    int func8(int & a); //func8 内部可能会修改a的值
-    int func9(const int & a); //func8 内部不会修改a的值
+    int func8(int &a); //func8 内部可能会修改a的值
+    int func9(const int &a); //func8 内部不会修改a的值
     int func10(int a) const ;//func10 内部不会修改class A 成员变量的值, 比如a, j
 };
 
@@ -3446,7 +3446,7 @@ int main(void)
 
 ​	(1)malloc只能申请内存不能带初始化，而new可以带初始化;
 
-​	(2)new会执行类的构造函数而malloc不会;
+​	(2)new会执**行类的构造函数**而malloc不会;
 
 ​	(3)malloc失败返回NULL，而new失败引发bad_alloc异常;
 
@@ -3456,7 +3456,7 @@ int main(void)
 
 ### 1.5.3.3、总结
 
-​	(1)linux平台中new内部是通过malloc实现的，new比malloc多一个调用构造函数;
+​	(1)linux平台中new内部是通过malloc实现的，new比malloc多一个**调用构造函数**;
 
 ​	(2)malloc只是返回一块荒地给你，而new会给你修好路盖好房子规划好田地等;
 
@@ -3607,7 +3607,7 @@ int main(void)
 
 ### 2.1.1.2、面向对象并不是一个单一概念
 
-​	(1)面向对象三大特征：封装、继承、多态；
+​	(1)面向对象三大特征：**封装、继承、多态**；
 
 ​	(2)面向对象还会延伸出很多细节，而不同编程语言会选择不同的应对方法；
 
@@ -4381,7 +4381,7 @@ using namespace std;
 using namespace MAN;
 
 int main()
-{
+{ 
     person *pPerson = new person("linux");
 
     //pPerson->name = "zhangsan";
@@ -4420,7 +4420,7 @@ int main()
 
 ```c++
 person *pPerson = new person(s1);
-delte pPerson;		//显示析构
+delete pPerson;		//显示析构
 ```
 
 ​		2.分配在栈上的对象，当栈释放时自动析构;
@@ -4800,13 +4800,13 @@ Shridan
 
 ### 2.2.8.2、为什么可以
 
-​	(1)变量的直接初始化，是变量在被分配内存之后直接用初始化值去填充赋值完成初始化;
+​	(1)**变量的直接初始化** : 是变量在被分配内存之后直接用初始化值去填充赋值完成初始化;
 
-​	(2)变量用另一个变量来初始化，是给变量分配了内存后执行了一个内存复制操作来完成的初始化;
+​	(2)**变量用另一个变量来初始化**: 是给变量分配了内存后执行了一个内存复制操作来完成的初始化;
 
-​	(3)对象的直接初始化，是对象在分配内存之后调用了相应constructor来完成的初始化;
+​	(3)**对象的直接初始化**: 是对象在分配内存之后调用了相应constructor来完成的初始化;
 
-​	(4)对象的用另一个对象来初始化，是**对象在分配之后调用了相应的copy constructor来完成初始化**;
+​	(4)**对象的用另一个对象来初始化**: 是**对象在分配之后调用了相应的copy constructor来完成初始化**;
 
 
 
@@ -4887,7 +4887,7 @@ Shridan
 
 ### 2.2.10.1、浅拷贝的缺陷
 
-​	(1)上节讲的只有普通成员变量初始化的拷贝构造函数，就是浅拷贝;
+​	(1)上节讲的只有普通成员变量初始化的拷贝构造函数，就是**浅拷贝**;
 
 ​	(2)如果不显式提供，C++会自动提供一个全部普通成员被浅拷贝的默认copy constructor;
 
@@ -4910,7 +4910,7 @@ namespace  MAN
         person(){};       //默认构造函数
         person(string myname, int myage, bool mymale);       
         ~person();      //默认析构函数
-        person(const person& pn); 
+        person(const person& pn);  //拷贝函数
 
  
         //方法
@@ -4929,13 +4929,14 @@ void MAN::person::print(void)
     cout << this->name << endl;
     cout << this->age  << endl;
     cout << this->male << endl;
-    cout << *this->pInt << endl;  // 如果使用到了拷贝函数切是浅拷贝不重新分配动态内存的会出错, 再次调用的							   //时候会导致pint 没有被分配动态内存而出现段错误;
+    cout << *this->pInt << endl;  // 如果使用到了拷贝函数且是浅拷贝不重新分配动态内存的会出错, 再次调用的							  
+    							//时候会导致pint 没有被分配动态内存而出现段错误;
     						   // 假如在拷贝构造函数中直接将另一个变量pInt的地址赋值给现在的pInt,
     						   // 那么在析构函数 delete  this->pInt 会出错, 因为 析构函数会被执行两次
     						   // 而我们只是new了一个内存空间;
 }
 
-
+拷贝函数
 MAN::person::person(const person& pn)
 {
     cout<< "copy constructor" << endl;
@@ -5572,9 +5573,62 @@ class 派生类名:访问控制 基类名1,访问控制 基类名2,访问控制 
 
 ​	(1)public继承（公有继承）：父类成员在子类中保持原有访问级别;
 
+```c++
+class person{
+    public: 
+    	int sex;
+    private:
+    	int age;
+    protected:
+    	int money;
+}
+
+class man: public person{	//public继承
+    
+}
+//那么 sex 还是public 权限; 
+//age 还是private权限, 确切来说比private的权限还好小:
+        //age不能直接被访问,只能通过子类从父类继承而来的父类里实现了的成员函数(public权限)来间接访问。
+//money 还是protected 权限:
+		//该成员在子类中是子类内部成员可以访问，子类对象外部不可以访问，子类再次去继承产生孙类中他还是protected的。
+
+```
+
 ​	(2)private继承（私有继承）：父类成员在子类中变为private成员;
 
+```c++
+class person{
+    public: 
+    	int sex;
+    private:
+    	int age;
+    protected:
+    	int money;
+}
+
+class man: private person{	//private继承
+    
+}
+//那么父类中的public成员和protected成员就变成了子类中的private成员，父类中的private成员成了子类中比private还可怜的那种成员。
+```
+
 ​	(3)protected继承（保护继承）：父类中public成员会变成protected,父类中protected成员仍然为protected,父类中private成员仍然为private;  
+
+```c++
+class person{
+    public: 
+    	int sex;
+    private:
+    	int age;
+    protected:
+    	int money;
+}
+
+class man: protected person{	//protect继承
+    
+}
+//那么父类中的public成员和protected成员就变成了子类中的protected成员，父类中的private成员成了子类中比private还可怜的那种成员;
+```
 
 ​	(4)如果继承时不写则默认情况下派生类为class时是private继承，而派生类为struct时是public继承;
 
@@ -5705,7 +5759,7 @@ class 派生类名:访问控制 基类名1,访问控制 基类名2,访问控制 
 
 ### 2.3.9.1、为什么派生类的构造（析构）必须调用基类的某个构造（析构）
 
-​	(1)牢记构造函数的2大作用：初始化成员，分配动态内存;
+​	(1)牢记构造函数的2大作用：**初始化成员，分配动态内存**;
 
 ​	(2)派生类和基类各自有各自的构造函数和析构函数，所以是各自管理各自的成员初始化，各自分配和释放各自所需的动态内存;
 
@@ -5717,7 +5771,7 @@ class 派生类名:访问控制 基类名1,访问控制 基类名2,访问控制 
 
 ### 2.3.9.2、其他几个细节
 
-​	(1)派生类构造函数可以直接全部写在派生类声明的class中，也可以只在clas中声明时只写派生类构造函数名和自己的参数列表，不写继承基类的构造函数名和参数列表，而在派生类的cpp文件中再写满整个继承列表，这就是语法要求;
+​	(1)派生类构造函数可以直接全部写在派生类声明的class中，也可以只在class中声明时只写派生类构造函数名和自己的参数列表，不写继承基类的构造函数名和参数列表，而在派生类的cpp文件中再写满整个继承列表，这就是语法要求;
 
 ​	(2)派生类析构函数则不用显式调用，直接写即可直接调用基类析构函数。猜测是因为参数列表问题;
 
@@ -5729,6 +5783,7 @@ class 派生类名:访问控制 基类名1,访问控制 基类名2,访问控制 
 
 ### 2.3.9.3、派生类做的三件事
 
+<<<<<<< Updated upstream
 (1)吸收基类成员：除过构造和析构函数以外的所有成员全部吸收进入派生类中
 (2)更改继承的成员。1是更改访问控制权限(根据继承类型还有成员在基类中的访问类型决定) 2是同名覆盖(派生类中同名成员覆盖掉基类中)
 (3)添加派生类独有的成员。
@@ -5896,3 +5951,1861 @@ class 派生类名:访问控制 基类名1,访问控制 基类名2,访问控制 
 (2)面向对象三大特征中：封装是基础、继承是关键、多态是延伸。
 (3)本部分内容很重要，属于C++知识体系中关键基础零件，对于以后理解复杂代码和架构意义重大，必须彻底理解和熟悉。
 (4)要求要见过、认识、会写、理解原理、熟练运用。
+=======
+​	(1)吸收基类成员：除过构造和析构函数以外的所有成员全部吸收进入派生类中；
+
+​	(2)更改继承的成员。1是更改访问控制权限(根据继承类型还有成员在基类中的访问类型决定) 2是同名覆盖(派生类中同名成员覆盖掉基类中)；
+
+​	(3)添加派生类独有的成员；
+
+
+
+## 2.3.10.派生类和基类的同名成员问题
+
+### 2.3.10.1、派生类中再实现一个基类中的方法会怎样
+
+​	(1)代码实验：派生类和基类中各自实现一个内容不同但函数原型完全相同的方法，会怎么样;
+
+```C++
+class person
+{
+public:
+    string name;
+    void speak(void);
+};
+void person::speak(void)
+{
+    cout << "person speak" << endl;
+}
+
+class man:public person
+{
+public:
+    void speak(void);
+};
+void man::speak(void)
+{
+    cout << "man speak" << endl;
+}
+
+int main()
+{
+    man p1;
+    p1.speak();
+    return 0;
+}
+
+//输出：man speak
+
+```
+
+​	(2)结论：**基类对象调用的是基类的方法，派生类对象调用执行的是派生类中重新提供的方法;**
+
+​	(3)这种派生类中同名同参方法替代掉基类方法的现象，叫做：**重定义（redefining）**，也有人叫做**隐藏;**
+
+​	(4)隐藏特性生效时派生类中实际同时存在2份同名同参（但在不同类域名中）的方法，同时都存在，只是一个隐藏了另一个;
+
+
+
+### 2.3.10.2、派生类中如何访问被隐藏的基类方法
+
+​	(1)派生类对象直接调用时，隐藏规则生效，直接调用的肯定是派生类中重新实现的那一个;
+
+​	(2)将派生类强制类型转换成基类的类型，再去调用则这时编译器认为是基类在调用，则调用的是基类那一个，隐藏规则被绕过了;
+
+​	(3)在派生类内部，使用父类::方法()的方式，可以强制绕过隐藏规则，调用父类实现的那一个;
+
+```C++
+class person
+{
+public:
+    string name;
+    void speak(void);
+};
+void person::speak(void)
+{
+    cout << "person speak" << endl;
+}
+
+class man:public person
+{
+public:
+    void speak(void);
+    void shout(void);
+};
+
+void man::speak(void)
+{
+    cout << "man speak" << endl;
+}
+
+void shout(void)
+{
+    speak();  //这句话完整版this->speak(); 那么输出结果是 man speak;
+    person::speak(); //调用基类的speak(); 那么输出结果是person speak;
+}
+
+int main()
+{
+    man p1;
+    p1.shout();
+    return 0;
+}
+/*输出结果:
+	g++ man.cpp person.cpp main.cpp -o person
+	jay@ubuntu:~/learn/cpp/2.3/2.3.10$ ./person
+	man speak
+	person speak
+*/	
+```
+
+
+
+### 2.3.10.3、注意和总结
+
+​	(1)其实不止成员方法，成员变量也遵循隐藏规则;
+
+​	(2)隐藏规则本质上是大小作用域内同名变量的认领规则问题，实际上2个同名成员都存在当前派生类的对象内存中的;
+
+​	(3)**隐藏（重定义，redefining），与重载（overload）、重写（override，又叫覆盖**），这三个概念一定要区分清楚;
+
+​	**1）重载（overload）：**
+
+指函数名相同，但是它的参数表列个数或顺序，类型不同。但是不能靠返回类型来判断。
+
+​     a 相同的范围（在同一个类中）
+
+​     b 函数名字相同、 参数不同
+
+​     c virtual关键字可有可无
+
+​     d 返回值可以不同；
+
+**2） 重写（覆盖override)是指派生类函数覆盖基类函数，特征是：**
+
+​     a 不同的范围，分别位于基类和派生类中
+
+​     b 函数的名字相同、 参数相同
+
+​     c 基类函数必须有virtual关键字，不能有static
+
+​     d 返回值相同（或者协变），否则报错；
+
+​     e 重写函数的访问修饰符可以不同。尽管virtual是private的，派生类中重写改写为public, protected也是可以的
+
+**3） 重定义(隐藏redefine)是指派生类的函数屏蔽了与其同名的基类函数，特征是：**
+
+​      a 不在同一个作用域（分别位于派生类与基类）
+
+​      b 函数名字相同
+
+​      c 返回值可以不同
+
+​      d 规则：
+
+  如果派生类的函数和基类的函数同名，但是参数不同，此时，不管有无virtual，基类的函数被隐藏；
+
+ 如果派生类的函数与基类的函数同名，并且参数也相同，但是基类函数没有vitual关键字，此时，基类的函数被隐藏。
+
+   **ps: 多态性可以分为静态多态性（方法的重载，一个类）和动态多态性（方法的覆盖，有继承关系的类之间的行为）。进而多态性可以由重载和覆盖来实现。**
+
+**例子：**
+
+```c++
+
+class Base {
+private:
+ <span style="color:#ff0000;">virtual</span> void display() { cout<<"Base display()"<<endl; }
+ void say(){ cout<<"Base say()"<<endl; }
+public:
+ void exec(){ display(); say(); }
+ void f1(string a) { cout<<"Base f1(string)"<<endl; }
+ void f1(int a) { cout<<"Base f1(int)"<<endl; } //<span style="color:#ff0000;">overload，两个f1函数在Base类的内部被重载</span>
+};
+ 
+class DeriveA:public Base{
+public:
+ void display() { cout<<"DeriveA display()"<<endl; } //<span style="color:#ff0000;">override，基类中display为虚函数，故此处为重写</span>
+ void f1(int a,int b) { cout<<"DeriveA f1(int,int)"<<endl; } //<span style="color:#ff0000;">redefine，f1函数在Base类中不为虚函数，故此处为重定义</span>
+ void say() { cout<<"DeriveA say()"<<endl; } //<span style="color:#ff0000;">redefine，同上</span>
+};
+ 
+ 
+class DeriveB:public Base
+{
+public:
+ void f1(int a) { cout<<"DeriveB f1(int)"<<endl; } //<span style="color:#ff6666;">redefine，重定义</span>
+};
+ 
+ 
+int main(){
+ DeriveA a;
+ Base *b=&a;
+ b->exec(); //display():version of DeriveA call(polymorphism) //say():version of Base called(allways )
+ 
+ <span style="color:#ff0000;">b里边的函数display被A类覆盖，但是say还是自己的</span>。
+ 
+ 
+ a.exec(); //same result as last statement   
+ a.say();
+ DeriveB c;
+ c.f1(1); //version of DeriveB called
+}
+
+//执行结果：
+/*
+DeriveA display()
+Base display()
+DeriveA display()
+Base display()
+DeriveA display()
+DeriveB f1(int)
+*/
+
+
+```
+
+————————————————
+版权声明：本文为CSDN博主「happywq2009」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。
+原文链接：https://blog.csdn.net/happywq2009/article/details/45014511
+
+## 2.3.11.子类和父类的类型兼容规则
+
+### 2.3.11.1、何为类型兼容规则
+
+​	(1)C和C++都是强类型语言，任何变量和对象，指针，引用等都有类型，编译器根据类型来确定很多事;
+
+​	(2)派生类是基类的超集，基类有的派生类都有(除构造和析构)，派生类有的基类不一定有，所以这2个类型间有关联;
+
+​	(3)派生类对象可以cast后当作基类对象，而基类对象不能放大成派生类对象，否则就可能会出错;
+
+​	(4)考虑到指针和引用与对象指向后，派生类和基类对象的访问规则就是所谓类型兼容规则;
+
+
+
+### 2.3.11.2、类型兼容规则的常见情况及演示
+
+子类对象可以当作父类对象使用，也就是说子类对象可以无条件隐式类型转换为一个父类对象;
+
+  (1)父类指针可以直接指向子类对象;
+
+```c++
+class person
+{
+public:
+    string name;
+    void speak(void);
+};
+void person::speak(void)
+{
+    cout << "person speak" << endl;
+}
+
+class man:public person
+{
+public:
+    void speak(void);
+};
+
+void man::speak(void)
+{
+    cout << "man speak" << endl;
+}
+
+int main()
+{
+    person pn1;
+    man mn1;
+
+    person *p = &mn1; // person* 和man * 是类型兼容的
+    p->speak(); //编译器在解析这句话时, 他认为p的类型就是person*, 
+                //所以指向一定是一个person对象
+    return 0;
+}
+
+//输出
+//jay@ubuntu:~/learn/cpp/2.3/2.3.11$ ./person
+//person speak
+
+```
+
+
+
+(2)父类引用可以直接引用子类对象;
+
+```c++
+int main()
+{
+    man mn1;
+    person &rp = mn1;
+    rp.speak();
+    return 0;
+}
+
+//输出：
+//jay@ubuntu:~/learn/cpp/2.3/2.3.11$ ./person
+//person speak
+```
+
+ 
+
+(3)子类对象可以直接初始化或直接赋值给父类对象;
+
+```c++
+int main()
+{
+    man mn1;
+    person pn1;
+    mn1.age = 100; 
+    pn1 = mn1;  //直接赋值
+    cout << mn1.age << endl;
+    return 0;
+}
+//g++ man.cpp person.cpp main.cpp -o person
+//jay@ubuntu:~/learn/cpp/2.3/2.3.11$ ./person
+//100
+
+
+int main()
+{
+    man mn1;
+    
+    mn1.age = 100; 
+   person pn1(mn1);  //直接赋值
+    cout << mn1.age << endl;
+    return 0;
+}
+//g++ man.cpp person.cpp main.cpp -o person
+//jay@ubuntu:~/learn/cpp/2.3/2.3.11$ ./person
+//100
+```
+
+但是父类对象不可以当作子类对象使用， 因为父类只是子类的一部分。
+
+![he_re](./image/he_re.jpg)
+
+### 2.3.11.3、总结
+
+​	(1)派生类对象可以作为基类的对象使用，但是只能使用从基类继承的成员;
+
+​	(2)类型兼容规则是多态性的重要基础之一;
+
+​	(3)总结：子类就是特殊的父类 (base *p = &child;);
+
+
+
+## 2.3.12.继承的优势与不良继承
+
+### 2.3.12.1、为什么会有继承
+
+​	(1)本质上为了代码复用;
+
+​	(2)继承方式很适合用来构建复杂框架体系;
+
+​    (3)用继承来设计类进而构建各层级对象，符合现实中的需要。举例：描述人的种群;
+
+   
+
+### 2.3.12.2、何为不良继承
+
+​	(1)鸵鸟不是鸟问题。因为鸵鸟从鸟继承了fly方法但是鸵鸟不会飞;
+
+​	(2)圆不是椭圆问题。因为圆从椭圆继承了长短轴属性然而圆没有长短轴属性;
+
+​	(3)不良继承是天然的，是现实世界和编程的继承特性之间的不完美契合;
+
+
+
+### 2.3.12.3、如何解决不良继承
+
+​	(1)修改继承关系设计。既然圆继承椭圆是一种不良类设计就应该杜绝。去掉继承关系，两个类可以继承自同一个共同的父类，不过该类不能执行不对称的setSize计算，然后在圆和椭圆这2个子类中分别再设计以区分;
+
+​	(2)所有不良继承都可以归结为“圆不是椭圆”这一著名具有代表性的问题上。在不良继承中，基类总会有一些额外能力，而派生类却无法满足它。这些额外的能力通常表现为一个或多个成员函数提供的功能。要解决这一问题，要么使基类弱化，要么消除继承关系，需要根据具体情形来选择。
+
+
+
+## 2.3.13.组合介绍以及与继承对比
+
+### 2.3.13.1、什么是组合
+
+​	(1)composition，组合，就是在一个class内使用其他多个class的对象作为成员;
+
+​	(2)用class tree做案例讲解；
+
+```C++
+class root
+{
+    
+}
+class trunk
+{
+    
+}
+
+class branch
+{
+    
+}
+
+class leaf
+{
+    
+}
+
+class tree
+{
+    root  root_param;
+    trunk trunk_param;
+    branch branch_param;
+    leaf leaf_param;
+}
+
+//用继承的方式来实现：
+class tree: public class root, public class trunk, public class branch, public class leaf{
+    
+}
+```
+
+​	(3)组合也是一种代码复用方法，本质也是结构体包含；
+
+
+
+### 2.3.13.2、继承与组合的特点对比
+
+​	(1)继承是a kind of（is a）关系，具有传递性(它是单向），不具有对称性；
+
+​	(2)组合是a part of（has a）的关系；
+
+​	(3)继承是**白盒复用**。因为类继承允许我们根据自己的实现来覆盖重写父类的实现细节，父类的实现对于子类是可见的；
+
+​	(4)继承的白盒复用特点，一定程度上破坏了类的封装特性，因为这会将父类的实现细节暴露给子类；
+
+​	(5)组合属于**黑盒复用**。被包含对象的内部细节对外是不可见的，所以它的封装性相对较好，实现上相互依赖比较小；
+
+​	(6)组合中被包含类会随着包含类创建而创建，消亡而消亡。组合属于黑盒复用，并且可以通过获取其它具有相同类型的对象引用或指针，在运行期间动态的定义组合。而缺点就是致使系统中的对象过多；
+
+​	(7)OO设计原则是优先组合，而后继承；
+
+
+
+## 2.3.14_15.多继承及其二义性问题1_2
+
+### 2.3.14.1、多继承
+
+​	(1)多继承就是一个子类有多个父类；
+
+​	(2)多继承演示；
+
+​	(3)多继承和单继承的原理，效果并无明显区别；
+
+​	(4)多继承会导致二义性问题；
+
+```c++
+#include <iostream>
+
+using namespace std;
+class A
+{
+public:
+    void set_value(int a);      //设置a的值
+    void print(void);
+private:
+    int value;
+};
+
+class B
+{
+public:
+    void set_value(int a);      //设置a的值
+    void print(void);
+private:
+    int v;
+};
+
+class C :public A, public B
+{
+
+};
+    cout << this->value << endl;
+
+void A::set_value(int a)
+{
+    this->value = a;
+} 
+
+void A::print(void)
+{
+    cout << this->value << endl;
+}
+
+
+void B::set_value(int a)
+{
+    this->v = a;
+} 
+
+void B::print(void)
+{
+    cout << this->v << endl;
+}
+
+
+int main()
+{
+    C a;
+    a.set_value(10);   //这两句话又二义性, 因为C继承了A, 和B 但是编译器调用
+    a.Aprint();        //函数的时候不知道调用A中函数还是B中的函数, 
+                       //因为这两个函数A和B中名字都相同
+   
+
+    
+    return 0;
+}
+
+```
+
+
+
+### 2.3.14.2、多继承的二义性问题1
+
+​	(1)场景：C多继承自A和B，则C中调用A和B的同名成员时会有二义性；
+
+​	(2)原因：C从A和B各自继承了一个同名（不同namespace域）成员，所以用C的对象来调用时编译器无法确定我们想调用的是哪一个；
+
+​	(3)解决办法1：避免出现，让A和B的public成员命名不要重复冲突。但这个有时不可控；
+
+​	(4)解决办法2：编码时明确指定要调用哪一个，用c.A::func()明确指定调用的是class A的func而不是class B的；
+
+```c++
+	//解决方法1
+    a.A::set_value(10);
+    a.A::print();
+```
+
+​	(5)解决办法3：在C中重定义func，则调用时会调用C中的func，A和B中的都被隐藏了；
+
+```c++
+class C :public A, public B
+{
+public:
+     //方法3，重定义
+     void set_value(int a);      //设置a的值
+     void print(void);
+ private:
+    int value;
+};
+void A::set_value(int a)
+{
+    C::value = a;
+} 
+
+void A::print(void)
+{
+    cout << C::value << endl;
+}
+```
+
+​	(6)总结：能解决，但是都没有很好的解决；
+
+
+
+### 2.3.14.3、多继承的二义性问题2
+
+​	(1)场景：菱形继承问题。即A为祖类，B1:A, B2:A, C:B1,B2，此时用C的对象调用A中的某个方法时会有二义性；
+
+```c++
+class A
+{
+ public:
+     void set_value(int a);      //设置a的值
+     void print(void);
+ private:
+    int value;
+}
+class B1:public A
+{
+    
+}
+class B2:public A
+{
+    
+}
+class C:public B1, public B2
+{
+    
+}
+
+int main()
+{
+    C a;
+	a.B1::set();
+     a.B1::print();
+     a.B2::set();
+     a.B2::print();
+    
+    //有二义性
+     a.A::set();
+     a.A::print();
+    //为什么A有二义性？  B1，和B2 从A继承过来的函数完整表达
+    //A::set();  A::print();
+    //如果在外部直接执行这个，有相当于去执行B1和B2中的函数了，
+    //他们同名所以有二义性。
+    return 0;
+ }
+
+```
+
+​	(2)分析：c.func()有二义性，c.A::func()也有二义性，但是c.B1::func()和c.B2::func()却没有二义性；
+
+​	(3)解决办法：和问题1中的一样，但是问题2更隐蔽，也更难以避免；
+
+
+
+### 2.3.14.4、总结
+
+​	(1)二义性就是歧义，好的情况表现为编译错误，不好的情况表现为运行时错误，最惨的情况表现为运行时莫名其妙；
+
+​	(2)随着系统的变大和变复杂，难免出现二义性，这不是程序员用不用心的问题，是系统自身带来的；
+
+​	(3)解决二义性问题不能靠程序员个人的细心和调试能力，而要靠机制，也就是编程语言的更高级语法特性；
+
+​	(4)虚函数、虚继承、纯虚函数、抽象类、override（重写，覆盖）、多态等概念就是干这些事的；
+
+​	(5)感慨：欲戴王冠必承其重，要揽瓷器活就 得有金刚钻，C++学得越清楚就越能想象将来用C++去解决的都是些什么层次的问题；
+
+
+
+## 2.3.16.虚继承解决菱形继承的二义性问题
+
+### 2.3.16.1、虚继承怎么用
+
+​	(1)场景：菱形继承导致二义性问题，本质上是在孙子类C中有B1和B2中包含的2份A对象，所以有了二义性；
+
+​	(2)虚继承解决方案：让B1和B2虚继承A，C再正常多继承B1和B2即可；
+
+​	(3)虚继承就这么简单，就是为了解决菱形继承的二义性问题而生，和虚函数（为了实现多态特性）并没有直接关系；
+
+```c++
+class A
+{
+ public:
+     void set_value(int a);      //设置a的值
+     void print(void);
+ private:
+    int value;
+}
+class B1:virtual public A
+{
+    
+}
+class B2:virtual public A
+{
+    
+}
+class C:public B1, public B2
+{
+    
+}
+```
+
+  (4)虚继承和虚函数相互没有关系，两种用法的函数各不相同；
+
+### 2.3.16.2、虚继承的实现原理
+
+  (1)虚继承的原理是：虚基类表指针vbptr和虚基类表virtual table
+
+  (2)参考：https://blog.csdn.net/xiejingfa/article/details/48028491
+
+
+
+## 2.3.17.多态和虚函数1
+
+### 2.3.17.1、通过案例学多态
+
+​	(1)案例：父类Animal，2个子类Dog和Cat，实现speak方法；
+
+​	(2)用父类指针指向各对象，调用各方法看效果，记下来；
+
+​	(3)将父类speak方法声明为virtual，再用父类指针调用各方法看效果，记下来；
+
+​	(4)对比差异，理解什么叫多态；
+
+```c++
+//父类 animal
+class Animal {
+public:
+ virtual  void speak();   //虚函数
+};
+
+
+class Dog: public Animal {
+public:
+    void speak(void);
+};
+
+class Cat: public Animal {
+public:
+    void speak(void);
+};
+
+using namespace std;
+
+void Animal::speak(void)
+{
+    cout << "animal speak" << endl;
+    return;
+}
+
+void Dog::speak(void)
+{
+    cout << "wang wang wang" << endl;
+    return;
+}
+
+void Cat::speak(void)
+{
+    cout << "miao miao miao" << endl;
+    return;
+}
+
+int main()
+{
+    Animal animal;  //父类
+    Dog dog;        //子类1
+    Cat cat;        //子类2
+
+    Animal *pa;
+    pa = &dog;
+    pa->speak();
+
+    Animal *pc;
+    pc = &cat;
+    pc->speak();
+
+    return 0;
+}
+//jay@ubuntu:~/learn/cpp/2.3/2.3.17$ g++ test.cpp
+//jay@ubuntu:~/learn/cpp/2.3/2.3.17$ ./a.out
+//wang wang wang
+//miao miao miao
+
+
+```
+
+
+
+## 2.3.18.多态和虚函数2
+
+### 2.3.18.1、什么是多态
+
+​	(1)polymorphism，多态，面向对象的三大特征之一；
+
+​	(2)从宏观讲，多态就是要实现一套逻辑多种具体适配的执行结果。猫就应该是猫的叫声，狗就应该是狗的叫声；
+
+​	(3)从微观讲，多态就是要一套代码在运行时根据实际对象的不同来动态绑定/跳转执行相匹配的具体函数；
+
+​	(4)函数声明前加virtual的即是虚函数；
+
+​	(5)虚函数是C++实现多态特性的基础，从语法上讲多态特性的基类方法必须是虚函数；
+
+### 2.3.18.2、多态中的override
+
+​	(1)基类中方法声明为virtual，派生类中重新实现同名方法以实现多态，这就叫override（中文为覆盖，或重写）；
+
+(2)注意区分override和redefining，微观上最大区别就是是否有virtual，宏观上最大区别就是是否表现为多态；
+
+### 2.3.18.3、多态一定要通过面向对象和override来实现吗
+
+​	(1)宏观上的多态是一种编程效果，微观上的多态是一种C++支持的编程技术，微观是为了去实现宏观；
+
+​	(2)不用C++的virtual和override，也可以实现宏观上的多态，C中我们就经常这么干；
+
+​	(3)C中实现多态的案例：
+
+​	(4)C++源生支持多态，实现起来更容易，后续修改和维护更容易，架构复杂后优势更大。
+
+### 2.3.18.4、对比下三个概念
+
+​	(1)overload，重载				同一个类里面的多个方法，函数名相同但参数列表不同；
+
+​	(2)redifining，重定义，隐藏		继承中子类再次实现父类中同名方法然后把父类方法隐藏掉；
+
+​	(3)override，覆盖，重写			继承中子类去实现父类中同名virtual方法然后实现多态特性；
+
+
+
+## 2.3.19_20.纯虚函数与抽象类1_2
+
+### 2.3.19.1、纯虚函数
+
+​	(1)纯虚函数就是基类中只有原型没有实体的一种虚函数；
+
+​	(2)纯虚函数形式：virtual 函数原型=0；
+
+```c++
+class Animal {
+public:
+ virtual  void speak() = 0;   //虚函数
+};
+```
+
+​	(3)代码实践：在基类Animal中使用纯虚函数；
+
+​	(4)纯虚函数为什么没有实体？因为语义上不需要；
+
+​	(5)纯虚函数是否占用内存？不会，因为纯虚函数所在的类根本无法实例化对象；
+
+
+
+### 2.3.19.2、抽象类(abstract type)
+
+​	(1)带有纯虚函数的类成为抽象类。抽象类只能作为基类来派生新类，不可实例化对象。
+
+```c++
+class Animal {
+public:
+ virtual  void speak() = 0;   //虚函数
+ int a;
+};
+int main()
+{
+    return 0;
+}
+
+//输出：
+test.cpp:26:12: error: cannot declare variable ‘a’ to be of abstract type ‘Animal’
+     Animal a;
+            ^
+In file included from test.cpp:1:0:
+test.hpp:5:7: note:   because the following virtual functions are pure within ‘Animal’:
+ class Animal {
+       ^~~~~~
+test.cpp:6:6: note:     virtual void Animal::speak()
+ void Animal::speak(void)
+
+```
+
+​	(2)派生类必须实现基类的纯虚函数后才能用于实例化对象。
+
+​	(3)抽象类的作用：将有关的数据和行为组织在一个继承层次结构中，保证派生类具有要求的行为。对应暂时无法实现的函数，可以声明为纯虚函数，留给派生类去实现。这种机制可以让语法和语义保持一致。
+
+​	(4)抽象类的子类必须实现基类中的纯虚函数，这样子类才能创建对象，否则子类就还是个抽象类。
+
+
+
+### 2.3.19.3、接口（interface）
+
+​	(1)接口是一种特殊的类，用来定义一套访问接口，也就是定义一套规约；
+
+​	(2)接口类中不应该定义任何成员变量 ；
+
+​	(3)接口类中所有成员函数都是**公有且都是纯虚函数**；
+
+​	(4)有些高级语言中直接提供关键字interface定义接口，接口其实就是个纯粹的抽象基类；
+
+
+
+## 2.3.21.虚析构函数
+
+### 2.3.21.1、什么是虚析构函数
+
+​	(1)析构函数前加virtual，则析构函数变为虚析构函数;
+
+​	(2)规则：基类有1个或多个虚函数时（注意不要求是纯虚函数），则其析构函数应该声明为virtual;
+
+
+
+### 2.3.21.2、为什么需要虚析构函数
+
+​	(1)代码演示：父子类各自添加析构函数，用2种分配和回收对象的方式分别实验，观察析构函数被调用的规律;
+
+```c++
+//父类 animal
+class Animal {
+public:
+    virtual  void speak() = 0;
+    //virtual  void speak();
+    //int a;
+   virtual ~Animal();
+};
+
+
+class Dog: public Animal {
+public:
+    void speak(void);
+    ~Dog();
+};
+
+class Cat: public Animal {
+public:
+    void speak(void);
+};
+using namespace std;
+
+
+void Dog::speak(void)
+{
+    cout << "wang wang wang" << endl;
+    return;
+}
+
+void Cat::speak(void)
+{
+    cout << "miao miao miao" << endl;
+    return;
+}
+
+Animal::~Animal()
+{
+    cout << "~Animal" << endl; 
+}
+
+Dog::~Dog()
+{
+    cout << "~Dog" << endl; 
+}
+
+int main()
+{
+    
+    Dog d;
+    Animal *pa = &d;  //对象Dog类, 分配在栈上
+    pa->speak();     //只执行了Animal析构
+  //  jay@ubuntu:~/learn/cpp/2.3/2.3.21$ ./a.out
+  //  wang wang wang
+  //  ~Animal
+
+    
+
+   Animal *pa = new Dog();  //对象是Dog类对象, 但是分配在堆上面
+   pa->speak();
+   delete pa;               //执行了Animal析构和Dog析构;
+  //jay@ubuntu:~/learn/cpp/2.3/2.3.21$ ./a.out
+  //wang wang wang
+  //~Dog
+  //~Animal
+
+
+```
+
+​	(2)结论：虚析构函数在各种情况下总能调用正确的（和对象真正匹配的）析构函数;
+
+
+
+### 2.3.21.3、分析和总结
+
+​	(1)其实虚函数的virtual的价值，就是让成员函数在运行时动态解析和绑定具体执行的函数，这是**RTTI**机制的一部分;
+
+​	(2)析构函数也是成员函数，加virtual的效果和普通成员函数加virtual没什么本质差异;
+
+​	(3)加virtual是有开销的，**运行时动态绑定不如编译时静态绑定效率高资源消耗优，但是可以多态**;
+
+
+
+## 2.3.22.using重新定义继承时访问权限
+
+### 2.3.22.1、using关键字在非public继承时的权限重开作用
+
+​	(1)父类的public方法在private/protected继承时，到了子类就成了private/protected而不是public了，无法用子类对象来调用了;
+
+​	  **解决方法1：**改为public继承，有用但是有时候不得不protected或者private继承时就没办法了;
+
+​	  **解决方法2：**在子类中再实现一个public的方法，内部调用父类继承而来的那个方法，能用但是有点麻烦而且有额外开销;
+
+​	  **解决犯法3：**是在子类中使用using关键字将该方法声明为public访问权限，本质上类似于权限打洞;
+
+```c++
+#include "test.hpp"
+#include <iostream>
+
+using namespace std;
+
+//父类 animal
+class Animal {
+public:
+ void speak();
+
+};
+
+
+class Dog: protected Animal {
+public:
+    //强制将父类的speak方法提升道pulblic方法
+    using Animal::speak;
+};
+
+void Animal::speak(void)
+{
+    cout << "Animal speak" << endl;
+}
+
+void Cat::speak(void)
+{
+    cout << "miao miao miao" << endl;
+    return;
+}
+
+
+
+int main()
+{
+    Animal a;
+    a.speak();
+    Dog d;
+    d.speak();
+
+    return 0;
+}
+
+//----------没有加：using Animal::speak;----------//
+/* 
+test.cpp:24:13: error: ‘void Animal::speak()’ is inaccessible within this context
+     d.speak();
+             ^
+test.cpp:6:6: note: declared here
+ void Animal::speak(void)
+      ^~~~~~
+test.cpp:24:13: error: ‘Animal’ is not an accessible base of ‘Dog’
+     d.speak();
+             ^
+jay@ubuntu:~/learn/cpp/2.3/2.3.22$
+*/
+
+//----------加了：using Animal::speak;----------//
+/*
+jay@ubuntu:~/learn/cpp/2.3/2.3.22$ g++ test.cpp
+jay@ubuntu:~/learn/cpp/2.3/2.3.22$ ./a.out
+Animal speak
+Animal speak
+*/
+```
+
+​	(4)用法：在子类public声明中使用 using Base::func; 即可，不带返回值类型不带参数列表;
+
+​	(5)注意：using只用于private/protected继承中的权限损失找回，如果方法在父类中本来就是private的子类中没法using后访问
+
+
+
+### 2.3.22.2、本部分课程总结
+
+​	(1)本部分主要讲了OO的2个特性：继承和多态，其中继承和权限管控、继承中的构造和析构、隐藏和覆盖、虚函数和多态、纯虚函数和抽象类、接口、静态和动态绑定等是本课程的重点;
+
+​	(2)面向对象三大特征中：封装是基础、继承是关键、多态是延伸;
+
+​	(3)本部分内容很重要，属于C++知识体系中关键基础零件，对于以后理解复杂代码和架构意义重大，必须彻底理解和熟悉;
+
+​	(4)要求要见过、认识、会写、理解原理、熟练运用;
+
+
+
+# 第九章 C++的运算符重载
+
+## 2.4.0 章节概要
+
+**2.4.1.运算符重载引入**
+	本节从函数重载讲起，引入运算符重载的概念，并且用自建的class的对象的加号运算符重载为案例讲解。
+
+**2.4.2.运算符重载示例**
+	本节设计了一个coordinate类，并且实现了它的+运算符重载函数。
+
+**2.4.3.深度理解运算符重载**
+	本节深度讲解运算符重载的概念和原理，让大家对运算符重载技术有一个本质的认识。
+
+**2.4.4.理解运算符重载的关键点1**
+	本节讲解运算符重载技术的关键点之一，即运算表达式和运算符重载函数的三元素对应关系。
+
+**2.4.5.理解运算符重载的关键点2**
+	本节讲解+=运算符的关键解读并代码实战演示，并作最后总结。
+
+**2.4.6.运算符重载函数中的细节**
+	本节讲解2个细节，一个是赋值运算符重载函数和拷贝构造函数的区别，另一个是如何避免自赋值。
+
+**2.4.7.赋值运算符重载函数返回引用**
+	本节讲解为什么赋值运算符重载函数会返回引用，这样比直接返回对象有哪些优势。
+
+**2.4.8.String类的赋值运算符重载1**
+	本节自己编程实现一个MyString类，主要实现了构造函数和普通成员函数等作为基础。
+
+**2.4.9.String类的赋值运算符重载2**
+	本节接上节继续实现MyString类的赋值运算符重载函数，并引出浅拷贝和深拷贝的问题。
+
+**2.4.10.++和--运算符的前置后置如何实现**
+	本节引导大家如何实现++运算符的前置后置式用法的不同重载函数，--运算符是类似的。
+
+**2.4.11.两种运算符重载方法**
+	本节主要讲了使用独立函数来实现运算符重载的另一种方法，并分析了2种方式各自优劣。
+
+
+
+## 2.4.1.运算符重载引入
+
+### 2.4.1.1、从函数重载说起
+
+​	(1)函数重载是在一定作用域内，多个相同名称但不同参数列表的函数重载；
+
+​	(2)编译时由编译器根据实际调用时给的实参情况来判定本次实际用哪个函数，这个过程叫**重载决策**；
+
+​	(3)重载函数本质上就是多个独立函数，重载机制在编译时发生，运行时不参与；
+
+​	(4)函数重载的意义就是避免我们胡乱起名，方便编写类库覆盖所有可能操作，是一种语法糖；
+
+
+
+### 2.4.1.2、什么是运算符重载
+
+​	(1)什么是运算符？
+
+​					譬如+ - * / %等算术运算符和> < == !=等关系运算符就是典型的可重载运算符（但不是所有的运算符都可以重载，譬如sizeof)；
+
+​	(2)运算符诞生于C语言中，用来对变量进行某种“**预定义**”的运算操作，这种预定义是编译器预制好的，编译时会翻译对应到CPU机器码；
+
+​	(3)面向对象时代带来新的问题：两个对象如何运算？譬如：Person a, b, c; c = a + b; 此处的+让编译器如何解读？见下面示例；
+
+```C++
+#include <iostream>
+
+using namespace std;
+
+class person
+{
+public:
+    int age;
+};
+
+
+int main(void)
+{
+    person p1;
+    person p2;
+    person p3;
+    p3 = p1 + p2;  //这个加号是自定义的
+}
+
+/*
+jay@ubuntu:~/learn/cpp/2.4/2.4.1$ g++ sample.cpp
+sample.cpp: In function ‘int main()’:
+sample.cpp:17:13: error: no match for ‘operator+’ (operand types are ‘person’ and ‘person’)
+     p3 = p1 + p2;
+*/
+```
+
+
+
+## 2.4.2.运算符重载示例
+
+​	(1)class coordinate, 2个属性x和y，直接对2个对象执行+，编译不通过；
+
+​	(2)重载+运算符后，再编译并执行，查看结果，分析结果；
+
+```c++
+#include <iostream>
+
+using namespace std;
+
+class coordinate
+{
+public:
+    int x;  //x轴坐标
+    int y;  //y轴坐标
+    coordinate();
+    coordinate(int x0, int y0);
+    void print(void);
+
+    //定义类的时候,提供一个运算符重载的队医解析函数即可
+    coordinate operator+(const coordinate &other);
+};
+
+coordinate::coordinate()
+{
+    x = 0;
+    y = 0;
+};
+
+coordinate::coordinate(int x0, int y0)
+{
+    x = x0;
+    y = y0;
+}
+
+void coordinate::print()
+{
+    cout << "(" << this->x << "," << this->y << ")" << endl;
+    return;
+}
+
+coordinate coordinate::operator+(const coordinate &other)
+{
+    //在该函数内,去实现+的真正操作
+    coordinate tmp;
+    tmp.x = this->x + other.x;
+    tmp.y = this->y + other.y;
+    return tmp;  //看着一个返回int ,临时变量,是可以返回回去的
+}
+
+int main(void)
+{
+    coordinate a(1, 3);
+    coordinate b(2, 6);
+    coordinate c;
+    a.print();
+    b.print();
+    c = a + b;  //编译时候被编译器翻译为 c=a.operator+(b); ,也可以直接这么写
+    c.print();
+
+
+    return 0;
+}
+
+/*
+jay@ubuntu:~/learn/cpp/2.4/2.4.2$ ./a.out
+(1,3)
+(2,6)
+(3,9)
+*/
+```
+
+
+
+## 2.4.3.深度理解运算符重载
+
+### 2.4.3.1、运算符重载的本质
+
+​	(1)表面上，运算符重载是对C++源生运算符的意义，在某个class中做重定义;
+
+​	(2)本质上，运算符被映射到执行相应的成员函数，所以运算符重载其实是重定义对象的运算符所对应的函数;
+
+
+
+### 2.4.3.2、运算符重载的意义
+
+​	(1)运算符重载是一种语法特性，C++全面支持，Java不支持，python有限度的支持；
+
+​	(2)没有运算符重载照样写代码，所有操作全部通过显式调用相应成员函数来完成即可；
+
+​	(3)运算符重载是一种语法糖，可以让代码“看起来更简洁，更优雅”，将复杂实现隐藏在类的内部；
+
+​	(4)运算符重载机制加大了类库作者的工作量，减少了调用类库写功能的人的书写量；
+
+​	(5)C++支持运算符重载机制有其理念和历史原因，是对写法简洁和效率优秀的综合考量；
+
+​	(6)赋值运算符=重载和引用结合，可有效提升代码效率，后面会有案例详解；
+
+​	(7)赋值运算符=重载时要注意有指针成员时会涉及浅拷贝和深拷贝，后面会有案例详解；
+
+​	(8)运算符重载一定程度上体现了C++的多态性，因为同样的运算符在不同的class中表现是不同的；
+
+
+
+### 2.4.3.3、运算符重载如何学习
+
+​	(1)本课程内讲的基本理论、写法、理解方法等要全部掌握，见了认识、理解原理、会用；
+
+​	(2)实际工作中遇到别人的类库中有使用运算符重载时，利用本课程讲的基础原理去研究和理解，看懂并用好，如此可加深功力；
+
+
+
+## 2.4.4.理解运算符重载的关键点1
+
+### 2.4.4.1、理解运算符重载机制的两部曲
+
+​	(1)记住、理解、并且能轻松认出写出运算符重载函数的格式、名称、对应的运算符；
+
+​	(2)理解在运算符重载函数中**this表示谁**，**参数表示谁**，**返回值对应谁**，这个是重中之重；
+
+
+
+### 2.4.4.2、通过代码实践来深度理解运算符重载函数
+
+​	(1)运算符+的重载中的对应关系回顾
+
+​	   总结：a + b; -> a.operator+(b)，a对应this，b对应函数参数other，a+b的表达式的值对应函数返回值
+
+​	(2)运算符=的重载中的对应关系
+
+​		总结：c = a; -> c.operator=(a); c对应this，a对应other，c=a整个表达式的值（其实就是c）对应函数返回值
+
+运算符重载总的规则：运算符左边的是this，右边的是other，运算符加操作数的整个表达式的返回值就是返回值；
+
+如果**operator=返回值为void类型**， 当a=(b=c); b = c 的等式返回值为void类型，这样是不能赋值给a的， 这个时候编译会报错
+
+```C++
+#include <iostream>
+
+using namespace std;
+
+class coordinate
+{
+public:
+    int x;  //x轴坐标
+    int y;  //y轴坐标
+    coordinate();
+    coordinate(int x0, int y0);
+    void print(void);
+
+    //定义类的时候,提供一个运算符重载的队医解析函数即可
+    coordinate operator+(const coordinate &other);
+    coordinate operator=(const coordinate &other);
+};
+
+coordinate::coordinate()
+{
+    x = 0;
+    y = 0;
+};
+
+coordinate::coordinate(int x0, int y0)
+{
+    x = x0;
+    y = y0;
+}
+
+void coordinate::print()
+{
+    cout << "(" << this->x << "," << this->y << ")" << endl;
+    return;
+}
+
+coordinate coordinate::operator+(const coordinate &other)
+{
+    //在该函数内,去实现+的真正操作
+    coordinate tmp;
+    tmp.x = this->x + other.x;
+    tmp.y = this->y + other.y;
+    return tmp;  //看着一个返回int ,临时变量,是可以返回回去的
+}
+
+coordinate coordinate::operator=(const coordinate &other)
+{
+ 
+    //c=a; c是this ， a是other， c=a整个表达式是返回值
+    this->x = other.x;
+    this->y =   other.y;
+    return *this;  
+}
+
+int main(void)
+{
+    coordinate a(1, 3);
+    coordinate b(2, 6);
+    coordinate c;
+    a.print();
+    b.print();
+   // c = a + b;  //编译时候被编译器翻译为 c=a.operator+(b);
+   //c=a.operator+(b);
+    c = a;
+    c.print();
+
+
+    return 0;
+}
+
+/*
+jay@ubuntu:~/learn/cpp/2.4/2.4.4$ g++ sample.cpp
+jay@ubuntu:~/learn/cpp/2.4/2.4.4$ ./a.out
+(1,3)
+(2,6)
+(1,3)
+jay@ubuntu:~/learn/cpp/2.4/2.4.4$
+
+*/
+```
+
+
+
+## 2.4.5.理解运算符重载的关键点2
+
+### 2.4.5.1、运算符=的默认提供问题
+
+​	(1)=运算符有点特殊，编译器会提供一个默认的=运算符的重载，所以不提供时也能用;
+
+​	(2)如果自己显式写了=运算符的重载函数，则会覆盖编译器自动提供的那一个;
+
+
+
+### 2.4.5.2、+=运算符
+
+​	(1)运算符+=的重载中的对应关系;
+
+​	总结：a += b; -> a.operator+=(b); a对应this，b对应other，a+=b的整体表达式对应返回值, ;
+
+```C++
+#include <iostream>
+
+using namespace std;
+
+class coordinate
+{
+public:
+    int x;  //x轴坐标
+    int y;  //y轴坐标
+    coordinate();
+    coordinate(int x0, int y0);
+    void print(void);
+    void operator+=(const coordinate &other);
+};
+
+
+void coordinate::operator+=(const coordinate &other)
+{
+    this->x += other.x;
+    this->y += other.y;
+    return;
+}
+
+int main(void)
+{
+    coordinate a(1, 3);
+    coordinate b(2, 6);
+    coordinate c;
+    a.print();
+    b.print();
+
+    a+=b;
+    a.print();
+    b.print();
+  //  c= ( a+=b); 一般不会这么些程序， 所以重定义实现函数可以是void类型
+    return 0;
+}
+
+/*
+jay@ubuntu:~/learn/cpp/2.4/2.4.4$ g++ sample.cpp
+jay@ubuntu:~/learn/cpp/2.4/2.4.4$ ./a.out
+(1,3)
+(2,6)
+(3,9)
+(2,6)
+
+*/
+
+```
+
+
+
+### 2.4.5.3、总结
+
+​	(1)编译器会为每个自定义class提供一个默认的赋值运算符的重载，而我们可以覆盖这个重载;
+
+​	(2)盯紧表达式实际对应执行哪个函数，盯紧函数的参数是谁，this是谁，返回值是谁，一切都清楚了;
+
+​	(3)a+b有可能不等于b+a，这个也是运算符重载衍生出来的不好把控的风险问题;
+
+​	(4)运算符重载给了类库作者非常大自由度，所以容易失控，实际中不乏写的很雷人的运算符重载，或者纯粹炫技的代码惹人讨厌;
+
+```c++
+// a是this，b是other， a > b这个整体表达式的bool值就是返回值，所以返回值才是关键
+if (a > b)
+{
+}
+```
+
+
+
+## 2.4.6.运算符重载函数中的细节
+
+### 2.4.6.1、赋值运算符重载与拷贝构造函数
+
+​	(1)区分初始化时的赋值（一般就叫初始化），和非初始化时的赋值（一般就叫赋值）;
+
+​	(2)实验验证初始化和赋值时各自对应;
+
+```c++
+#include <iostream>
+
+using namespace std;
+
+class coordinate
+{
+public:
+    int x;  //x轴坐标
+    int y;  //y轴坐标
+    coordinate();
+    coordinate(int x0, int y0);
+    coordinate(const coordinate &rhs);
+    void print(void);
+
+    //定义类的时候,提供一个运算符重载的队医解析函数即可
+    coordinate operator+(const coordinate &other);
+    coordinate operator=(const coordinate &other);
+    void operator+=(const coordinate &other);
+};
+
+coordinate::coordinate()
+{
+    x = 0;
+    y = 0;
+};
+
+coordinate::coordinate(int x0, int y0)
+{
+    x = x0;
+    y = y0;
+}
+
+void coordinate::print()
+{
+    cout << "(" << this->x << "," << this->y << ")" << endl;
+    return;
+}
+
+
+
+coordinate coordinate::operator=(const coordinate &other)
+{
+ 
+    //c=a; c是this ， a是other， c=a整个表达式是返回值
+    cout << "operator=" << endl;
+    this->x = other.x;
+    this->y =   other.y;
+    return *this;   //当有返回值*this这个类的返回值的时候，构造函数将会被执行；
+}
+
+
+coordinate::coordinate(const coordinate &rhs)
+{
+    cout << "copy construct" << endl;
+    this->x = rhs.x;
+    this->y = rhs.y;
+}
+
+/*****************************示例一********************************/
+int main(void)
+{
+    coordinate a(1, 3);
+    coordinate b = a;  // 通过类的拷贝钩爪函数生成b
+    b.print();
+    return 0;
+}
+
+/*
+jay@ubuntu:~/learn/cpp/2.4/2.4.6$ g++ sample.cpp
+jay@ubuntu:~/learn/cpp/2.4/2.4.6$ ./a.out
+copy construct
+(1,3)
+*/
+
+/*****************************示例二********************************/
+int main(void)
+{
+    coordinate a(1, 3);
+    coordinate b;
+    b = a;
+    b.print();
+    return 0;
+}
+/*
+jay@ubuntu:~/learn/cpp/2.4/2.4.6$ g++ sample.cpp
+jay@ubuntu:~/learn/cpp/2.4/2.4.6$ ./a.out
+operator=
+copy construct
+(1,3)
+*/
+```
+
+
+
+### 2.4.6.2、赋值运算符重载函数参数中的const
+
+​	(1)如果运算符对其右侧的操作数并不改变，则应该在参数列表中使用const引用；
+
+​	(2)C++的const要求非常严格，在c = a + b;中如果=运算符的重载函数参数列表中没有用const会编译报错；
+
+
+
+### 2.4.6.3、避免赋值运算符中的自赋值
+
+​	(1)自赋值就是Person a; a = a;
+
+​	(2)自赋值如果不处理，轻则浪费效率，重则导致内存丢失（该深拷贝时做了浅拷贝，在2.4.8中详解）；
+
+​	(3)避免自赋值很简单，只需要在赋值运算符重载函数所有操作前加上一个判断 if (this != &other)即可；
+
+```c
+coordinate coordinate::operator=(const coordinate &other)
+{
+  if(this != &other){
+        cout << "operator=" << endl;
+    	this->x = other.x;
+    	this->y =   other.y;   
+  }
+    return *this;
+}
+```
+
+
+
+## 2.4.7.赋值运算符重载函数返回引用
+
+### 2.4.7.1、返回引用好处1：提升程序效率
+
+​	(1)赋值运算符重载函数返回值可以返回对象类型，也可以返回对象引用类型，都能工作。代码验证;
+
+​	(2)区别在于：返回引用可以避免一次返回值值传递的对象复制，这需要消耗资源的。代码验证;
+
+```C++
+#include <iostream>
+
+using namespace std;
+
+class coordinate
+{
+public:
+    int x;  //x轴坐标
+    int y;  //y轴坐标
+    coordinate();
+    coordinate(int x0, int y0);
+    coordinate(const coordinate &rhs);
+    void print(void);
+    coordinate operator=(const coordinate &other);
+    //coordinate& operator=(const coordinate &other); 返回引用少了执行构造函数，以及一些值的运算
+
+};
+
+coordinate::coordinate()
+{
+    x = 0;
+    y = 0;
+};
+
+coordinate::coordinate(int x0, int y0)
+{
+    x = x0;
+    y = y0;
+}
+
+void coordinate::print()
+{
+    cout << "(" << this->x << "," << this->y << ")" << endl;
+    return;
+}
+//coordinate& coordinate::operator=(const coordinate &other)
+coordinate coordinate::operator=(const coordinate &other)
+{
+ 
+    //c=a; c是this ， a是other， c=a整个表达式是返回值
+    this->x = other.x;
+    this->y =   other.y;
+    return *this;  
+}
+
+
+coordinate::coordinate(const coordinate &rhs)
+{
+    cout << "copy construct" << endl;
+    this->x = rhs.x;
+    this->y = rhs.y;
+}
+
+int main(void)
+{
+    coordinate a(1, 3);
+    coordinate b;
+    b = a;
+    b.print();
+    return 0;
+}
+```
+
+​	(3)总结：虽然C++语法并未强制要求，但是好的写法是应该返回引用;
+
+
+
+### 2.4.7.2、连续赋值式
+
+​	(1)返回对象而不是引用时，在连续赋值（c = a = b;）时会编译可以，运行也可以，但是效率低同1中所讲;
+
+​	(2)原因是先执行a=b操作，返回值再作为第2次赋值运算的右值（也就是函数参数），对象和引用是类型兼容的;
+
+​	(3)总结：连等在返回对象和引用时都可以，但是在**返回void**时就不可以了;
+
+
+
+### 2.4.7.3、思考：传参为什么要传引用
+
+​	(1)如果传对象，则调用时是值传递，调用时需要复制一次，增加额外开销;
+
+​	(2)如果传指针，则重载后，使用时为了符合函数参数格式必须写成 a = &b;这种，不符合C语言写法习惯，也有歧义;
+
+​	(3)**实际测试发现真的传指针时，写 a=b; a=&b;都能编译通过，且运行正确。但是确实很别扭;**
+
+​	(4)总结：有资料表明，其实C++早期发明引用概念时，就是为了解决此处运算符重载传参的尴尬;
+
+
+
+## 2.4.8_9.String类的赋值运算符重载1_2
+
+### 2.4.8.1、标准库中String类的运算符重载
+
+​	(1)https://zh.cppreference.com/w/%E9%A6%96%E9%A1%B5 ;
+
+​	(2)String类提供了=和+等多个运算符重载函数的成员;
+
+​	(3)标准库只给了API，没给实现，咱们可以自己实现个=运算符重载函数;
+
+
+
+### 2.4.8.2、String的=运算符重载演练
+
+​	(1)自己编写一个MyString类，成员变量char *pBuf指向实际存储字符串的buf，new动态内存来使用;
+
+​	(2)实践：先完成构造函数，成员函数print，len等基础设计，写代码测试ok;
+
+​	(3)编写=运算符重载函数，引出浅拷贝深拷贝问题;
+
+
+
+### 2.4.8.3、总结
+
+​	(1)运算符重载技术本身很简单，就是个语法糖，前面讲的完全够了;
+
+​	(2)运算符重载会牵出其他技术点（譬如浅拷贝深拷贝）共同完成某个工作，这就有难点，讲究功底了;
+
+​	(3)C++编程中涉及到动态内存的地方一定要慎重，三思五思再慎重都不为过;
+
+
+
+2.4.10.++和--运算符的前置后置如何实现
+2.4.10.1、可前置可后置的运算符
+(1)int a = 5; a++; ++a;结果不同
+(2)重载++和--有无意义
+2.4.10.2、如何重载++和--
+(1)按最底层规则分析
+a++; a是this，other是空的，a是返回值，附带操作是a+1，对应 		Type& operator++(void);
+++a; this是空的，a是other，a+1是返回值，附带操作是a+1，对应 	Type& operator++(const Tpye& other);
+(2)代码实战和验证
+实践验证编译不通过，报错：coordinate& coordinate::operator++(const coordinate&)' must take 'int' as its argumen
+(3)再次分析，因为编译器强制要求++a的重载函数必须携带int类型的参数
+Type& operator++(int x);
+编译器的理解是：++a时，a是this，other是空的，int x用来做区分，a+1是返回值，附带操作是a+1
+实践验证：对应结论刚好是反的。
+(4)再次分析
+C++编译器认为，a++; 对应Type& operator++(int x);  而++a对应Type& operator++(void);
+咱们其他分析包括代码编写都是ok的
+2.4.10.3、总结
+(1)即使你觉得没必要，但是也得会，因为总有人会这样写
+(2)掌握最本质的规律的人最强大，遇到越困难的问题越需要这种能力来解决
+
+2.4.11.两种运算符重载方法
+2.4.11.1、并非所有运算符都支持重载
+(1)下面是不可重载的运算符列表
+.			成员访问运算符
+.*, ->*		成员指针访问运算符
+::			域运算符
+sizeof		长度运算符
+? :			条件运算符
+
+​			预处理符号
+
+2.4.11.2、并非只有一种方式实现重载
+(1)有两种方法可以使运算符重载
+第一种：使重载运算符成为该类的成员函数。这允许运算符函数访问类的私有成员。它也允许函数使用隐式的this指针形参来访问调用对象。
+第二种：使重载的成员函数成为独立分开的函数。当以这种方式重载时，运算符函数必须声明为类的友元才能访问类的私有成员。
+2.4.11.3、如何选择两种运算符重载
+(1)大多数运算符（如+ =等）既可以作为成员函数也可以作为独立函数重载。
+(2)更好的做法是将二元运算符重载为釆用相同类型形参的独立函数。这是因为，与独立运算符的重载不同，成员函数的重载通过使左侧形参变成隐式的，造成了两个形参之间的人为区别，这将允许转换构造函数应用右侧形参，但不应用左侧形参，从而产生了更改形参顺序的情况，导致正确的程序如果换个方式却出现了编译器错误。示例如下：
+Length a(4, 2), c(0);
+c = a + 2; //编译，当于 c = a.operator+(2)
+c = 2 + a; //不能编译：相当于 c = 2.operator+(a)
+
+
+分析String类的+=方法，和其他operator重载
+
+令运算符重载函数作为类的成员函数重载前置运算符和重载后置运算符分别如何实现？
+注：这里的int类型参数只是用来区别后置++与前置++，此外没有任何其他作用。
+https://blog.csdn.net/jacket_/article/details/89714947
+
+
+令运算符重载函数作为类的成员函数重载插入运算符和重载提取运算符分别如何实现，写个案例重载<<和>>这2个运算符
+
+
+
+# 第十章 C++的静态类和静态成员
+
+## 2.5.0  章节介绍
+
+**2.5.1.类的静态成员**
+	本节引入类的静态成员，并且通过实战代码演练静态成员的定义和使用，让大家先知其然。
+
+**2.5.2.静态成员的深度理解**
+	本节深度讲解静态成员的原理，让大家在上节知其然的基础上知其所以然。
+
+**2.5.3.静态成员的用途**
+	本节以页面计数的需求为例讲了静态成员的典型用途，并且写了代码进行实战演练。
+
+**2.5.4.静态类的扩展讲解**
+	本节扩展讲了静态类的概念，实际上C++不直接支持静态类特性但Java和C#等语言支持。
+
+
+
+## 2.5.1.类的静态成员
+
+### 2.5.1.1、static关键字
+
+​	(1)static，C语言中有2种用法：static修饰局部变量和全局变量，含义完全不同；
+
+​	(2)static，C++中扩展了第3种用法：静态类、静态成员，含义和前2种完全不同；
+
+
+
+### 2.5.1.2、什么是静态成员
+
+​	(1)用static修饰成员变量，即为静态成员变量；用static修饰成员方法，即为静态成员方法；
+
+​	(2)静态成员属于class本身，而不属于对象；
+
+
+
+### 2.5.1.3、静态成员的特征和实践验证
+
+(1)静态成员变量在类的多个对象中均可访问，且是同一个实体，被多个对象“共享”。实验验证；
+
+(2)静态成员变量和方法可以用对象调用，也可以根本不产生对象而用类本身来调用。实验验证；
+
+(3)静态成员函数在类外实现时只需在类内声明时加static，类外实体无须加static关键字，否则是错误的（思考下为什么？）；
+
+
+
+2.5.2.静态成员的深度理解
+2.5.2.1、静态数据成员的使用
+(1)静态数据成员不能在类中初始化，因为类定义实际只是模型，本身并没有和变量/对象实体去关联
+(2)静态数据成员不能在类的构造函数中初始化，因为构造函数是用来构造具体单个对象的，而静态成员属于类（或者说类和他的所有对象共享），如果在构造函数中允许对静态成员初始化或赋值，就会每多创建一个对象，原有对象中该静态成员的值莫名其妙变了，不合理
+(3)静态数据成员不能用初始化列表方式来初始化
+(4)静态数据成员如果不初始化则值默认为0
+(5)静态成员仍然遵循public，private，protected访问准则。
+2.5.2.2、静态成员和普通成员的互相调用规则
+(1)普通成员函数中可以调用静态成员变量和方法，调用方法有3种：直接访问、this指针访问、类名::func()方式访问
+(2)静态方法中只能访问静态成员变量和方法，不能访问任何非静态的东西
+(3)静态方法中如果确实需要访问非静态成员，应该通过函数传参方式
+2.5.2.3、从内存角度出发
+(1)class定义时只是定义类型，并不定义变量和对象，静态成员变量真正定义是在外部，类似于全局变量
+(2)静态成员变量在编译链接时分配，程序加载时被落实到内存中，程序结束时死亡，等同于全局变量
+(3)静态成员函数在编译链接时分配，程序加载时被落实到内存中，程序结束时死亡，类似于全局函数
+(4)普通成员和对象绑定，随对象的创建和释放而生死（不管在栈里还是堆里），类似于局部变量和malloc堆内存
+(5)静态成员变量在对象中不占用存储空间
+
+2.5.3.静态成员的用途
+2.5.3.1、用途举例
+(1)静态数据成员的用途之一是统计有多少个对象实际存在，比如声明一个学生类，其中一个成员为学生总数，则这个变量就应当声明为静态变量，应该根据实际需求来设置成员变量。代码实战
+(2)静态方法就是与该类相关的，是类的一种行为，而不是与该类的实例对象相关
+2.5.3.2、静态成员与面向对象
+(1)静态成员仍然在class内，仍可通过对象调用，因此表面上遵守面向对象规则。
+(2)静态成员一定程度上破坏了面向对象，因为没有对象直接用class名也可以调用静态成员。
+(3)静态成员可被看做是类外部的全局变量和全局函数被封装到了类的内部
+(4)一个类的静态成员和非静态成员是完全不同的，两者唯一的关联可能就是隶属于同一个class的作用域内。
+
+2.5.4.静态类的扩展讲解
+2.5.4.1、什么是静态类
+(1)class声明时使用static，整个类是个静态类
+(2)静态类内部全是静态成员，没有非静态成员
+(3)静态类不能被实例化
+(4)静态类是密封(sealed)的。									补充：什么是密封？
+(5)静态类不包括构造函数
+(6)静态类不能指定任何接口实现，不能有任何实例成员
+(7)静态类的成员不能有protected或protected internal访问保护修饰符。
+(8)静态类不能包含构造函数，但仍可声明静态构造函数以分配初始值或设置某个静态状态。
+2.5.4.2、静态类的优势
+(1)编译器能够执行检查以确保不致偶然地添加实例成员。编译器将保证不会创建此类的实例。
+(2)静态类是密封的，因此不可被继承。
+2.5.4.3、C++不支持静态类
+(1)Java/C#等高级语言支持静态类，而C++并不支持。
+(2)C++中创建静态类与创建仅包含静态成员和私有构造函数的类大致一样。私有构造函数阻止类被实例化。
+>>>>>>> Stashed changes
