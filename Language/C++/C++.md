@@ -6590,7 +6590,7 @@ public:
 
 ### 2.3.19.2、抽象类(abstract type)
 
-​	(1)带有纯虚函数的类成为抽象类。抽象类只能作为基类来派生新类，不可实例化对象。
+​	(1)带有纯虚函数的类成为抽象类。**抽象类只能作为基类来派生新类，不可实例化对象**。
 
 ```c++
 class Animal {
@@ -6600,6 +6600,7 @@ public:
 };
 int main()
 {
+    Animal a;
     return 0;
 }
 
@@ -8829,118 +8830,2939 @@ int main(void)
 
 ​	(3)代码实践，用函数模板来实现swap;
 
+```c++
+#include <iostream>
+
+using namespace std;
+
+template <typename T>
+void my_swap(T& x, T& y)
+{
+    T tmp;
+    tmp = x;
+    x = y;
+    y = tmp;
+
+}
+
+int main()
+{
+    int a = 3, b = 4;
+    my_swap(a, b);
+    cout << a << "  " << b << endl;
+
+    double aa = 3.3, bb = 4.4;
+    my_swap(aa, bb);
+    cout << aa << "  " << bb << endl;
+
+    return 0;
+}
+
+/*
+4    3
+4.4  3.3
+*/
+```
 
 
-3.1.2.模板的理解和几个细节
-3.1.2.1、模板是一种编译时的多态
-(1)模板是关键是编写函数代码原型时不给定具体类型，每次调用时再给定具体类型
-(2)模板特性由编译器提供，编译时根据调用时的实参具体类型推导匹配的原型中模板的本次具体类型
-(3)模板在最终生成的可执行程序中是不可见的
-(4)模板是编译时的多态，也可以叫“静态”多态
-(5)模板是一种语法糖，是编译器提供给我们的减少编程劳动量的一种语法特性
-3.1.2.3、模板有什么用
-(1)让我们编写与类型无关的函数
-(2)模板是一种抽象的维度，让我们能够写出抽象度更高的代码
-(3)用模板来写库函数更好，因为这样的模板库可以在调用库函数时再指定各种数据类型
-(4)模板没那么简单，抽象是拿复杂度换劳动量，所以学起来难，学会了用处大
-3.1.2.2、模板的几个小细节
-(1)函数模板定义时typename和class效果是一样的，视个人习惯而使用
-(2)函数模板中可以有多个typename，使用时按名称匹配。实战演示
 
-3.1.3.函数模板和类模板
-3.1.3.1、模板分2种
-(1)函数模板。模板类型在函数参数列表中使用
-(2)类模板。模板类型在类中（定义类成员变量，或类成员函数的参数列表）使用
-3.1.3.2、类模板举例
-(1)单模板参数的类模板定义，代码实践
-(2)单模板参数的类模板使用，代码实践
+## 3.1.2.模板的理解和几个细节
 
-3.1.4.多模板参数的类模板
-3.1.4.1、同类型多参数
-3.1.4.2、不同类型多参数
-3.1.4.3、成员函数在类内部的模板类
+### 3.1.2.1、模板是一种编译时的多态
 
-3.1.5.模板友元函数
-3.1.5.1、友元函数参数中不带模板的情况
-(1)友元函数声明在class内，定义实现写在class外
-(2)友元函数参数中类的<T>直接给出具体类型，譬如<int>
-(3)这种友元函数实际是削弱了模板参数在使用
-3.1.5.2、友元函数参数中带模板参数方法1
-(1)友元函数声明和定义都写在class内部
-(2)虽然写在class内，但仍然是友元，而不是member function
-(3)友元可以适配类的各种模板参数
-3.1.5.3、友元函数参数中带模板参数方法2
-(1)友元函数声明在class内，定义在class外
-(2)声明时函数名加<T>后缀，而定义时不用加
-(3)需要class和friend function的2个前置声明
-(4)调用friend function时可加<实参类型>后缀，也可以不加，但是加就必须加对了
+​	(1)模板是关键是编写函数代码原型时不给定具体类型，每次调用时再给定具体类型;
 
-3.1.6.模板运算符重载函数
+​	(2)模板特性由编译器提供，编译时根据调用时的实参具体类型推导匹配的原型中模板的本次具体类型;
 
-3.1.7.模板友元运算符重载实现
-3.1.7.1、+作为友元运算符重载
-(1)友元函数在class内实现，ok，但是因为是友元实现的，所以参数要有2个
-(2)友元函数在class外实现，不ok
-(3)友元函数的第三种实现，ok
-3.1.7.2、+=作为友元运算符重载
-(1)友元函数在class内实现，ok，但必须带2个参数，带1个不行
-(2)友元函数在class外实现，ok
-(3)友元函数的第三种实现，ok
+​	(3)模板在最终生成的可执行程序中是不可见的;
 
-3.1.8.模板类的继承1
-3.1.8.1、模板类继承的多种情况
+​	(4)模板是编译时的多态，也可以叫“静态”多态;
+
+​	(5)模板是一种语法糖，是编译器提供给我们的减少编程劳动量的一种语法特性;
+
+
+
+### 3.1.2.3、模板有什么用
+
+​	(1)让我们编写与类型无关的函数;
+
+​	(2)模板是一种抽象的维度，让我们能够写出抽象度更高的代码;
+
+​	(3)用模板来写库函数更好，因为这样的模板库可以在调用库函数时再指定各种数据类型;
+
+​	(4)模板没那么简单，抽象是拿复杂度换劳动量，所以学起来难，学会了用处大;
+
+
+
+## 3.1.2.2、模板的几个小细节
+
+​	(1)函数模板定义时typename和class效果是一样的，视个人习惯而使用;
+
+​	(2)函数模板中可以有多个typename，使用时按名称匹配。实战演示;
+
+
+
+## 3.1.3.函数模板和类模板
+
+### 3.1.3.1、模板分2种
+
+​	(1)函数模板。模板类型在函数参数列表中使用;
+
+​	(2)类模板。模板类型在类中（定义类成员变量，或类成员函数的参数列表）使用;
+
+
+
+### 3.1.3.2、类模板举例
+
+​	(1)单模板参数的类模板定义，代码实践;
+
+​	(2)单模板参数的类模板使用，代码实践;
+
+```c++
+#include <iostream>
+
+using namespace std;
+
+//定义模板类
+template <typename T> class People {
+private:
+    T age;
+public:
+    People(){};
+    People(T a);
+    void print();
+};
+
+template <typename T> People<T>::People(T a)
+{
+    age = a;
+}
+
+template <typename T> void People<T>::print()
+{
+    cout << "x =  " << age << endl;
+}
+
+int main()
+{
+    //使用模板类
+    People<double> p(20.33);
+    p.print();
+    People<string> p1("hhh");
+    p1.print();
+
+    return 0;
+}
+
+/*
+x =  20.33
+x =  hhh
+*/
+```
+
+
+
+## 3.1.4.多模板参数的类模板
+
+### 3.1.4.1、不同类型多参数
+
+```c++
+#include <iostream>
+
+using namespace std;
+
+//定义模板类
+template <typename T1, typename T2> class People {
+private:
+    T1 age;
+public:
+    People(){};
+    People(T1 a);
+    void func(T1 x, T2 y);
+};
+
+template <typename T1, typename T2> People<T1, T2>::People(T1 a)
+{
+    age = a;
+}
+
+template <typename T1, typename T2> void People<T1, T2>::func(T1 x, T2 y)
+{
+    cout << x << " " << y << " age = " << age << endl;
+}
+
+int main()
+{
+    //使用模板类
+    People<string, int> p1("23");
+    p1.func("hhhhh", 66);
+  
+    return 0;
+}
+
+/*
+hhhhh 66 age = 23
+*/
+```
+
+
+
+### 3.1.4.2、成员函数在类内部的模板类
+
+```c++
+//定义模板类
+template <typename T1, typename T2> class People {
+private:
+    T1 age;
+public:
+    People(){};
+    People(T1 a);
+    void func(T1 x, T2 y)
+    {
+         cout << x << " " << y << " age = " << age << endl; 
+    }
+};
+```
+
+
+
+## 3.1.5.模板友元函数
+
+### 3.1.5.1、友元函数参数中不带模板的情况
+
+​	(1)友元函数声明在class内，定义实现写在class外;
+
+​	(2)友元函数参数中类的<T>直接给出具体类型，譬如<int>;
+
+​	(3)这种友元函数实际是削弱了模板参数在使用;
+
+```C++
+#include <iostream>
+#include <string>
+
+using namespace std;
+
+//定义模板类
+template <typename T> class People {
+private:
+    T age;
+public:
+    People(){};
+    People(T a) : age(a) {};
+    //这两个友元函数并不能模板
+    friend void print(const People<string>& pn);
+    friend void print(const People<int>& pn);
+   // friend plus(const People<T>& pn);
+};
+
+void print(const People<int>& pn)
+{
+    cout << "i am friend" << "age = " << pn.age << endl;
+}
+
+void print(const People<string>& pn)
+{
+    cout << "i am friend" << "age = " << pn.age << endl;
+}
+
+int main()
+{
+
+    People<int> p1(5);
+    print(p1);
+
+    People<string> p2("Jay");
+    print(p2);
+  
+    return 0;
+}
+
+/* OUTPUT:
+	i am friendage = 5
+	i am friendage = Jay
+
+*/
+```
+
+
+
+### 3.1.5.2、友元函数参数中带模板参数方法1
+
+​	(1)友元函数声明和定义都写在class内部;
+
+​	(2)虽然写在class内，但仍然是友元，而不是member function;
+
+​	(3)友元可以适配类的各种模板参数;
+
+```C++
+#include <iostream>
+#include <string>
+
+using namespace std;
+
+//定义模板类
+template <typename T> class People {
+private:
+    T age;
+public:
+    People(){};
+    People(T a) : age(a) {};
+
+    friend void print(const People<T>& pn)
+{
+    cout << "i am friend" << "age = " << pn.age << endl;
+}
+
+};
+
+int main()
+{
+
+    People<int> p1(5);
+    print(p1);
+
+    People<string> p2("Jay");
+    print(p2);
+  
+    return 0;
+}
+```
+
+
+
+### 3.1.5.3、友元函数参数中带模板参数方法2
+
+​	(1)友元函数声明在class内，定义在class外;
+
+​	(2)声明时函数名加<T>后缀，而定义时不用加;
+
+​	(3)需要class和friend function的2个前置声明;
+
+​	(4)调用friend function时可加<实参类型>后缀，也可以不加，但是加就必须加对了;
+
+```c++
+#include <iostream>
+#include <string>
+using namespace std;
+
+template <typename T> class People;
+template<typename T> void print(const People<T>& pn);
+
+
+//定义模板类
+template <typename T> class People {
+private:
+    T age;
+public:
+    People(){};
+    People(T a) : age(a) {};
+    friend void print<T>(const People<T>& pn);
+
+};
+
+template<typename T> void print(const People<T>& pn)
+{
+    cout << "i am friend" << "age = " << pn.age << endl;
+}
+
+int main()
+{
+    People<int> p1(520);
+    People<string> p2("Jay");
+    print(p1);
+    print<string>(p2);
+    return 0;
+}
+
+/* output
+	i am friendage = 520
+	i am friendage = Jay	
+*/
+```
+
+
+
+
+
+## 3.1.6.模板运算符重载函数
+
+```c++
+#include <iostream>
+#include <string>
+using namespace std;
+
+template <typename T> class People;
+template<typename T> void print(const People<T>& pn);
+
+
+//定义模板类
+template <typename T> class People {
+private:
+    T age;
+public:
+    People(){};
+    People(T a) : age(a) {};
+    void print();
+    //运算符重载
+    People<T> operator+(People<T>& other);
+};
+
+template<typename T> void People<T>::print()
+{
+    cout << "i am friend" << "age = " << this->age << endl;
+}
+
+template<typename T> People<T> People<T>::operator+(People<T>& other)
+{
+    People<T> tmp;
+    tmp.age = this->age + other.age;
+    
+    return tmp;
+}
+
+int main()
+{
+    People<int> a(18);
+    People<int> b(16);
+    People<int> c(0);
+    c = a + b;
+    c.print();
+
+    People<string> d("Jay");
+    People<string> e(" is doing work now");
+    People<string> f("");
+    f = d + e;
+    f.print();
+
+    return 0;
+}
+
+/* output
+i am friendage = 34
+i am friendage = Jay is doing wokr now
+*/
+```
+
+
+
+
+
+## 3.1.7.模板友元运算符重载实现
+
+### 3.1.7.1、+作为友元运算符重载
+
+​	(1)友元函数在class内实现，ok，但是因为是友元实现的，所以参数要有2个
+
+```c++
+#include <iostream>
+#include <string>
+using namespace std;
+
+//定义模板类
+template <typename T> class People {
+private:
+    T age;
+public:
+    People(){};
+    People(T a) : age(a) {};
+    void print();
+    //运算符重载
+    friend People<T> operator+(People<T>& a, People<T>& b)
+    {
+        People<T> tmp;
+        tmp.age = a.age + b.age;
+        
+        return tmp; 
+    }
+};
+
+template<typename T> void People<T>::print()
+{
+    cout << "i am friend" << "age = " << this->age << endl;
+}
+
+int main()
+{
+    People<int> a(18);
+    People<int> b(16);
+    People<int> c(0);
+
+    c = b + a;
+    c.print();
+
+    return 0;
+}
+
+/*
+	i am friendage = 34
+*/
+```
+
+
+
+​	(2)友元函数在class外实现，不ok
+
+​			运算符重载函数在函数外实现编译器报错;
+
+```c++
+#include <iostream>
+#include <string>
+using namespace std;
+
+template <typename T> class People;
+template<typename T> People<T> operator+(People<T>& a, People<T>& b);
+//定义模板类
+template <typename T> class People {
+private:
+    T age;
+public:
+    People(){};
+    People(T a) : age(a) {};
+    void print();
+    //运算符重载
+    friend People<T> operator+<T>(People<T>& a, People<T>& b);
+};
+
+template<typename T> void People<T>::print()
+{
+    cout << "i am friend" << "age = " << this->age << endl;
+}
+
+template<typename T> People<T> operator+(People<T>& a, People<T>& b)
+{
+    People<T> tmp;
+    tmp.age = a.age + b.age;
+    
+    return tmp; 
+}
+
+int main()
+{
+    People<int> a(18);
+    People<int> b(16);
+    People<int> c(0);
+
+    c = b + a;
+    c.print();
+
+    return 0;
+}
+
+/*
+/usr/include/c++/7/bits/stl_iterator.h:1019:50: error: no type named ‘reference’ in ‘struct std::iterator_traits<int>’
+       typedef typename __traits_type::reference  __base_ref;
+                                                  ^~~~~~~~~~
+/usr/include/c++/7/bits/stl_iterator.h:1023:57: error: no type named ‘iterator_category’ in ‘struct std::iterator_traits<int>’
+       typedef typename __traits_type::iterator_category iterator_category;
+*/
+```
+
+
+
+​	(3)友元函数的第三种实现，ok
+
+```c++
+#include <iostream>
+#include <string>
+using namespace std;
+
+
+//定义模板类
+template <typename T> class People {
+private:
+    T age;
+public:
+    People(){};
+    People(T a) : age(a) {};
+    void print();
+    //运算符重载
+    //模板类型的名字不要相同
+    template<typename U> friend People<U> operator+(People<U>& a, People<U>& b);
+};
+
+template<typename T> void People<T>::print()
+{
+    cout << "i am friend" << "age = " << this->age << endl;
+}
+
+template<typename T> People<T> operator+(People<T>& a, People<T>& b)
+{
+    People<T> tmp;
+    tmp.age = a.age + b.age;
+    
+    return tmp; 
+}
+
+int main()
+{
+    People<int> a(18);
+    People<int> b(16);
+    People<int> c(0);
+
+    c = b + a;
+    c.print();
+
+    return 0;
+}
+
+/*
+i am friendage = 34
+*/
+```
+
+
+
+### 3.1.7.2、+=作为友元运算符重载
+
+​	(1)友元函数在class内实现，ok，但必须带2个参数，带1个不行
+
+```c++
+template <typename T> class People {
+    
+    //......
+    public:
+       friend People<T> operator+=(People<T>& a, People<T>& b)
+    {
+        People<T> tmp;
+        tmp.age = a.age + b.age;
+        
+        return tmp; 
+    }
+     //......
+};
+```
+
+​	
+
+  (2)友元函数在class外实现，ok
+
+```c++
+template <typename T> class People;
+template <typename T>  friend People<T> operator+=(People<T>& a, People<T>& b);
+
+template <typename T> class People {
+    
+    //......
+    public:
+       friend People<T> operator+=<T>(People<T>& a, People<T>& b)
+     //......
+};
+
+template <typename T>  friend People<T> operator+=(People<T>& a, People<T>& b)
+{
+        People<T> tmp;
+        tmp.age = a.age + b.age;
+        
+        return tmp; 
+ }
+```
+
+
+
+​	(3)友元函数的第三种实现，ok
+
+```c++
+template <typename T> class People {
+    
+    //......
+    public:
+     template <typename U>  friend People<U> operator+=(People<U>& a, People<U>& b)
+     //......
+};
+
+template <typename T>  friend People<T> operator+=(People<T>& a, People<T>& b)
+{
+        People<T> tmp;
+        tmp.age = a.age + b.age;
+        
+        return tmp; 
+ }
+```
+
+
+
+## 3.1.8.模板类的继承1
+
+### 3.1.8.1、模板类继承的多种情况
+
 (1)类模板 继承 类模板
+
 (2)类模板 继承 模板类
+
 (3)类模板 继承 普通类
+
 (4)普通类 继承 模板类
-3.1.8.2、类模板继承类模板
+
+
+
+### 3.1.8.2、类模板继承类模板
+
 (1)单模板参数，类模板继承类模板
+
 (2)代码实战中学习
+
+```c++
+//(1)类模板 继承 类模板
+
+#include <iostream>
+#include <string>
+
+using namespace std;
+
+
+//定义模板类
+template <typename T> class People {
+private:
+
+public:
+    T x;
+    People(){};
+    People(T a) : x(a) {};
+};
+
+template <typename T> class Man:public People<T>
+{
+public:
+    T y;
+    Man(){};
+    Man(T a):y(a) {};
+    Man(T a, T b):People<T>(a), y(b) {};
+
+};
+
+
+
+int main()
+{
+    Man<int> m1(3, 19);
+    cout << "x = " << m1.x << endl;
+    cout << "y = " << m1.y << endl;
+    
+    return 0;
+}
+
+/*
+	x = 3
+	y = 19
+*/
+```
+
 (3)总结：在继承时，相当于用子类的模板参数Tx去实例填充了父类的模板参数Ty
+
 (4)作用：用于构建模板化的类体系，写模板化的大框架
 
-3.1.9.模板类的继承2
-3.1.8.3、多模板参数
-(1)2个或2个以上模板参数的情况
-(2)代码实战中学习
-(3)注意：多个模板参数是按照顺序对应的
 
-3.1.10.模板类的继承3
-3.1.9.1、类模板 继承 模板类
-3.1.9.2、类模板 继承 普通类
-3.1.9.3、普通类 继承 模板类
 
-3.1.11.非类型模板参数和模板类型推导
-3.1.11.1、非类型模版参数
+## 3.1.9.模板类的继承2
+
+### 3.1.8.3、多模板参数
+
+​	(1)2个或2个以上模板参数的情况
+
+​	(2)代码实战中学习
+
+```c++
+#include <iostream>
+#include <string>
+
+using namespace std;
+
+
+//定义模板类
+template <typename T1, typename T2> class People {
+private:
+
+public:
+    T1 x1;
+    T2 x2;
+    People(){};
+    People(T1 a1, T2 a2) : x1(a1), x2(a2) {};
+};
+
+//在示例当时, T1 对应int T2 对应double
+template <typename T1, typename T2> class Man:public People<T1, T2>
+{
+public:
+    T1 y1;
+    T2 y2;
+    Man(){};
+    Man(T1 a1, T2 a2):y1(a1), y2(a2) {};
+    //4个参数顺寻 y1 y2, x1 x2
+    Man(T1 a1, T2 a2, T2 b1, T2 b2):People<T1, T2>(b1, b2), y1(a1), y2(a2) {};
+
+};
+
+
+
+int main()
+{
+    Man<int, double> m1(3, 3.3, 1, 1.1);
+    cout << "x1 = " << m1.x1 << endl;
+    cout << "x2 = " << m1.x2 << endl;
+    cout << "y1 = " << m1.y1 << endl;
+    cout << "y2 = " << m1.y2 << endl;
+    
+    return 0;
+}
+```
+
+​	(3)注意：多个模板参数是按照顺序对应的
+
+
+
+## 3.1.10.模板类的继承3
+
+### 3.1.9.1、类模板 继承 模板类
+
+```c++
+#include <iostream>
+#include <string>
+
+using namespace std;
+
+
+//定义模板类
+template <typename T> class People {
+private:
+
+public:
+    T x;
+    People(){};
+    People(T a) : x(a) {};
+};
+
+template <typename T> class Man:public People<double>
+{
+public:
+    T y;
+    Man(){};
+    Man(T a):y(a) {};
+    Man(T a, double b): y(a), People<double>(b) {};
+
+};
+
+
+
+int main()
+{
+    Man<int> m1(3, 19.9);
+    cout << "x = " << m1.x << endl;
+    cout << "y = " << m1.y << endl;
+    
+    return 0;
+}
+
+/*
+	x = 19.9
+	y = 3
+*/
+```
+
+
+
+### 3.1.9.2、类模板 继承 普通类
+
+```c++
+#include <iostream>
+#include <string>
+
+using namespace std;
+
+
+//定义模板类
+class People {
+private:
+
+public:
+    double x;
+    People(){};
+    People(double a) : x(a) {};
+};
+
+template <typename T> class Man:public People
+{
+public:
+    T y;
+    Man(){};
+    Man(T a):y(a) {};
+    Man(T a, double b): y(a), People(b) {};
+
+};
+
+
+int main()
+{
+    Man<int> m1(3, 19.9);
+    cout << "x = " << m1.x << endl;
+    cout << "y = " << m1.y << endl;
+    
+    return 0;
+}
+
+/*
+	x = 19.9
+	y = 3
+*/
+```
+
+
+
+### 3.1.9.3、普通类 继承 模板类
+
+```c++
+#include <iostream>
+#include <string>
+
+using namespace std;
+
+
+//定义模板类
+template <typename T> class People {
+private:
+
+public:
+    T x;
+    People(){};
+    People(T a) : x(a) {};
+};
+
+
+class Man:public People<double>
+{
+public:
+    int y;
+    Man(){};
+    Man(int a):y(a) {};
+    Man(int a, double b): y(a), People(b) {};
+
+};
+
+
+
+int main()
+{
+    Man m1(3, 19.9);
+    cout << "x = " << m1.x << endl;
+    cout << "y = " << m1.y << endl;
+    
+    return 0;
+}
+
+/*
+    x = 19.9
+    y = 3
+
+*/
+```
+
+
+
+
+
+
+
+## 3.1.11.非类型模板参数和模板类型推导
+
+### 3.1.11.1、非类型模版参数
+
 参考 https://blog.csdn.net/lanchunhui/article/details/49634077
-3.1.11.2、模板的本质
-(1)类型参数化
-(2)值参数化
-(3)类型和值都参数化
-(4)本质：延迟绑定
-3.1.11.3、类型推导的隐式类型转换
-(1)在决定模板参数类型前，编译器执行隐式类型转换，有时候实际类型和看起来会不同
-(2)编译器用值类型实例化函数模板，而不是用相应的引用类型
-(3)编译器用指针类型实例化函数模板，而不是相应的数组类型
-(4)去除const修饰，绝不会用const类型实例化函数模板，总是用相应的非const类型
-(5)对于指针来说，指针和 const 指针是不同的类型。
-3.1.11.4、模板和库
-(1)模板无法单独编译，也就不能通过lib连接静态库的形式隐藏实现
-(2)模板通常会把声明和定义写在头文件里，所以c++的模板总是开源的
 
+
+
+### 3.1.11.2、模板的本质
+
+​	(1)类型参数化
+
+​	(2)值参数化
+
+​	(3)类型和值都参数化
+
+​	(4)本质：延迟绑定
+
+
+
+### 3.1.11.3、类型推导的隐式类型转换
+
+​	(1)在决定模板参数类型前，编译器执行隐式类型转换，有时候实际类型和看起来会不同;
+
+​	(2)编译器用值类型实例化函数模板，而不是用相应的引用类型;
+
+​	(3)编译器用指针类型实例化函数模板，而不是相应的数组类型;
+
+​	(4)去除const修饰，绝不会用const类型实例化函数模板，总是用相应的非const类型;
+
+​	(5)对于指针来说，指针和 const 指针是不同的类型;
+
+
+
+### 3.1.11.4、模板和库
+
+​	(1)模板无法单独编译，也就不能通过lib连接静态库的形式隐藏实现
+
+​	(2)模板通常会把声明和定义写在头文件里，所以c++的模板总是开源的
+
+```c++
 int a = 5;
 int &b = a;
-People<b>
+People<b>   //是int 类型
 
 int a[5];
 void func(a);		// 数组做实参，实际实参不是数组而是指针
-People<a>
+People<a>			//不是数组类型, 是指针
 
 const int a = 5;
-People<a>
+People<a>		    //会丢掉const
 
-const int *p1;
+const int *p1;    //对于指针来说，指针和 const 指针是不同的类型;
 int *p2;
+```
 
-说明typename的一种用法，这种用法里typename不等同于class
+**说明typename的一种用法，这种用法里typename不等同于class**
 https://blog.csdn.net/dick_china/article/details/4522253
+
+
+
+# 第三部分第二章STL的容器类和迭代器
+
+
+
+**3.2.1.STL的容器类介绍**
+
+​	本节介绍STL容器类的概念，以及STL中常用的一些容器类。
+
+**3.2.2.容器类array的初步使用1**
+
+​	本节讲解array类的特征，以及列表初始化方式，构造函数等。
+
+**3.2.3.容器类array的初步使用2**
+
+​	本节讲解array的元素访问和容量获取的相关方法。
+
+**3.2.4.容器类array的初步使用3**
+
+​	本节讲解array的几个元素操作相关的方法，如swap。
+
+**3.2.5.容器类array的初步使用4**
+
+​	本节讲解array的辅助类函数。
+
+**3.2.6.容器类array的初步使用5**
+
+​	本节讲解array已经过时的make_array方法等。
+
+**3.2.7.迭代器的引入**
+
+​	本节引入迭代器的概念，并用简单例子演示迭代器的使用。
+
+**3.2.8.迭代器的几个细节问题**
+
+​	本节讲解迭代器的几个技术细节如const与非const，半开半闭区间等。
+
+**3.2.9.STL的不同类型迭代器**
+
+​	本节讲解STL在不同时间总共支持的几种迭代器类型及其特点。
+
+**3.2.10.序列容器之Vector1**
+
+​	本节讲解STL另一个顺序容器vector。
+
+**3.2.11.序列容器之Vector2**
+
+​	本节通过一些实践案例来讲解vector的所有相关操作方法和特性。
+
+**3.2.12.序列容器之list1**
+
+​	本节讲解STL的另一个顺序容器list的特征。
+
+**3.2.13.序列容器之list2**
+
+​	本节分析list的操作方法列表，结合一些示例程序进行分析。
+
+**3.2.14.序列容器之deque1**
+
+​	本节讲解了STL的另一个顺序容器deque，重点是deque的内存模型和行为特征。
+
+**3.2.15.序列容器之deque2**
+
+​	本节接上节继续讲解deque，尤其是结合示例程序对应分析内存模型。
+​	
+
+## 3.2.1.STL的容器类介绍
+
+### 3.2.1.1、何为容器
+
+​	(1)顾名思义，容器就是盛放东西的东西，这里被盛放的一般是数据对象，用来盛放的是容器类;
+
+​	(2)计算机中一切皆是数据，数据存储只能在内存中，而容器类是用做容器的内存的管理方法;
+
+​	(3)**容器类的内核就是：数据结构 + 算法**;
+
+​	(4)C语言语法内置的数组和结构体，就是语言源生支持的容器;
+
+​	(5)C++容器通过类库方式提供，容器类库被模板技术泛化后，就是STL容器了;
+
+
+
+### 3.2.1.2、STL有哪些容器类
+
+​	(1)**序列容器**: 元素在容器中的位置同元素的值无关，即容器不是排序的（类似于C数组）。包括array、vector、deque、list、forward_list等几个;
+
+​	(2)**排序容器**: 数据插入时即自动按照值从小到大排列好。包括set、multiset、map、mutilmap等;
+
+​	(3)**哈希容器**: 哈希容器中的元素是未排序的，元素的位置由哈希函数确定，即遵守一定规则的<key,value>对式存储;
+
+包括unordered_set、unordered_map、hash_set、hash_multiset、hash_map、hash_multimap等;
+
+
+
+### 3.2.1.3、容器类如何学习
+
+​	(1)容器类就是STL的核心，STL其他技术点都围绕容器类开展;
+
+​	(2)**可见STL的本质其实就是一套模板技术泛化类型的C++基本数据结构和算法类库**;
+
+​	(3)本课程会集中细致讲几个STL序列容器array、vector等，其他容器类似情况就简略讲过了;
+
+​	(4)第一层为学会使用stl容器，第二层为能合理使用stl容器，第三层为理解stl背后设计，第四层为自己能写新的stl容器;
+
+
+
+## 3.2.2.容器类array的初步使用1
+
+### 3.2.2.1、array的特性
+
+(1)array是定长、同类型多元素、内存中连续排布的一种容器;
+
+(2)array其实就是C语言数组的C++ template封装;
+
+
+
+### 3.2.2.2、array的学习方法
+
+(1)参考文档：https://zh.cppreference.com/w/cpp/container/array
+
+(2)挨个理解文档相关所有元素，并写代码验证
+
+
+
+### 3.2.2.3、array的构造和初始化
+
+(1)和C数组兼容的初始化方式;
+
+(2)需要C++11或以上标准来支持;
+
+(3)支持默认的拷贝构造;
+
+```c++
+#include <iostream>
+#include <array>
+
+using namespace std;
+
+
+
+
+int main(void)
+{
+	array<int, 3> a1;		// 定义了但是未初始化，猜测值应该是随机的
+//	array<int ,3> a2(1, 3, 5);			// C++无法提供无数个构造函数来匹配
+	array<int, 3> a2{1, 3, 5};		// 可以，属于聚合初始化
+	array<int, 3> a3 = {1, 3, 5};	// 初始化赋值，和a2效果一样
+	array<int, 3> a4 = a3;			// 拷贝构造
+
+	return 0;
+}
+
+```
+
+
+
+## 3.2.3.容器类array的初步使用2
+
+### 3.2.3.1、array的元素访问
+
+​	(1)at方法
+
+```c++
+#include <iostream>
+#include <array>
+
+using namespace std;
+
+
+int main(void)
+{
+	array<int, 3> a{1, 3, 5};		// 可以，属于聚合初始化
+
+    cout << a.at(0) << endl;	//c++的写法会帮你检查是否越界
+
+
+	return 0;
+}
+/* 
+	1
+	1
+*/
+```
+
+​	
+
+(2)operator[]实现的C数组式访问
+
+```c++
+    cout << a[0] << endl;  /* 1 */
+```
+
+​	
+
+(3)front和back方法返回第1个和最后1个元素
+
+```c++
+    cout << a.front() << endl; /* 1 */
+    cout << a.back() << endl; /* 5 */
+```
+
+​	
+
+(4)data返回真实存储内存中首元素首地址的值
+
+```c++
+    int *p = a.data();
+    cout <<  p << endl;	/* 0x7ffdd71c023c */
+    cout << *p << endl; /* 1 */
+
+```
+
+​	如果array的元素访问越界了，那么编译时没问题，但是运行时会抛出异常
+
+
+
+### 3.2.3.2、array的容量设置和获取
+
+(1)容量设置只能在定义时一次设定，且必须设定，设定后再不能改
+
+(2)empty
+
+```C++
+array<int, 3> a;
+a.empty();  // 0
+
+array<int, 0> b;
+b.empty(); //1
+```
+
+
+
+(3)size
+
+```c++
+array<int, 3> a;
+a.size();  // 3
+```
+
+​	
+
+(4)max_size
+
+```c++
+array<int, 3> a;
+a.size();	   // 3
+a.max_size();  // 3  , array 的 size =  max_size
+```
+
+
+
+## 3.2.4.容器类array的初步使用3
+
+### 3.2.4.1、操作
+
+(1)fill
+
+```c++
+#include <iostream>
+#include <array>
+
+using namespace std;
+
+
+int main(void)
+{
+	array<int, 3> a{1, 3, 5};		// 可以，属于聚合初始化
+
+    cout << a.at(2) << endl;
+    cout << a[0] << endl;
+
+    a.fill(6);
+    
+    cout << "a[0] = " << a.at(0) << endl;
+    cout << "a[1] = " << a.at(1) << endl;
+    cout << "a[2] = " << a.at(2) << endl;
+
+	return 0;
+}
+/*
+    6
+    6
+    6
+*/
+```
+
+
+
+(2)swap
+
+```c++
+#include <iostream>
+#include <array>
+
+using namespace std;
+
+
+int main(void)
+{
+	array<int, 3> a{1, 3, 5};		// 可以，属于聚合初始化
+	array<int, 3> b{7, 8, 9};		// 可以，属于聚合初始化
+
+    a.swap(b);
+    
+    cout << "a[0] = " << a.at(0) << endl;
+    cout << "a[1] = " << a.at(1) << endl;
+    cout << "a[2] = " << a.at(2) << endl;
+
+	return 0;
+}
+
+/*
+    a[0] = 7
+    a[1] = 8
+    a[2] = 9
+*/
+```
+
+
+
+### 3.2.4.2、非成员函数
+
+(1)operator重载函数
+
+​	详细参考[cppreference.com](https://en.cppreference.com/)
+
+(2)std::get(std::array)
+
+​	详细参考cppreference.com
+
+(3)swap
+
+
+
+(4)to_array
+
+  将c语言数组转换成c++的array, c++ 20
+
+
+
+## 3.2.5_6.容器类array的初步使用4_5
+
+### 3.2.5.1、辅助类tuple_size
+
+```c++
+#include <iostream>
+#include <array>
+ 
+template<class T>
+void test(T)
+{
+    int a[std::tuple_size<T>::value]; // can be used at compile time
+    std::cout << std::size(a) << '\n';
+}
+ 
+int main()
+{
+    std::array<float, 3> arr;
+    test(arr);
+}
+//output : 3
+```
+
+
+
+### 3.2.5.2、辅助类tuple_element
+
+```c++
+#include <array>
+#include <iostream>
+#include <tuple>
+#include <type_traits>
+ 
+int main()
+{
+   // define array and get the type of the element at position 0
+   std::array<int, 10> data {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+   using T = std::tuple_element<0, decltype(data)>::type; // int
+ 
+   std::cout << std::boolalpha;
+   std::cout << std::is_same<T, int>::value << '\n';
+ 
+   const auto const_data = data;
+   using CT = std::tuple_element<0, decltype(const_data)>::type; // const int
+ 
+   // the result of tuple_element depends on the cv-qualification of the tuple-like type
+   std::cout << std::is_same<T, CT>::value << '\n';
+   std::cout << std::is_same<CT, const int>::value << '\n';
+}
+
+/*
+    true
+    false
+    true
+*/
+```
+
+
+
+### 3.2.5.3、被取代的make_array
+
+已经被移除
+
+
+
+## 3.2.7.迭代器的引入
+
+### 3.2.7.1、迭代器是干嘛的
+
+​	(1)迭代器就是能通过移动来遍历处理的一种机制;
+
+​	(2)C语言中遍历数组元素，用指针*p++方式，指针变量就是遍历迭代器;
+
+​	(3)思考：结构体元素能够通过指针运算来遍历？
+
+
+
+### 3.2.7.2、关于迭代器的分析
+
+​	(1)每种容器理论上都可以被遍历，不存在不能被遍历的容器;
+
+​	(2)每种容器的遍历实现都可能不同，要结合容器和元素的特点来具体实现;
+
+​	(3)迭代器内部原理肯定是通过指针操作（地址运算）来实现;
+
+​	(4)迭代器就是C++为我们设计的一个**高层次的“指针”**，高层指针是面向容器中的元素的;
+
+
+
+### 3.2.7.3、C++实际是这么设计迭代器的
+
+​	(1)所有的迭代器有一个共同基类（接口），规定了迭代器的基本行为规范接口;
+
+​	(2)每个容器类中均包含了一个专属化迭代器成员变量，这个专属化迭代器专门针对该容器的特点实现了迭代器应该有的所有接口;
+
+​	(3)需要遍历某STL容器时，只需要直接调出该容器的这个迭代器成员变量直接用即可，固定名字为iterator;
+
+
+
+### 3.2.7.4、典型的迭代器用法
+
+​	(1)代码实战，用迭代器来实现遍历array;
+
+```c++
+#include <iostream>
+#include <array>
+
+using namespace std;
+
+
+int main(void)
+{
+	array<int, 3> a{1, 3, 5};	
+
+    array<int, 3>::iterator iter;  //定一个相同类型的迭代器(高级指针)
+    
+    for (iter = a.begin(); iter!= a.end(); iter++) {
+        cout << "*itera = " << *iter << endl;
+    }
+
+	return 0;
+}
+```
+
+​	(2)begin()和end()方法是得到容器遍历的开始和结尾的套路化方法;
+
+
+
+## 3.2.8.迭代器的几个细节问题
+
+### 3.2.8.1、const与非const
+
+​	(1)begin和end返回可读可写的迭代器，而cbegin(c是const的意思)和cend返回const的只读迭代器;
+
+​	(2)代码验证迭代器的读写权限;
+
+```c++
+#include <iostream>
+#include <array>
+
+using namespace std;
+
+
+int main(void)
+{
+	array<int, 3> a{1, 3, 5};	
+
+    array<int, 3>::const_iterator iter;
+    
+    iter = a.cbegin();
+    *iter = 3;
+    cout << "*itera = " << *iter << endl;
+
+
+	return 0;
+}
+
+/*
+jay@ubuntu:~/learn/cpp/3.2/3.2.7$ g++ array.cpp
+array.cpp: In function ‘int main()’:
+array.cpp:14:13: error: assignment of read-only location ‘* iter’
+     *iter = 3;
+
+*/
+
+```
+
+
+
+### 3.2.8.2、begin和end的半开半闭区间
+
+​	(1)begin返回第0个元素的迭代器（类似于C数组的首元素首地址指针）;
+
+​	(2)end指向的不是末尾元素的迭代器，而是末尾元素的（实际不存在的）下一个元素的迭代器;
+
+```c++
+    for (iter = a.begin(); iter!= a.end(); iter++) 
+```
+
+​	(3)前闭后开区间，经常记做[begin end)，这样设计是为了写循环遍历时方便;
+
+
+
+### 3.2.8.3、正向和逆向迭代器
+
+​	(1)rbegin和rend返回逆向迭代器;
+
+​	(2)逆向迭代器的begin是最末尾元素，而end是第0个元素去（实际不存在的）前面1个元素的迭代器;
+
+​	(3)逆向迭代器++是向前移动，而--是向后移动;
+
+```c++
+#include <iostream>
+#include <array>
+
+using namespace std;
+
+
+int main(void)
+{
+	array<int, 3> a{1, 3, 5};	
+
+    array<int, 3>::reverse_iterator iter;
+    
+    for (iter = a.rbegin(); iter!= a.rend(); iter++) {
+        cout << "*itera = " << *iter << endl;
+    }
+
+	return 0;
+}
+/**
+ * jay@ubuntu:~/learn/cpp/3.2/3.2.7$ ./a.out
+ *itera = 5
+ *itera = 3
+ *itera = 1
+ 
+ * /
+
+```
+
+
+
+### 3.2.8.4、迭代器越界会怎么样
+
+​	(1)和数组越界类似，编译时不审查，运行时会崩溃;
+
+​	(2)不管是正向还是逆向迭代器，++不到end，--不到begin，就不会越界;
+
+
+
+## 3.2.9.STL的不同类型迭代器
+
+### 3.2.9.1、C++17前共有5种迭代器
+
+​	(1)**InputIterator**，输入迭代器。只能从容器内读出而不能向容器内写入，只能单次读出（读出过一次后不保证再次操作仍然可以，想想流输入输出），只能++走不能--走（就是单向的），不能保证第二次遍历容器时，顺序不变。输入迭代器适用于单通只读型算法。
+
+​	(2)**OutputIterator**，输出迭代器。用于将信息传输给容器（修改容器中元素的值），但是不能读取。（显示器就是只能写不能读的设备，可用输出容器来表示它）只能++走不能--走（就是单向的），输出迭代器适用于单通只写型算法。
+
+​	(3)**ForwardIterator**，前向迭代器。只能++走不能--走（就是单向的）
+
+​	(4)**BidirectionalIterator**，双向迭代器。既能++也可以--，双向移动。 
+
+​	 (5)**RandomAccessIterator**，随机访问迭代器。能双向移动，并且可以单次跨越多个元素移动。
+
+​	感觉这个输入输出的迭代器是相反的, 可能可以这样理解键盘的输入信息存入容器,这时候用输入迭代器来做只读操作, 比如说显示屏是输出的设备, 需要将数据放入容器中,这时候就做只写操作。
+
+
+
+### 3.2.9.2、C++17新增1种迭代器
+
+​	(1)**contiguousIterator**,连续迭代器。所指向的逻辑相邻元素也在内存中物理上相邻。
+
+
+
+### 3.2.9.3、STL的6种迭代器总结
+
+​	(1)每种迭代器更应该被看作是具有某些预定义特征（或者满足某接口要求）的一个迭代器的实现;
+
+​	(2)这些迭代器彼此之间有功能重叠，譬如随机访问迭代器可由双向迭代器扩展而来，详见文档;
+
+​	(3)为何定义多种迭代器？是为了适配容器特性和泛型算法，后面会看到;
+
+
+
+### 3.2.9.4 不同容器的迭代器的功能
+
+| 容器           | 迭代器功能   |
+| -------------- | ------------ |
+| vector         | 随机访问     |
+| deque          | 随机访问     |
+| list           | 双向         |
+| set / multiset | 双向         |
+| map / multimap | 双向         |
+| stack          | 不支持迭代器 |
+| queue          | 不支持迭代器 |
+| priority_queue | 不支持迭代器 |
+
+
+
+### 3.2.9.4、C++20的新迭代器
+
+​	(1)C++20中重新实现了基于**concept**的新的迭代器体系;
+
+​	(2)原有的模板都被加了前缀Legecy，但很长时间仍然可用，甚至还是主流;
+
+​	(3)基于concept的新迭代器主要在**类型约束**和**模板特化**方面做了优化;
+
+​	(4)C++20目前还刚开始，可以先不管，先学好原有的，后面再扩展去学C++20新特性;
+
+
+
+## 3.2.10_11.序列容器 之Vector1_2
+
+### 3.2.10.1、Vector的特征
+
+​	(1)Vector和Array相同点是：都是数组、都是contiguousIterator、容器内元素种类都相同；
+
+​	(2)Vector和Array不同点是：Array是固定数组；Vector是动态数组，可以按需扩展数组大小；
+
+​	(3)vector 的存储是自动管理的，按需扩张收缩；
+
+​	(4)vector 通常占用多于静态数组的空间，因为要分配更多内存以管理将来的增长；
+
+​	(5)vector 所用的方式不在每次插入元素时，而只在额外内存耗尽时重分配；
+
+
+
+### 3.2.10.2、构造拷贝和赋值
+
+​	(1)多种参数的构造；
+
+​	(2)拷贝构造；
+
+​	(3)assign；
+
+
+
+### 3.2.10.3、容器元素的遍历
+
+​	(1)最本质的笨办法：获取容器迭代器，再写for/while循环来遍历；
+
+​	(2)C++11：Range-Based for循环，案例参考assign函数页面；
+
+```c++
+#include <vector>
+#include <iostream>
+ 
+int main()
+{
+    std::vector<char> characters;
+ 
+    characters.assign(5, 'a');
+ 
+    for (char c : characters) {
+        std::cout << c << ' ';
+    } 
+ 
+    characters.assign({'\n', 'C', '+', '+', '1', '1', '\n'});
+ 
+    for (char c : characters) {
+        std::cout << c;
+    }
+}
+
+/*output:
+    a a a a a 
+    C++11
+*/
+```
+
+
+
+## 3.2.12_13.序列容器之list1_2
+
+### 3.2.12_13.1 概要
+
+`std::list` 是支持常数时间从容器任何位置插入和移除元素的容器。不支持快速随机访问。它通常实现为双向链表。与 [std::forward_list](https://zh.cppreference.com/w/cpp/container/forward_list) 相比，此容器提供双向迭代但在空间上效率稍低。
+
+在 list 内或在数个 list 间添加、移除和移动元素不会非法化迭代器或引用。迭代器仅在对应元素被删除时非法化。
+
+`std::list` 满足[*容器* *(Container)* ](https://zh.cppreference.com/w/cpp/named_req/Container)、[*知分配器容器* *(AllocatorAwareContainer)* ](https://zh.cppreference.com/w/cpp/named_req/AllocatorAwareContainer)、[*序列容器* *(SequenceContainer)* ](https://zh.cppreference.com/w/cpp/named_req/SequenceContainer)及[*可逆容器* *(ReversibleContainer)* ](https://zh.cppreference.com/w/cpp/named_req/ReversibleContainer)的要求。
+
+
+
+### 3.2.12_13.2 示例
+
+```c++
+#include <algorithm>
+#include <iostream>
+#include <list>
+ 
+int main()
+{
+    // 创建含整数的 list
+    std::list<int> l = { 7, 5, 16, 8 };
+ 
+    // 添加整数到 list 开头
+    l.push_front(25);
+    // 添加整数到 list 结尾
+    l.push_back(13);
+ 
+    // 以搜索插入 16 前的值
+    auto it = std::find(l.begin(), l.end(), 16);
+    if (it != l.end()) {
+        l.insert(it, 42);
+    }
+ 
+    // 迭代并打印 list 的值
+    for (int n : l) {
+        std::cout << n << '\n';
+    }
+}
+
+/*output
+    25
+    7
+    5
+    42
+    16
+    8
+    13
+*/
+```
+
+
+
+### 3.2.12_13.3 emplace
+
+​	直接于 `pos` 前插入元素到容器中。
+
+​	通过 [std::allocator_traits::construct](https://zh.cppreference.com/w/cpp/memory/allocator_traits/construct) 构造元素，用布置 new 在容器提供的位置原位构造元素。
+
+将参数 `args...` 作为 [std::forward](http://zh.cppreference.com/w/cpp/utility/forward)<Args>(args)... 转发给构造函数。 `args...` 可以直接或间接地指代容器中的值。
+
+没有引用和迭代器被非法化 
+
+**说人话就是传入参数他会帮你构建一个对象。**
+
+所以insert和emplace的区别就在于，前者直接插入对象， 后者是传入参数帮你构建一个对象。
+
+**示例：**
+
+```c++
+#include <iostream>
+#include <string>
+#include <list>
+ 
+struct A {
+    std::string s;
+    A(std::string str) : s(std::move(str))  { std::cout << " constructed\n"; }
+    A(const A& o) : s(o.s) { std::cout << " copy constructed\n"; }
+    A(A&& o) : s(std::move(o.s)) { std::cout << " move constructed\n"; }
+    A& operator=(const A& other) {
+        s = other.s;
+        std::cout << " copy assigned\n";
+        return *this;
+    }
+    A& operator=(A&& other) {
+        s = std::move(other.s);
+        std::cout << " move assigned\n";
+        return *this;
+    }
+};
+ 
+int main()
+{
+    std::list<A> container;
+ 
+    std::cout << "construct 2 times A:\n";
+    A two { "two" };
+    A three { "three" };
+ 
+    std::cout << "emplace:\n";
+    container.emplace(container.end(), "one");
+ 
+    std::cout << "emplace with A&:\n";
+    container.emplace(container.end(), two);
+ 
+    std::cout << "emplace with A&&:\n";
+    container.emplace(container.end(), std::move(three));
+ 
+    std::cout << "content:\n";
+    for (const auto& obj : container)
+        std::cout << ' ' << obj.s;
+    std::cout << '\n';
+}
+
+/*output:
+    construct 2 times A:
+    constructed
+    constructed
+    emplace:
+    constructed
+    emplace with A&:
+    copy constructed
+    emplace with A&&:
+    move constructed
+    content vec:
+    one two three
+*/
+```
+
+
+
+### 3.2.12_13.3 emplace
+
+​	以升序排序元素。保持相等元素的顺序。第一版本用 operator< 比较元素，第二版本用给定的比较函数 `comp` 。
+
+若抛出异常，则 *this 中元素顺序未指定。
+
+
+
+  **示例：**
+
+```c++
+#include <iostream>
+#include <functional>
+#include <list>
+ 
+std::ostream& operator<<(std::ostream& ostr, const std::list<int>& list)
+{
+    for (auto &i : list) {
+        ostr << " " << i;
+    }
+    return ostr;
+}
+ 
+int main()
+{
+    std::list<int> list = { 8,7,5,9,0,1,3,2,6,4 };
+ 
+    std::cout << "before:     " << list << "\n";
+    list.sort();
+    std::cout << "ascending:  " << list << "\n";
+    list.sort(std::greater<int>());
+    std::cout << "descending: " << list << "\n";
+}
+
+/*output
+    before:      8 7 5 9 0 1 3 2 6 4
+    ascending:   0 1 2 3 4 5 6 7 8 9
+    descending:  9 8 7 6 5 4 3 2 1 0
+*/
+```
+
+
+
+## 3.2.14_15.序列容器之deque1_2
+
+### 3.2.14_15.1 概要
+
+​	`std::deque` （ double-ended queue ，双端队列）是有下标顺序容器，它允许在其首尾两段快速插入及删除。另外，在 deque 任一端插入或删除不会非法化指向其余元素的指针或引用。
+
+​	与 [std::vector](https://zh.cppreference.com/w/cpp/container/vector) 相反， deque 的元素不是相接存储的：典型实现用单独分配的固定大小数组的序列，外加额外的登记，这表示下标访问必须进行二次指针解引用，与之相比 vector 的下标访问只进行一次。
+
+​	deque 的存储按需自动扩展及收缩。扩张 deque 比扩张 [std::vector](https://zh.cppreference.com/w/cpp/container/vector) 更优，因为它不涉及到复制既存元素到新内存位置。另一方面， deque 典型地拥有较大的最小内存开销；只保有一个元素的 deque 必须分配其整个内部数组（例如 64 位 libstdc++ 上为对象大小 8 倍； 64 位 libc++ 上为对象大小 16 倍或 4096 字节的较大者）。
+
+
+
+### 3.2.14_15.1 示例
+
+```c++
+#include <iostream>
+#include <deque>
+ 
+int main()
+{
+    // 创建容纳整数的 deque
+    std::deque<int> d = {7, 5, 16, 8};
+ 
+    // 从 deque 的首尾添加整数
+    d.push_front(13);
+    d.push_back(25);
+ 
+    // 迭代并打印 deque 的值
+    for(int n : d) {
+        std::cout << n << '\n';
+    }
+}
+
+/* output
+    13
+    7
+    5
+    16
+    8
+    25
+*/
+```
+
+详细
+
+见：https://blog.csdn.net/u010710458/article/details/79540505
+
+
+
+# 第三部分第三章 STL的泛型算法使用详解
+
+**3.3.1.什么是泛型算法**	
+
+本节引入泛型算法的概念，并且用sort方法实际举例写代码来讲。
+
+**3.3.2.泛型算法使用实战**
+
+​	本节使用sort分别就array和vector、list等几种容器来排序。
+
+**3.3.3.谓词predicate和函数对象引入**
+
+​	本节讲解谓词的概念，并引入函数对象这个谓词。
+
+**3.3.4.函数对象的一些细节1**
+
+​	本节详细讲函数对象，并实际写代码来演示函数对象的定义和使用。
+
+**3.3.5.函数对象的一些细节2**
+
+​	本节接上节继续实战演练函数对象，并作总结。
+
+**3.3.6.STL典型泛型算法解读1**
+
+​	本节开始解读STL的典型泛型算法，首先是all_of。
+
+**3.3.7.STL典型泛型算法解读2**
+
+​	本节结合示例程序详解all_of、any_of和none_of这几个算法。
+
+**3.3.8.CPP之lamba表达式**
+
+​	本节以理论分析和层层推进的代码实战来讲解lambda表达式。
+
+**3.3.9.lambda表达式之参数捕获**
+
+​	本节专门讲解lambda表达式的参数捕获。
+
+**3.3.10.CPP函数适配器**
+
+​	本节讲解C++的函数适配器，主要是bind1st、bind2nd和std::bind
+
+**3.3.11.STL典型泛型算法解读3**
+
+​	本节继续讲解STL的泛型算法，主要是for_each和transform
+
+**3.3.12.STL典型泛型算法解读4**
+
+​	本节再讲了几个典型算法，并对泛型算法的学习和精进方法做了总结。
+​	
+
+## 3.3.1.什么是泛型算法
+
+### 3.3.1.1、从容器说起
+
+​	(1)容器是数据结构，是对数据的封装；
+
+​	(2)各容器都提供了少量处理元素操作的方法，譬如sort，但没有提供更多；
+
+​	(3)同样的操作譬如sort，在不同容器中底层处理肯定会不同；
+
+​	(4)泛型算法是独立于容器类的一些操作方法，可以用于多种容器，所以叫“泛型”算法；
+
+​	(5)泛型算法实际上是更高层次的抽象，所以设计和实现的难度很大，这也是STL的核心技术；
+
+
+
+### 3.3.1.2、泛型算法使用基础
+
+​	(1)泛型算法参考：https://zh.cppreference.com/w/cpp/algorithm
+
+​	(2)泛型算法所在头文件<algorithm>
+
+
+
+## 3.3.2.泛型算法使用实战
+
+### 3.3.2.1、泛型算法和容器迭代器的适配
+
+​	(1)算法中对迭代器有要求；
+
+​	(2)容器中包含的迭代器有特性；
+
+​	(3)2者兼容才可结合使用，否则不可使用；
+
+
+
+### 3.3.1.3、泛型算法使用举例
+
+(1)使用sort为array默认排序；
+
+```c++
+#include <iostream>
+#include <array>
+#include <algorithm>
+#include <vector>
+
+using namespace std;
+
+
+int main()
+{
+    array<int, 5> a1 = {3, 1, 5, 2, 4};
+    //vector<int> a1 = {3, 1, 5, 2, 4};
+
+    sort(a1.begin(), a1.end());
+	
+    
+    for (auto ax : a1) {
+        cout << ax << " ";
+    }
+
+    cout << endl;
+
+    return 0;
+}
+
+/* output
+	1 2 3 4 5
+*/
+```
+
+
+
+(2)使用sort为list默认排序；
+
+​	list不能用sort， 因为它的迭代器不支持， sort需要**随机访问迭代器**， 而sort是比它还要小一点的范围的**双向迭代器**。
+
+(3)使用sort为array由大到小排序；
+
+```c++
+sort(a1.begin(), a1.end(), greater<int>());   //从大到小, greatrer<int>()这是个谓词, 可以自己实现
+```
+
+
+
+## 3.3.3.谓词predicate和函数对象引入
+
+### 3.3.3.1、何为谓词
+
+​	(1)谓词就是可以做谓语的词，就是“动词、动作”性质语义的词;
+
+​	(2)C/C++中的函数function就是典型的谓词语义;
+
+​	(3)C++ STL中的谓词类似这样：bool func(T& a); 或者 bool func(T&a, T& b);
+
+​	(4)常见的谓词：函数,函数指针,lambda表达式,函数对象,库定义的函数对象;
+
+
+
+### 3.3.3.2、函数对象引入
+
+​	(1)函数对象 function object， **也叫仿函数 functor**;
+
+​	(2)函数对象在语法上不是函数，而是个类;
+
+​	(3)函数对象在调用形式上看起来像个函数;
+
+
+
+### 3.3.3.3、函数对象案例实践
+
+​	(1)写一个函数，判断传参是否大于0;
+
+​	(2)用函数对象实现，对比、分析、体会;
+
+```c++
+#include <iostream>
+
+
+using namespace std;
+
+//函数来实现
+bool IsGreater(int a)
+{
+    return (a > 0);
+}
+
+//用仿函数实现
+class beGreater
+{
+public:
+    bool operator()(int a) 
+    {
+        return (a > 0);
+    }
+};
+
+int main()
+{
+    beGreater greater;
+    bool b = greater(0);
+
+    cout << boolalpha << b << endl;  //false
+
+    return 0;
+}
+```
+
+
+
+
+
+## 3.3.4_5.函数对象的一些细节1_2
+
+### 3.3.4.1、STL中定义的函数对象的分析
+
+
+
+### 3.3.4.2、自定义函数对象用于STL算法库
+
+```c++
+#include <iostream>
+#include <array>
+#include <algorithm>
+#include <string>
+
+using namespace std;
+
+
+//对比按照字符串大小的长度大小来排序
+class MyGreater {
+public:
+    bool operator()(const string& s1, const string& s2) 
+    {
+        return (s1.size() > s2.size());
+    }
+};
+
+int main()
+{
+    array<string, 3> a1 = {"linux", "android", "ios"};
+
+    sort(a1.begin(), a1.end(), MyGreater());
+
+    for (auto ax : a1) {
+        cout << ax << " ";
+    }
+
+    cout << endl;
+
+    return 0;
+}
+
+/*output
+    android linux ios
+*/
+```
+
+
+
+### 3.3.4.3、函数对象的优势
+
+​	(1)函数对象可以使用template技术实现多类型支持，这比函数的重载技术更有优势;
+​	(2)函数对象可以有自己的状态。我们可以在类中定义状态变量（类私有成员变量），这样一个函数对象在多次的调用中可以共享这个状态。参考：https://www.cnblogs.com/gis-user/p/5086218.html
+
+
+
+## 3.3.6.STL典型泛型算法解读1
+
+​	本节结合示例程序详解all_of、any_of和none_of这几个算法。详细参考cppreference
+
+| all_of  | 区间[开始, 结束)中是否**所有**的元素**都满足**判断式p，所有的元素都满足条件返回true，否则返回false。 |
+| ------- | ------------------------------------------------------------ |
+| any_of  | 区间[开始, 结束)中是否**至少**有一个元素都满足判断式p，**只要**有一个元素满足条件就返回true，否则返回true。 |
+| none_of | 区间[开始, 结束)中是否所有的元素**都不满足**判断式p，所有的元素**都不满**足条件返回true，否则返回false。 |
+
+
+
+## 3.3.7.STL典型泛型算法解读2
+
+本节结合示例程序详解all_of、any_of和none_of这几个算法。详细参考cppreference
+
+### 3.3.7.1 all_of 用法
+
+```c++
+std::vector<int> vec_score{10, 2, 33, 43, 52};
+//是否都大于100
+bool is_greater_than_100 = std::all_of(vec_score.begin(), vec_score.end(), 
+                                       [](int &item) {return 100 < item});
+if(!is_greater_than_100)
+    	std::cout << "Not at all of them greater than 100" << std::endl;
+else
+    	std::cout << "All greater than 100" << std::endl;
+//output : Not at all of them greater than 100
+```
+
+
+
+### 3.3.7.2 any_of 用法
+
+```c++
+// 分数
+std::vector<int> vec_score{10 , 2, 33, 43, 52};
+
+// 是否存在大于100的元素
+bool is_exist_greater_than_100 = std::any_of(vec_score.begin(), vec_score.end(), 
+                                             [](int &item) {return 100 < item; });
+
+if (is_exist_greater_than_100)
+	std::cout << "Exists greater than 100" << std::endl;
+else
+	std::cout << "There is nothing greater than 100" << std::endl;
+//output : "There is nothing greater than 100
+```
+
+
+
+### 3.3.7.3 none_of 用法
+
+```c++
+std::vector<int> vec_score{10 , 2, 33, 43, 52};
+//检查是否所有的数字不大于100
+bool is_less_than_100 = std::none_of(vec_scroe.begin(), vec_scroe.end(),
+                                    [](int& item) {return item > 100;};
+if (is_less_than_100)
+	std::cout << "Exists number is greater than 100" << std::endl;
+else
+	std::cout << "Not at all of them is less than 100" << std::endl;                                  
+```
+
+
+
+## 3.3.8.CPP之lamba表达式
+
+### 3.3.8.1、实践体会lamba表达式
+
+​	(1)lambda表达式使用举例：上节all_of示例代码;
+
+```c++
+#include <iostream>
+#include <vector>
+
+int main()
+{
+    std::vector<int> v(10, 2);
+    if (std::all_of(v.cbegin(), v.cend(), [](int i) -> bool { return i % 2 == 0; })) 
+        //if (std::all_of(v.cbegin(), v.cend(), IsEven())) 	
+        {
+            std::cout << "All numbers are even\n";
+        }
+        else
+        {
+            std::cout << " Not all numbers are  even\n";
+        }
+      return 0;
+  }
+/* output:
+	All numbers are even
+*/
+```
+
+​	(2)使用函数对象实现类似于lambda表达式的效果;
+
+```c++
+struct IsEven
+{
+    bool operator()(int i)
+    {
+        return i % 2 == 0;
+    }
+}
+if(std::all_of(v.cbegin(), v.cend(), IsEven()))
+{
+            std::cout << "All numbers are even\n";
+        }
+        else
+        {
+            std::cout << " Not all numbers are  even\n";
+        }
+      return 0;
+  }
+/* output:
+	All numbers are even
+*/
+```
+
+
+
+### 3.3.8.2、lambda表达式总结
+
+​	(1)lambda表达式 就是一个匿名函数，相当于一次使用的、直接原地展开调用的函数;
+
+​	(2)lambda表达式也叫闭包，就是在别的地方无法调用的封包;
+
+​	(3)lambda表达式其实就是一个函数对象，在内部创建了一个重载()操作符的类;
+
+
+
+### 3.3.8.3、lambda表达式格式
+
+​	(1)完整格式5部分：[参数捕获] (操作符重载函数参数) mutable或exception声明 ->返回值类型 {函数体};
+
+​	(2)最简单的lambda表达式：**[](){}，调用执行时为[](){}()**;
+
+```c++
+[](){cout << "hello "  << endl;}();
+//Output: hello 
+```
+
+​	(3)带传参的lambda表达式：[](int i){//i在这里可以用};
+
+```c++
+[](int i){cout << "hello " << i << endl;}(5);
+//Output: hello 5
+```
+
+​	(4)使用auto将lambda表达式定义为一个变量，再以变量方式调用;
+
+```c++
+auto func = [](int i){cout << "hello " << i << endl;};
+func(1);
+//Output: hello 1
+```
+
+​	(5)使用->int这种方式让lambda表达式函数返回相应类型的值;
+
+```c++
+[](int i) -> bool {return i  % 2 == 0;}
+```
+
+
+
+## 3.3.9.lambda表达式之参数捕获
+
+### 3.3.9.1、什么是参数捕获
+
+​	(1)实验：在lambda表达式外面定义int a，在表达式内部试图访问;
+
+```c++
+int a = 5;
+auto  func = [](int i) {cout << "i = " << i << ", a = " << a << endl;}
+
+/*complie
+jay@ubuntu:~/learn/cpp/3.3/3.3.9$ g++ lambda.cpp
+lambda.cpp: In lambda function:
+lambda.cpp:8:64: error: ‘a’ is not captured
+     auto func = [](int i) { cout << "i = " << i << ", a = " << a << endl;};
+*/
+```
+
+​	(2)解决：在[]中增加捕获说明即可;
+
+```c++
+auto  func = [a](int i) {cout << "i = " << i << ", a = " << a << endl;}
+```
+
+​	(3)总结：所谓参数捕获，就是让lambda表达式内部可以捕获并使用外部的变量;
+
+
+
+### 3.3.9.2、lambda表达式的捕获列表
+
+​	(1)[] 空，完全不捕获
+
+​	(2)[=] 等号，以**值传参**方式捕获，捕获范围是表达式所在作用范围（包括所在类的this）
+
+​			值传递的变量会自动加上const, 保护变量不可以更改。
+
+​	(3)[&] &号，以**引用传参**方式捕获，**捕获范围是表达式所在作用范围**（包括所在类的this）
+
+​	(4)[this] 只捕获lambda表达式所在类的this可访问的那些
+
+​				这种情况是lamba表达式写在一个类里面的
+
+```c++
+#include <iostream>
+#include <functional>
+using namespace std;
+
+class People {
+public:
+    People(){}
+    People(int i) {sum = i;};
+    void func (void)
+    {
+      //  cout << "sum = " << sum << endl;
+      auto func = [this](){cout << "sum = " << this->sum << endl;};
+      func();
+    }
+private:
+    int sum;
+};
+
+int main()
+{
+    People p1(10);
+    p1.func();
+
+    return 0;
+}
+
+/* Output：
+	sum = 10
+*/
+
+```
+
+​	(5)[a] 仅以值方式捕获a，其他全部不捕获  (a是变量名)
+
+​	(6)[&a] 仅以引用方式捕获a，其他全部不捕获 (a是变量名)
+
+​	(7)[a, &b] 仅以值方式捕获a，以引用方式捕获b，其余完全不捕获
+
+​	(8)[=, &a, &b] 仅以引用方式捕获a和b，其余以值方式捕获
+
+​	(9)[&, a, b] 仅以值方式捕获a和b，其余以引用方式捕获
+
+
+
+### 3.3.9.3、lambda表达式总结
+
+​	(1)lambda表达式提供一种单次使用的函数简写方式
+
+​	(2)通过捕获列表，在lambda表达式内部也可以访问外部的变量，相当于函数传参
+
+
+
+## 3.3.10.CPP函数适配器
+
+### 3.3.10.1、什么是函数适配器
+
+​	(1)适配器，adapter，用来在不适配的2端间对接的连接器；
+
+​	(2)函数适配器是在不同传参个数的函数间进行适配的技术；
+
+​	(3)几个概念：1元函数、2元函数、1元谓词、2元谓词；
+
+
+
+### 3.3.10.2、C++的函数适配器
+
+​	(1)早期C++98时，常用bind1st bind2nd ；
+
+​	(2)C++11开始，引入加强版：std::bind；
+
+
+
+### 3.3.10.3、bind的学习
+
+参考：https://blog.csdn.net/u013654125/article/details/100140328
+
+
+
+## 3.3.11.STL典型泛型算法解读3
+
+for_each和transform
+
+## 3.3.12.STL典型泛型算法解读4
+
+### 3.3.12.1、再看几个泛型算法
+
+### 3.3.12.2、泛型算法总结
+
+​	(1)理解谓词和函数对象，是学习和使用泛型算法的基础；
+
+​	(2)泛型算法很多，但是套路是类似的，学会的关键是理解并会用这种套路；
+
+​	(3)不建议试图死记硬背所有泛型算法，建议实战中去熟悉、去用起来并记住；
+
+​	(4)能用现成泛型算法写代码就不要自己造轮子；
+
+​	(5)一个潜在问题警告：C++包的越来越多，不要想当然，未经验证确认的代码都要有怀疑精神；
+
+
+
+# 第三部分第四章 模板特化与类型萃取
+
+3.4.1.从案例中理解什么是模板特化1
+	本节从一个实际案例来演示什么是模板特化。
+3.4.2.从案例中理解什么是模板特化2
+	本节接上节从一个实际案例来演示什么是模板特化。
+3.4.3.偏特化和全特化
+	本节详细讲解全特化，并提出偏特化的概念。
+3.4.4.类模板的多种偏特化1
+	本节讲解并演示类模板的偏特化，譬如偏特化为指针类型。
+3.4.5.类模板的多种偏特化2
+	本节继续讲解类模板的偏特化，譬如偏特化为vector<T>
+3.4.6.函数模板为什么不能偏特化
+	本节讲解并分析了函数模板为什么不能偏特化。
+3.4.7.编译器匹配规则和特化的总结
+	本节讲解编译器的匹配规则，并且对特化进行了总结。
+3.4.8.类型萃取的目的和意义
+	本节引入类型萃取的概念，并且分析了类型萃取能解决什么问题。
+3.4.9.类型萃取实战演练
+	本节用一个实际案例来演示类型萃取的使用。
+3.4.10.类型萃取是如何实现的
+	本节分析类型萃取的实现原理，与模板特化对接上了
+3.4.11.类型萃取的另一种可能实现
+	本节讲解类型萃取的另一些实现技术，尤其是typedef重定义嵌套类型的技术。
+3.4.12.迭代器萃取与泛型算法
+	本节讲解迭代器萃取与泛型算法的关联。
+3.4.13.迭代器萃取器的设计解读
+	本节讲解了迭代器萃取器的设计思路和实现过程。
+3.4.14.迭代器萃取器的特化
+	本节讲解了迭代器萃取器的偏特化，并最终对整个课程内容进行了总结和学习指导。
+
+
+第三部分、随堂记录
+3.4.1_2.从案例中理解什么是模板特化1_2
+3.4.1.1、本课程内容是用来干嘛的
+(1)3.2主要讲了顺序容器，3.3讲了泛型算法，都是使用STL所必须掌握的
+(2)本课程讲的特化和萃取，是STL内部实现所需要的，属于深度技术
+(3)下个课程3.5会继续讲剩余的其他容器
+3.4.1.2、通过一个案例理解模板特化
+(1)案例前奏：写一个add函数库，可以适用于各种数据类型。结论是模板比函数重载好用。
+(2)案例：写一个GreaterThan函数，可以对比各种数据类型的大小。
+(3)特殊要求：int等比较数值大小，但string类型对比时，不比较字典序，而是以字符串长短来比较
+3.4.1.3、模板特化总结
+(1)模板特化有点类似于函数重载，而且都是编译链接时确定，而非运行时确定的。
+(2)特化，specialize，就是让模板参数T在某个具体类型时可以特殊化指定处理
+(3)特化的模板声明，前面一般是template<>
+
+3.4.3.偏特化和全特化
+3.4.3.1、全特化与偏特化概念
+(1)全特化，特化原模板的所有模板类型为具体类型
+(2)偏特化，又叫局部特化，特化原模板的部分类型，或部分特化原模板的类型
+(3)全特化比较简单，本节即可全部解决。而偏特化更复杂，是之后讨论的重点。
+3.4.3.1、函数模板的全特化
+(1)代码实践，单个模板参数
+(2)代码实践，多个模板参数
+3.4.3.2、类模板的全特化
+(1)代码实践，单个模板参数
+(2)代码实践，多个模板参数
+
+3.4.4_5.类模板的多种偏特化1_2
+3.4.4.1、类模板的第一种偏特化
+(1)特化多个模板参数中的一部分参数
+(2)这种比较简单，代码实践演示
+3.4.4.2、类模板的第二种偏特化
+(1)特化为T的指针类型
+(2)这种特化理解起来稍微有点绕，实战演示
+3.4.4.3、类模板的第三种偏特化
+(1)特化为T的其他类模板，譬如vector<T>
+(2)这种特化理解起来难度更大，实战演示
+3.4.4.4、类模板的第4种偏特化
+(1)特华为带const的版本
+
+3.4.6.函数模板为什么不能偏特化
+3.4.6.1、事实
+(1)代码演示，函数模板确实不支持偏特化，只能全特化，这是编译器决定的
+(2)怎么办？用模板函数重载即可
+(3)总结：为什么函数模板不能偏特化？因为没必要支持，模板函数重载就能搞定
+3.4.6.2、分析深度原因
+(1)C++语言设计基本原则：后出现的语法尽量兼容且不破坏原有的语法规则
+(2)C++一开始就支持函数重载，所以模板函数自然沿用了支持函数重载
+(3)偏特化实现的效果，完全可以用模板函数重载实现，所以没必要让模板函数可以偏特化
+(4)再思考：类模板为什么可以偏特化？因为类不能重载
+
+3.4.7.编译器匹配规则和特化的总结
+3.4.7.1、编译器匹配规则
+(1)第1步先匹配非模版函数，也就是普通函数，如果匹配到就执行，匹配不到进入下一步
+(2)第2步再匹配基础泛化版函数，如果匹配不到就报错了，匹配到进入下一步
+(3)第3步再匹配完全特化版本，如果匹配到就执行，匹配不到就执行上一步匹配到的泛化版本
+(4)一个小细节：函数模板的特化（当然是全特化）不参与函数重载
+3.4.7.2、特化与递归结合
+(1)特化与递归结合，可以很巧妙的实现编译期的条件判断
+(2)详见：https://blog.csdn.net/liuxuejiang158blog/article/details/17678573
+3.4.7.3、特化的最后总结
+(1)特化本质上是我们顶替了编译器的工作，我们帮编译器做了类型推导
+(2)模板特化和模板实例化这2个概念的对比
+(3)全特化本质上是一个实例，而偏特化本质上还是一个模板，只是原来模板的一个子集，所以全特化的函数模板，本质上是实例（但不参与普通函数的重载），从而不会与函数模板产生二义性
+
+3.4.8.类型萃取的目的和意义
+3.4.8.1、类型萃取是用途
+(1)典型应用就是：在模板函数中区分T是源生类型POD还是自定义类型
+(2)POD,Plain Old Data,简单理解就是C++从C继承而来的基本类型，如int、double等
+(3)POD类型的本质是没有C++叠加的那些高级特征（构造析构，拷贝构造，移动语义，虚函数等）
+3.4.8.2、为什么要区分POD类型和非POD类型
+(1)典型案例就是copy时，POD类型直接memcpy即可，而非POD类型需要用for循环加=挨个对象拷贝
+(2)非POD类型不能memcpy，本质是因为需要深拷贝以避免出错
+(3)代码演练:int数组和string数组的复制对比
+
+3.4.9.类型萃取实战演练
+3.4.9.1、使用is_pod解决上节中的问题
+(1)std::is_pod介绍
+(2)代码实战，使用is_pod来完善mycopy解决上节中的问题
+3.4.9.2、std提供的其他类型萃取
+
+3.4.10.类型萃取是如何实现的
+3.4.10.1、一种可能的实现
+(1)把所有pod类型组成列表，在内部挨个判断
+(2)优点：可以实现，且能实现<type_traits>中所有的标准库萃取工具
+(3)缺点：运行时判断，占用运行时资源，效率低
+3.4.10.2、使用类模板的特化实现
+(1)代码实践演示
+(2)总结：特化实现萃取的关键，就是特化版本的优先级高于泛化版本
+(3)思考：使用类模板特化，是否会增加代码量，影响程序效率？
+
+3.4.11.类型萃取的另一种可能实现
+3.4.11.1、不使用静态成员变量
+3.4.11.2、改为使用成员函数
+3.4.11.3、使用typedef增加一层中间层
+(1)class/struct内使用typedef定义子类型的方法
+(2)增加名为value_type的子类型中间层，实现pod判断
+
+3.4.12.迭代器萃取与泛型算法
+3.4.12.1、STL的核心
+(1)STL，就是C++提供的一套标准实现的template化的library
+(2)STL有很多内容，但是核心就是2个：泛型容器、泛型算法
+(3)为了实现泛型容器，引入了迭代器，迭代器是指针的泛化抽象
+(4)泛型算法可以接受多种容器，每种容器内可以存储多种数据载体，这就是泛型算法的2级泛化支持
+3.4.12.2、泛型算法实现的难题和解法
+(1)问题1：泛型算法无法预知自己处理的是什么容器
+(2)解决思路：将容器降级为迭代器来对接泛型算法。所以任何容器都必须内置一个迭代器
+(3)问题2：泛型算法无法预知容器内存储的元素类型，是否POD
+(4)解决思路：提供迭代器萃取器，在泛型算法内预先萃取并使用容器元素类型
+
+3.4.13.迭代器萃取器的设计解读
+(1)迭代器萃取器本质是一个类，叫iterator_traits，属于辅助迭代器的第三方类
+(2)解读参考：https://blog.csdn.net/virtual_func/article/details/48398451
+
+3.4.14.迭代器萃取器的特化
+3.4.14.1、萃取器的特化讲解
+(1)参考：https://blog.csdn.net/terence1212/article/details/52287762
+(2)总结：本质是偏特化结合类型萃取技术
+3.4.14.2、本课程总结
+(1)本课程主要讲了2项技术，一个是特化，一个是萃取
+(2)特化的核心价值是，让模板类/函数按一定优先级规则去匹配
+(3)萃取的核心价值是，让我们在写泛型算法时可以预先得知未来传参容器及容器内元素的型别特征
+(4)如果只是使用STL，实际上不需要关注特化和萃取
+(5)真正理解模板技术、特化、萃取等技术的使用和实现，你才会感受到C++的魅力，知道C++为什么效率高
+(6)从实用角度讲，不需要真的深度去研究这些。但是如果完全不懂甚至不知道这些技术的存在，那休想用好C++
+
+
+
+# 第三部分第五章 STL的其他容器讲解
+
+第二部分、章节介绍
+
+3.5.1.STL的三种容器适配器
+3.5.1.1、什么是容器适配器
+(1)回顾：C++三种适配器：函数适配器、容器适配器、迭代器适配器
+(2)适配器，adapter，本质是添加一个中间层来转换以适配双方
+(3)容器适配器，是用已有容器来二次封装以构建新容器
+(4)STL提供三种容器适配器，分别是：stack、queue、priority_queue
+(5)stack:栈，先进后出，关心压栈和弹栈操作
+(6)queue:队列，FIFO，关心入队和出队操作
+(7)priority_queue:优先级队列，内部自排队式进，按优先级出，关心入队和出队操作
+3.5.1.2、为什么会有容器适配器
+(1)顺序式容器是基本容器，偏重于“存储”特性，核心是元素如何在内存中管理
+(2)栈和队列是数据结构型容器，偏重于“数据操作”特性，核心是元素如何按需要进去出来
+(3)从层次讲：顺序式容器是底层实现，而栈和队列是上层应用
+(4)栈和队列底层完全可以由vector、list、array等顺序式容器封装形成，没必要完全从零构建
+3.5.1.3、总结
+(1)容器适配器很多时候用起来和容器完全一样，所以也可以叫容器
+(2)容器适配器内部实现和容器不同
+(3)容器适配器直接内部没有迭代器，但是间接包含有
+(4)容器适配器不能访问内部间接迭代器，而且也没有必要访问
+(5)容器适配器怎么实现的可以不必关心，除非你自己需要去定义新的容器适配器
+
+3.5.2.容器适配器stack详解
+3.5.2.1、stack的构造
+3.5.2.2、stack的操作函数
+(1)进栈push
+(2)出栈pop
+3.5.2.3、stack元素查询
+(1)栈顶元素读取top
+(2)栈内元素个数获取size
+(3)栈元素是否空empty
+3.5.2.4、栈和栈操作
+(1)栈元素交换：2个swap
+(2)栈元素对比：一众运算符重载
+
+3.5.3.queue和priority_queue详解
+3.5.3.1、queue
+(1)FIFO，先进先出
+(2)访问元素用front访问队首，用back访问队尾
+(3)push时只能push到back的后面，pop时只能从front处pop
+3.5.3.2、priority_queue
+(1)按照规则进时排队，从top出
+
+3.5.4.有序关联容器set
+3.5.4.1、什么是有序关联容器
+(1)顺序容器，容器中的元素是按它们在容器中的位置来顺序保存和访问的
+(2)顺序容器有array、vector、deque、list、forward_list、string等
+(3)关联容器中的元素是按关键字来保存和访问的，关联的意思就是关键字（key）与存储值（value）的关联
+(4)主要的关联容器类型是map和set
+(5)关联容器支持高效的关键字查找和访问
+(6)有序关联容器：容器内元素按顺序排列，一般用树（譬如红黑树）来实现
+(7)无序关联容器：容器内元素无顺序排列，一般用哈希表来实现，本质上是一种映射
+3.5.4.2、set的基本使用
+(1)set的基本理解：就是一个用来装Key类型对象的筐子，数学上叫集合
+(2)set的构造函数
+(3)插入数据可以用insert，插入时内部自动排序
+(4)查询set中元素个数用：empty、size，max_size是理论上的最大元素数
+(5)清除全部元素用clear
+(6)针对清除某个Key用erase，若erase的元素不存在则不报错
+
+3.5.5.set的遍历和原地构造
+3.5.5.1、set的三种遍历方法
+(1)使用ranged for
+(2)使用迭代器写for循环
+(3)使用std::for_each
+3.5.5.2、set的原地构造
+(1)set插入新元素一共有3个方法：insert、emplace、emplace_hint
+(2)一般来说，emplace比insert效率更高，参考：http://c.biancheng.net/view/6834.html
+(3)
+
+3.5.6.移动构造和emplace_hint
+3.5.6.1、移动构造函数
+(1)移动构造函数特征：传参是一个右值引用的对象（对比copy构造函数）
+(2)右值引用的特征就是&&，lvalue和rvalue相关的内容在第4部分会详解（注意原设计的4和5对调顺序了）
+(3)右值引用对应移动语义，对应移动构造函数；而左值引用对应复制语义，对应复制构造函数
+(4)移动语义就是直接把右值的临时对象给左值，而不是复制右值给左值重新构造一份
+(5)移动构造函数可以避免不必要的深拷贝，这在很多时候可以提升效率
+(6)此处案例，如果不提供移动构造函数，则会退而匹配调用拷贝构造函数，但不影响insert和emplace的对比
+3.5.6.2、emplace_hint
+(1)emplace_hint使用得到会比emplace效率更高，主要原因是插入位置会影响内部自排队效率
+(2)见cppreference emplace_hint页面案例及分析
+
+3.5.7.set的其他方法
+3.5.7.1、extract和merge
+3.5.7.2、查找
+(1)count
+(2)find
+(3)contains
+(4)equal_range、lower_bound、upper_bound
+3.5.7.2、观察者
+(1)key_comp
+(2)value_comp
+
+3.5.8_9.有序关联容器map1_2
+3.5.8.1、map介绍
+(1)map和set类似，但是map是(key, value)对，而set只有key
+(2)map是映射的意思，此处是key到value的一对一映射。不是地图
+(3)map的用法和特征与set非常类似，学会set了再学map就容易多了
+3.5.8.2、pair
+(1)pair即对，也就是(key, value)对，本质是有2个元素的结构体
+(2)std::pair是STL的标准pair封装，见cppreference
+(3)pair中2个元素类型可以不同，也就是说key和value的类型可以不同
+(4)pair中2个元素名字是固定的，key叫first，而value叫second
+(5)map中存的元素都是一个一个的pair，访问map的key和value要先从map找到pair，再去first和second
+3.5.8.3、map的构造函数详解
+(1)直接参考cppreference中构造函数页面的sample即可
+3.5.8.4、其他方法
+(1)与set非常类似，详见cppreference
+(2)extract是修改map的key值的唯一方法
+
+3.5.10.multi_set和multi_map
+3.5.10.1、multi_版本的差异
+(1)set和map中每个容器内所有元素的key都是unique的，不能重复
+(2)如果需要容器中同一个key有多个元素，则需要使用multi_版本的set和map
+(3)除此区别外，multi_版本和普通版本没有任何差异，所有方法也完全一样
+(4)工作中用哪个，取决于实际需求。
+3.5.10.2、multi_set实战演示
+3.5.10.3、multi_map实战演示
+
+
+3.5.11.无序关联容器
+3.5.11.1、无序关联容器和有序关联容器的相同点
+(1)也属于关联容器，有set和map两种，set只有key，map有(key, value)对 
+(2)也有带不带multi_的版本，差异和上节讲的一样
+(3)操作方法很多都是重合的，名字和作用也都一样
+3.5.11.2、无序关联容器和有序关联容器的差异点
+(1)有序内部用红黑树实现，无序内部用哈希函数实现
+(2)有序插入元素时会内部自动排序，无序插入时不排序，按照哈希规则直接映射存放
+(3)
+
+：unordered_set和unordered_map
+
+
+
+# 第三部分第六章节 智能指针与STL查漏补缺
+
+第一部分、章节目录
+3.6.1.智能指针的本质原理
+3.6.2.auto_ptr的使用
+3.6.3.auto_ptr的弊端
+3.6.4.unique_ptr的使用之构造函数1
+3.6.5.unique_ptr的使用之构造函数2
+3.6.6.unique_ptr的使用之构造函数3
+3.6.7.unique_ptr的其他成员详解
+3.6.8.unique_ptr的对比和总结
+3.6.9.CPP11最常用的智能指针shared_ptr
+3.6.10.shared_ptr的引用计数详解
+3.6.11.weak_ptr与shared_ptr的关联和使用
+3.6.12.迭代器适配器
+3.6.13.function封装器和可变参数模版
+
+第二部分、章节介绍
+3.6.1.智能指针的本质原理
+	本节讲解智能指针工作的根本性原理，这是所有智能指针的共性。
+3.6.2.auto_ptr的使用
+	本节讲解auto_ptr的具体使用和典型成员。
+3.6.3.auto_ptr的弊端
+	本节讲解auto_ptr的几个弊端，这也是auto_ptr的使用禁忌。
+3.6.4.unique_ptr的使用之构造函数1
+	本节讲解unique_ptr的构造函数，结合cppreference中的案例进行分析。
+3.6.5.unique_ptr的使用之构造函数2
+	本节继续讲解unique_ptr的构造函数，结合cppreference中的案例进行分析。
+3.6.6.unique_ptr的使用之构造函数3
+	本节继续讲解unique_ptr的构造函数，结合cppreference中的案例进行分析。
+3.6.7.unique_ptr的其他成员详解
+	本节讲解unique_ptr的其他成员，主要是一些观察器和修改器。
+3.6.8.unique_ptr的对比和总结
+	本节主要对比unique_ptr和auto_ptr，并对unique_ptr进行总结。
+3.6.9.CPP11最常用的智能指针shared_ptr
+	本节介绍shared_ptr并通过代码实践来讲解其基本使用。
+3.6.10.shared_ptr的引用计数详解
+	本节讲解shared_ptr的引用计数工作原理。
+3.6.11.weak_ptr与shared_ptr的关联和使用
+	本节讲解weak_ptr的使用，及其解决shared_ptr的循环引用问题。
+3.6.12.迭代器适配器
+	本节讲解C++ STL的迭代器适配器并做案例分析。
+3.6.13.function封装器和可变参数模版
+	本节讲解function封装器和可变参数模版，并对C++前三部分做总结。
+	
+
+第三部分、随堂记录
+3.6.1.智能指针的本质原理
+3.6.1.1、为什么需要智能指针
+(1)智能指针是为了解决内存泄漏问题
+(2)内存泄漏问题，本质上是因为程序员自己忘记主动释放导致的
+(3)智能指针的解决思路是：连带自动释放
+3.6.1.2、智能指针的本质工作原理
+(1)一方面，利用局部变量/对象分配在栈上，代码段结束时会自动释放的特性
+(2)另一方面，利用对象释放时会自动调用析构函数的特性
+3.6.1.3、智能指针演示代码实战
+(1)定义一个类TestPtr，写出构造函数和析构函数
+(2)main.cpp中写一个全局函数func，在main中调用执行func
+(3)func中定义一个TestPtr类的对象作为局部变量，测试验证程序执行后自动调用析构函数
+(4)在TestPtr中定义成员变量int *p, 构造中new申请空间给p，析构中delete释放
+(5)在TestPtr中写test_use函数，使用p所指向的内存
+(6)分析以上，TestPtr使用了动态内存但是并不会导致内存泄漏，这就是智能指针的套路
+3.6.1.4、总结
+(1)智能指针本身是一个类，而普通指针本身是一个变量
+(2)智能指针的“智能”指的是随着智能指针对象本身的释放，所指向的对象也释放
+(3)C++里面的四个智能指针: auto_ptr, unique_ptr,shared_ptr, weak_ptr 其中后三个是C++11支持，并且第一个已经被C++11弃用
+
+3.6.2.auto_ptr的使用
+3.6.2.1、auto_ptr的常规使用
+3.6.2.2、auto_ptr的成员方法
+(1)成员函数 
+(2)观察器：get	operator*	operator->
+(3)修改器: reset	release 
+
+3.6.3.auto_ptr的弊端
+参考：https://blog.csdn.net/czc1997/article/details/84026887
+
+3.6.4_5_6.unique_ptr的使用之构造函数123
+结合cppreference的unique_ptr构造函数页面sample学习
+
+3.6.7.unique_ptr的其他成员详解
+3.6.7.1、修改器
+(1)release
+(2)reset
+(3)swap
+3.6.7.2、观察器
+(1)get
+(2)get_deleter
+(3)operator bool
+3.6.7.3、元素访问
+(1)单对象版本，*和->
+(2)数组对象版本，[]
+3.6.7.4、非成员函数
+(1)make_unique
+
+3.6.8.unique_ptr的对比和总结
+3.6.8.1、unique_ptr比auto_ptr的优势
+(1)消费unique_ptr的函数能以值或以右值引用接收它
+	unique_ptr<People> pass_through(unique_ptr<People> p)
+	{
+		p->bar();
+		return p;
+	}
+(2)unique_ptr在智能指针变量赋值方面比auto_ptr安全
+	unique_ptr<string> pu1(new string ("hello world")); 
+	unique_ptr<string> pu2; 
+	pu2 = pu1;                                      // 不允许
+	
+	unique_ptr<string> pu3; 
+	pu3 = unique_ptr<string>(new string ("You"));   // 允许
+
+3.6.8.2、unique_ptr的不足和使用注意事项
+(1)不要与裸指针混用
+	int *x(new int());
+	unique_ptr<int> up1,up2;
+	up1.reset(x);	
+	up2.reset(x);	//会使up1 up2指向同一个普通对象
+(2)不能忘记接收u.release()的返回值
+3.6.8.3、unique_ptr总结
+(1)unique_ptr 之所以叫这个名字，是因为它只能指向一个对象，当它指向新的对象时，之前所指向的对象会被释放。
+(2)当unique_ptr本身被释放时，指向的对象也会被自动释放
+(3)unique_ptr实现独占式拥有或严格拥有概念，保证同一时间内只有一个智能指针可以指向该对象。
+(4)要安全的重用unique_ptr，可以用reset给他赋新值。
+(4)std::move()能够将一个unique_ptr赋给另一个。这样转移所有权后 还是有可能出现原有指针调用就崩溃的情况。但是这个语法能强调你是在转移所有权，让你清晰的知道自己在做什么，从而不乱调用原有指针。
+
+3.6.9.CPP11最常用的智能指针shared_ptr
+3.6.9.1、shared_ptr的设计思路
+(1)auto_ptr和unique_ptr是独占式智能指针，即任何时候智能指针和对象是1对1绑定的，不能2对1
+(2)shared_ptr是基于引用计数式的设计，因此可以多个智能指针绑定1个对象，这会带来很多方便
+(3)shared_ptr在基础的定义和使用方式上，与前2个很类似，所以很容易学会使用
+3.6.9.2、shared_ptr的基本使用
+(1)智能指针的创建，一般有2种方式：使用构造函数、使用std::make_shared方法
+(2)代码实战：shared_ptr与单个对象的绑定和使用，测试智能指针的多种常见用途
+
+3.6.10.shared_ptr的引用计数详解
+3.6.10.1、引用计数的获取和检测
+(1)use_count
+(2)unique
+(3)operator bool
+(4)reset
+3.6.10.2、引用计数实现智能指针的总结
+(1)基本原理仍然是释放智能指针对象时，调用其Deleter，再调用被绑定对象的析构来释放
+(2)auto_ptr和unique_ptr都被实现为独占式，所以在=时必然发生占有权转移
+(3)shared_ptr增加引用计数，好处是可以让多个智能指针对象，同时绑定一个被管理对象，本质上其实是避免了被管理对象被多次自动释放带来的错误，所以比unique_ptr更好用
+3.6.10.3、shared_ptr的其他细节
+(1)static_pointer_cast/dynamic_pointer_cast
+(2)特化的原子操作（期望对复杂的结构进行无锁操作，而不用担心GC /内存泄漏）
+
+3.6.11.weak_ptr与shared_ptr的关联和使用
+参考：https://blog.csdn.net/albertsh/article/details/82286999
+
+
+3.6.12.迭代器适配器
+参考：http://c.biancheng.net/view/7255.html 与 cppreference
+
+3.6.13.function封装器和可变参数模版
+3.6.13.1、function封装器
+参考：https://blog.csdn.net/gongjianbo1992/article/details/105160627/
+3.6.13.2、可变参数模版
+参考：https://blog.csdn.net/xiaohu2022/article/details/69076281
+3.6.13.3、C++课程前3部分总结
+(1)C++课程前3部分是主体，后2部分是扩展。
+(2)前3部分学完，即可使用C++去做事，譬如GUI的qt、譬如AI的opencv
+(3)后2部分是C++编程功底和优化、更深度理解C++的，建议有一定C++使用体验后再去学
+(4)录制上也会先暂停C++去录制一些使用C++的其他课程，后面再找时间来讲后2部分扩展
+
